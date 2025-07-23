@@ -1,0 +1,25 @@
+{
+    "full_transcript": "[AUTOMATED_MESSAGE]: Bitte haben Sie noch etwas Geduld. Wir sind so schnell wie möglich persönlich für Sie da.\n[SPEAKER_01]: Schweizer Apotheke, guten Tag.\n[SPEAKER_02]: Schönen guten Tag, Melanie Haas hier von der Firma Berivo. Ich grüße Sie.\n[SPEAKER_01]: Hallo.\n[SPEAKER_02]: Hallo. Sie waren ja dieses Jahr auf der Apotheker-Messe und es geht um das Thema Neukundengewinnung. Können Sie mir sagen, wer bei Ihnen dafür zuständig ist?\n[SPEAKER_01]: Ich darf am Telefon leider keine Kontaktdaten oder Namen aus Datenschutzgründen rausgeben.\n[SPEAKER_02]: Können Sie mich denn weiterleiten?\n[SPEAKER_01]: Leider auch nicht. Sie dürfen uns aber gerne eine E-Mail schreiben.\n[SPEAKER_01]: Die dürfen Sie gerne ganz allgemein an uns richten. Die Kollegen, die diese Adresse betreuen, leiten das dann entsprechend hier im Haus an die zuständigen Kollegen weiter.\n[SPEAKER_02]: Okay. Wie lautet die E-Mail-Adresse?\n[SPEAKER_01]: Das ist die info@schweizer.de.\n[SPEAKER_02]: Okay, weiß ich Bescheid. Ich danke Ihnen. Schönen Tag noch.\n[SPEAKER_01]: Gerne, gleichfalls. Tschüss.\n[SPEAKER_02]: Tschüss.",
+    "entities": [
+        {
+            "text": "Schweizer Apotheke",
+            "type": "ORG"
+        },
+        {
+            "text": "Melanie Haas",
+            "type": "PER"
+        },
+        {
+            "text": "Berivo",
+            "type": "ORG"
+        },
+        {
+            "text": "dieses Jahr",
+            "type": "DATE"
+        },
+        {
+            "text": "Schweizer",
+            "type": "ORG"
+        }
+    ]
+}

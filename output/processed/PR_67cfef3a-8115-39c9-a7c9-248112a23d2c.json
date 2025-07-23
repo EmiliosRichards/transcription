@@ -1,0 +1,45 @@
+{
+    "full_transcript": "[SPEAKER_01]: Firma Caseware, Löscher mein Name.\n[SPEAKER_02]: Ja, schönen guten Tag, Frau Löscher. Melanie Haas hier noch mal von Berivo. Wir hatten ja vorgestern gesprochen. Ich hatte Ihnen eine E-Mail gesendet, die Sie weiterleiten wollten. Erinnern Sie sich noch daran?\n[SPEAKER_01]: Nein, tut mir leid.\n[SPEAKER_02]: Also, es ging um Folgendes: Wir hatten Sie dieses Jahr auf der Steuerberatermesse bemerkt, bei der wir beide als Aussteller vertreten waren. Da wollten wir mit der Ansprechperson sprechen, die für Neukundengewinnung zuständig ist.\n[SPEAKER_01]: Haben Sie eine E-Mail geschickt? Ich habe keine bekommen.\n[SPEAKER_02]: Doch, die ging an info@caseware.\n[SPEAKER_01]: Ja, das ist aber nicht meine, das ist eine allgemeine. Mit der info@-Adresse habe ich nichts zu tun. Das ist ein freies Forum, auf das die Mitarbeiter selbstständig zugreifen können. Das heißt, jede Abteilung kann da rein und sich ihre E-Mails rausholen. Das Marketing schaut da täglich rein. Falls Interesse besteht, wird darauf geantwortet, und falls kein Interesse besteht, wird nicht darauf geantwortet oder es dauert einen Moment.\n[SPEAKER_02]: Ja, dann warte ich die Woche einfach mal ab.\n[SPEAKER_01]: Genau. Deshalb war ich etwas verwundert, weil ich mit der Info-Adresse nichts zu tun habe. Da sammelt sich alles und wird dann von den einzelnen Abteilungen abgegriffen.\n[SPEAKER_02]: Okay, alles klar. Ich danke Ihnen.\n[SPEAKER_01]: Sehr gerne.\n[SPEAKER_02]: Vielen Dank.\n[SPEAKER_01]: Sehr gerne.\n[SPEAKER_02]: Tschüss.\n[SPEAKER_01]: Tschüss.",
+    "entities": [
+        {
+            "text": "Caseware",
+            "type": "ORG"
+        },
+        {
+            "text": "Löscher",
+            "type": "PER"
+        },
+        {
+            "text": "Frau Löscher",
+            "type": "PER"
+        },
+        {
+            "text": "Melanie Haas",
+            "type": "PER"
+        },
+        {
+            "text": "Berivo",
+            "type": "ORG"
+        },
+        {
+            "text": "vorgestern",
+            "type": "DATE"
+        },
+        {
+            "text": "dieses Jahr",
+            "type": "DATE"
+        },
+        {
+            "text": "caseware",
+            "type": "ORG"
+        },
+        {
+            "text": "Marketing",
+            "type": "ORG"
+        },
+        {
+            "text": "die Woche",
+            "type": "DATE"
+        }
+    ]
+}

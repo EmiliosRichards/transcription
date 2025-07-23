@@ -1,0 +1,21 @@
+{
+    "full_transcript": "[SPEAKER_02]: Hallo.\n[SPEAKER_01]: Hallo, einen wunderschönen guten Tag. Mein Name ist Laibel. Ich melde mich von Manuav.\n[SPEAKER_01]: Könnten Sie mir sagen, wer bei Ihnen für das Thema Gewinnung von Neukunden und Leadgenerierung zuständig ist?\n[SPEAKER_02]: Die Vertriebsleitung, der Sales Director.\n[SPEAKER_02]: Da möchte ich Sie erst mal fragen, weswegen Sie anrufen und was Sie möchten. Ich gebe ja nicht einfach so Kontaktdaten weiter.\n[SPEAKER_01]: Die Frau Klose hätte ich gerne gesprochen. Bin ich da bei Ihnen richtig?\n[SPEAKER_02]: Die Frau Klose, das ist richtig. Die Vertriebsleitung bin ich aber nicht, nein.\n[SPEAKER_01]: Aber Sales Director? Oder sind Sie für das Marketing zuständig?\n[SPEAKER_02]: Ja, für das Marketing bin ich zuständig.\n[SPEAKER_01]: Okay. Bei uns geht es um das Thema Gewinnung von Neukunden und Leadgenerierung. Wie sieht es denn da bei Ihnen aus?\n[SPEAKER_02]: Das funktioniert bei uns aktuell super.\n[SPEAKER_01]: Perfekt.\n[SPEAKER_02]: Was bieten Sie denn an?\n[SPEAKER_01]: Ich habe ja noch gar nicht gesagt, was ich anbiete. Bei uns geht es darum, dass wir aktuell Ihren Vertrieblern eine unverbindliche und kostenlose Potenzialanalyse anbieten.\n[SPEAKER_02]: Ach so.\n[SPEAKER_01]: Für Kaltakquise, Leadgenerierung und Neukundengewinnung.\n[SPEAKER_02]: Ah, okay. Nee, da haben wir kein Interesse.\n[SPEAKER_01]: Okay. Was spricht dagegen?\n[SPEAKER_02]: Weil es einfach gerade super läuft. Unser Vertriebsteam ist eigentlich fast zu klein für die vielen Neukundenanfragen, die wir zurzeit haben.\n[SPEAKER_01]: Okay, okay. Ja, dann bedanke ich mich recht herzlich, ja?\n[SPEAKER_02]: Mhm, danke auch.\n[SPEAKER_01]: Tschüss.\n[SPEAKER_02]: Danke, tschüss.",
+    "entities": [
+        {
+            "text": "Laibel",
+            "type": "PER"
+        },
+        {
+            "text": "Manuav",
+            "type": "ORG"
+        },
+        {
+            "text": "Frau Klose",
+            "type": "PER"
+        },
+        {
+            "text": "Klose",
+            "type": "PER"
+        }
+    ]
+}

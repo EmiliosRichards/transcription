@@ -1,0 +1,47 @@
+```json
+{
+  "full_transcript": "[AUTOMATED_MESSAGE]: Herzlich willkommen bei der Haufe Group mit ihren Marken Haufe, Haufe Akademie und Lexware.\n[SPEAKER_01]: Mein Name ist Andrea Greco-Schulze, guten Tag.\n[SPEAKER_02]: Guten Tag, Melanie Haas hier von der Firma Berivo. Ist der Chef oder die Chefin momentan erreichbar, beziehungsweise die Frau Tomeo?\n[SPEAKER_01]: Warten Sie mal eine Sekunde. Die Frau Tomeo ist im Moment nicht im Haus.\n[SPEAKER_02]: Ah, okay, dann melde ich mich nochmal. Oder wissen Sie, wer bei Ihnen für die Neukundengewinnung zuständig ist?\n[SPEAKER_02]: Wir hatten Sie auf der Steuerberater-Messe dieses Jahr bemerkt und es geht um das Thema Neukundengewinnung, Zielbereich Steuerberater.\n[SPEAKER_01]: Also, Sie dürfen uns diesbezüglich gerne eine E-Mail schreiben. Die Frau Tomeo ist dafür gar nicht zuständig.\n[SPEAKER_02]: Die E-Mail, genau, nee, alles gut.\n[SPEAKER_01]: Also, die Frau Tomeo ist auch nicht dafür zuständig.\n[SPEAKER_02]: Wir haben nur mit Frau Tomeo gesprochen gehabt, ihr auch eine E-Mail gesendet und sie wollte es einmal weiterleiten.\n[SPEAKER_01]: Okay, dann wird sie das auch sicher gemacht haben. Aber Sie dürfen das auch gerne nochmal an hello@career.haufegroup.com schicken.\n[SPEAKER_02]: Ja, an die Adresse habe ich bereits geschrieben, sowie auch an e-commit@haufe-lexware.com.\n[SPEAKER_01]: Wunderbar, dann sind Sie da an der richtigen Adresse.\n[SPEAKER_02]: Gut, dann warte ich auf eine Rückantwort.\n[SPEAKER_01]: Alles klar, vielen Dank.\n[SPEAKER_02]: Ich danke Ihnen. Tschüss.\n[SPEAKER_01]: Tschüss.",
+  "entities": [
+    {
+      "text": "Haufe Group",
+      "type": "ORG"
+    },
+    {
+      "text": "Haufe",
+      "type": "ORG"
+    },
+    {
+      "text": "Haufe Akademie",
+      "type": "ORG"
+    },
+    {
+      "text": "Lexware",
+      "type": "ORG"
+    },
+    {
+      "text": "Andrea Greco-Schulze",
+      "type": "PER"
+    },
+    {
+      "text": "Melanie Haas",
+      "type": "PER"
+    },
+    {
+      "text": "Berivo",
+      "type": "ORG"
+    },
+    {
+      "text": "Frau Tomeo",
+      "type": "PER"
+    },
+    {
+      "text": "dieses Jahr",
+      "type": "DATE"
+    },
+    {
+      "text": "Haufe-Lexware",
+      "type": "ORG"
+    }
+  ]
+}
+```

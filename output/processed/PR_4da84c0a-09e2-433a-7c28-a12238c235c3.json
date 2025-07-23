@@ -1,0 +1,25 @@
+{
+    "full_transcript": "[SPEAKER_01]: Hallo?\n[SPEAKER_02]: Ja, bitte.\n[SPEAKER_01]: Ja, schönen guten Tag, Melanie Haas hier von Berivo. Ich grüße Sie. Wir haben Sie auf der Steuerberatermesse dieses Jahr bemerkt, bei der wir beide als Aussteller vertreten waren. Können Sie mir sagen, wer bei Ihnen für Neukundengewinnung zuständig ist?\n[SPEAKER_02]: Unsere Vertriebler.\n[SPEAKER_01]: Ist die Dame momentan erreichbar?\n[SPEAKER_02]: Nein, sie ist im Urlaub und kommt erst in zwei Wochen wieder.\n[SPEAKER_01]: Dann melde ich mich in zwei Wochen erneut.\n[SPEAKER_02]: Ja, worum geht es denn konkret?\n[SPEAKER_01]: Es geht um das Thema Neukundengewinnung. Wir haben uns auf die Zielgruppe der Steuerberater spezialisiert.\n[SPEAKER_02]: Und was möchten Sie diesbezüglich von unserer Vertrieblerin erfahren?\n[SPEAKER_01]: Es geht um eine Zusammenarbeit. Wir haben ein Konzept entwickelt, das wir Ihnen gerne einmal vorstellen würden. Für die Neukundengewinnung.\n[SPEAKER_02]: Das brauchen wir nicht. Wir haben so viel Zulauf, dass wir gar keine Ressourcen mehr für Neukunden haben.\n[SPEAKER_01]: Okay. Wenn Sie möchten, kann ich Ihnen vorab eine E-Mail mit einer Zusammenfassung zusenden, worum es genau geht.\n[SPEAKER_02]: Das können Sie tun. Aber wie gesagt, wir sind für die nächsten drei Jahre komplett ausgebucht und können keine neuen Kunden aufnehmen.\n[SPEAKER_01]: Gut, dann weiß ich Bescheid. Ich danke Ihnen.\n[SPEAKER_02]: Gerne, danke. Tschüss.\n[SPEAKER_01]: Tschüss.",
+    "entities": [
+        {
+            "text": "Melanie Haas",
+            "type": "PER"
+        },
+        {
+            "text": "Berivo",
+            "type": "ORG"
+        },
+        {
+            "text": "dieses Jahr",
+            "type": "DATE"
+        },
+        {
+            "text": "in zwei Wochen",
+            "type": "DATE"
+        },
+        {
+            "text": "nächsten drei Jahre",
+            "type": "DATE"
+        }
+    ]
+}

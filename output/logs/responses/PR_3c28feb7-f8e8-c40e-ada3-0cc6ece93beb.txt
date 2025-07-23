@@ -1,0 +1,19 @@
+```json
+{
+  "full_transcript": "[AUTOMATED_MESSAGE]: Vielen Dank für Ihren Anruf. Der nächste freie Servicemitarbeiter ist gleich für Sie da. Sie können uns auch gerne eine E-Mail an service@inonecatcher.com schicken.\n[SPEAKER_01]: Einen wunderschönen guten Tag. Mein Name ist Laibel. Ich melde mich von der Firma Manuav und hätte gerne die Vertriebsleitung oder den Sales Director gesprochen, bitte.\n[SPEAKER_02]: Der Sales Director ist gerade nicht am Platz und unser Geschäftsführer ist auch noch in einem Termin.\n[SPEAKER_01]: Okay, immer noch im Termin. Wann könnte ich mich denn noch einmal melden?\n[SPEAKER_02]: Ich denke, so ab 11 Uhr wäre es gut. Sie können auch etwas ausrichten, wenn Sie möchten.\n[SPEAKER_01]: Ich würde mich dann lieber selbst noch einmal melden, ja.\n[SPEAKER_02]: Das können Sie gerne machen. In Ordnung.\n[SPEAKER_01]: Danke, auf Wiederhören.\n[SPEAKER_02]: Bis dahin, tschüss.",
+  "entities": [
+    {
+      "text": "Laibel",
+      "type": "PER"
+    },
+    {
+      "text": "Manuav",
+      "type": "ORG"
+    },
+    {
+      "text": "11 Uhr",
+      "type": "DATE"
+    }
+  ]
+}
+```

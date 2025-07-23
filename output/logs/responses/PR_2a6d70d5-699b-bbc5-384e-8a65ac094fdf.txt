@@ -1,0 +1,23 @@
+```json
+{
+  "full_transcript": "[SPEAKER_01]: Delphi Technology, guten Morgen.\n[SPEAKER_02]: Ja, guten Morgen, Melanie Haas hier von der Firma Berivo. Ich grüße Sie.\n[SPEAKER_02]: Und zwar haben wir Sie auf der Steuerberatermesse dieses Jahr bemerkt, bei der Sie als Aussteller vertreten waren.\n[SPEAKER_02]: Können Sie mir sagen, wer bei Ihnen für Neukundengewinnung zuständig ist?\n[SPEAKER_01]: Neukundengewinnung im Bereich der Steuerberater?\n[SPEAKER_02]: Die Gruppe Steuerberater, richtig.\n[SPEAKER_01]: Meistens der Vertriebsleiter. Also, wir vertreiben elektronische Preisauszeichnungen. Ich wüsste jetzt nicht, warum wir auf einer Steuerberatermesse waren.\n[SPEAKER_02]: Ah, okay. Dann weiß ich Bescheid. Dann wurde hier wahrscheinlich etwas Falsches angegeben.\n[SPEAKER_02]: Vielleicht ist es ein anderes Unternehmen. Soll ich das annehmen?\n[SPEAKER_01]: Ja. Ich wüsste jetzt nicht, dass wir da auf einer Steuerberatermesse waren.\n[SPEAKER_02]: Okay, tut mir leid für die Störung.\n[SPEAKER_01]: Kein Problem.\n[SPEAKER_02]: Vielen Dank Ihnen.\n[SPEAKER_01]: Ja, gleichfalls.",
+  "entities": [
+    {
+      "text": "Delphi Technology",
+      "type": "ORG"
+    },
+    {
+      "text": "Melanie Haas",
+      "type": "PER"
+    },
+    {
+      "text": "Berivo",
+      "type": "ORG"
+    },
+    {
+      "text": "dieses Jahr",
+      "type": "DATE"
+    }
+  ]
+}
+```

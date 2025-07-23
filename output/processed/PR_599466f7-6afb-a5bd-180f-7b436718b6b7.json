@@ -1,0 +1,9 @@
+{
+    "full_transcript": "[AUTOMATED_MESSAGE]: Herzlich Willkommen bei Besant & Company.\n[AUTOMATED_MESSAGE]: Bitte drücken Sie die 1, wenn Sie mit dem Support sprechen wollen.\n[AUTOMATED_MESSAGE]: In allen anderen Fällen drücken Sie bitte die 2.",
+    "entities": [
+        {
+            "text": "Besant & Company",
+            "type": "ORG"
+        }
+    ]
+}

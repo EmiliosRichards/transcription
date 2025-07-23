@@ -1,0 +1,31 @@
+```json
+{
+  "full_transcript": "[SPEAKER_01]: Page One Nürnberg, guten Tag.\n[SPEAKER_02]: Hallo, einen wunderschönen guten Tag. Mein Name ist Leibel von Manuav.\n[SPEAKER_02]: Könnten Sie mich bitte mit dem Sales Director verbinden?\n[SPEAKER_01]: Um was genau geht es denn?\n[SPEAKER_02]: Es geht um das Thema Neukundengewinnung und Resilienzbewertung.\n[SPEAKER_01]: Okay, darf ich Sie da einmal bitten, eine Mail an info@page-one.de zu schreiben? Ich würde das dann an die zuständige Abteilung weiterleiten.\n[SPEAKER_02]: Dorthin habe ich bereits geschrieben.\n[SPEAKER_01]: Wann denn? Dann gucke ich nach.\n[SPEAKER_02]: Das war am 10.12.\n[SPEAKER_01]: Okay, dann schaue ich mal. Dann hat das bestimmt eine Kollegin weitergeleitet und der jeweilige Mitarbeiter wird sich dann bei Ihnen melden, wenn Bedarf besteht. Ich schaue aber gerne noch mal nach.\n[SPEAKER_01]: Wie war die Firma bitte noch mal?\n[SPEAKER_02]: Manuav.\n[SPEAKER_01]: So, genau. Das ist an den Kollegen weitergeleitet worden. Und wenn da Bedarf besteht, würde sich jemand mit Ihnen in Verbindung setzen.\n[SPEAKER_02]: Okay, super, ich bedanke mich.\n[SPEAKER_01]: Gerne, kein Problem.\n[SPEAKER_02]: Auf Wiederhören.\n[SPEAKER_01]: Vielen Dank, auf Wiederhören.",
+  "entities": [
+    {
+      "text": "Page One",
+      "type": "ORG"
+    },
+    {
+      "text": "Nürnberg",
+      "type": "LOC"
+    },
+    {
+      "text": "Leibel",
+      "type": "PER"
+    },
+    {
+      "text": "Manuav",
+      "type": "ORG"
+    },
+    {
+      "text": "page-one.de",
+      "type": "ORG"
+    },
+    {
+      "text": "10.12.",
+      "type": "DATE"
+    }
+  ]
+}
+```

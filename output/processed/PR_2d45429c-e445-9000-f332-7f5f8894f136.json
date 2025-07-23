@@ -1,0 +1,9 @@
+{
+    "full_transcript": "[AUTOMATED_MESSAGE]: Herzlich Willkommen bei der Eulen-IT GmbH, Ihrem kompetenten IT-Systemhaus für endlich gute IT. Um Ihnen bei Ihrem technischen Anliegen schnellstmöglich...",
+    "entities": [
+        {
+            "text": "Eulen-IT GmbH",
+            "type": "ORG"
+        }
+    ]
+}

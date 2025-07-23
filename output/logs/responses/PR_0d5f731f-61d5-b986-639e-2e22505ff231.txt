@@ -1,0 +1,19 @@
+```json
+{
+  "full_transcript": "[SPEAKER_01]: Herzlich willkommen bei Service-Klick.\n[SPEAKER_02]: Einen wunderschönen guten Tag, mein Name ist Leiby. Wir melden uns von Manuav.\n[SPEAKER_02]: Ich hätte gerne die Vertriebsleitung gesprochen oder den Sales Director, bitte.\n[SPEAKER_01]: Puh, um was geht es denn ungefähr? Weil wir so etwas eigentlich nicht haben.\n[SPEAKER_02]: Oh, okay. Bei uns geht es um die Themen Neukundengewinnung, Bestandskundenaktivierung und Lead-Generierung. Wer kümmert sich denn darum?\n[SPEAKER_01]: Puh, also, ich sage jetzt mal so: Wir arbeiten hauptsächlich für Steuerkanzleien und die Mandanten kommen dann von diesen Steuerkanzleien zu uns. Also sind wir da ein bisschen zu klein für so etwas Großes.\n[SPEAKER_02]: Ah, okay, okay. Ihre Zielgröße ist dann also nicht mehr als 500 Kunden, oder?\n[SPEAKER_01]: Richtig, richtig.\n[SPEAKER_02]: Okay, dann tut es mir leid.\n[SPEAKER_01]: Kein Problem.\n[SPEAKER_02]: Dann danke ich Ihnen recht herzlich.\n[SPEAKER_01]: Danke schön, tschüss.",
+  "entities": [
+    {
+      "text": "Service-Klick",
+      "type": "ORG"
+    },
+    {
+      "text": "Leiby",
+      "type": "PER"
+    },
+    {
+      "text": "Manuav",
+      "type": "ORG"
+    }
+  ]
+}
+```

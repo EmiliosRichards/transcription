@@ -1,0 +1,25 @@
+{
+    "full_transcript": "[SPEAKER_01]: Sie sprechen mit Elke Israel. Was kann ich für Sie tun?\n[SPEAKER_02]: Einen wunderschönen guten Tag, mein Name ist Leibel, ich melde mich von Manuav. Ist die Frau Munker zu sprechen, bitte?\n[SPEAKER_01]: Leider nicht, die ist persönlich nicht zu erreichen, Frau Leibel.\n[SPEAKER_02]: Wann könnte ich sie denn am besten erreichen? Wann kommt sie wieder?\n[SPEAKER_01]: Ich kann höchstens einen Rückruf veranlassen, Frau Leibel. Wenn Sie mir sagen, worum es geht, kann ich das gerne eintragen.\n[SPEAKER_02]: Ich melde mich dann einfach nochmal, ja.\n[SPEAKER_01]: Das bringt nichts, wir können hier nicht durchstellen. Sie kommen wieder bei mir raus. Wenn Sie keinen Rückruf wünschen, sagen Sie mir doch bitte, worum es geht.\n[SPEAKER_01]: Sagen Sie mir nochmal den Firmennamen, Frau Leibel.\n[SPEAKER_02]: Manuav.\n[SPEAKER_01]: Und um was geht es denn bitte?\n[SPEAKER_02]: Neukundengewinnung und Lead-Generierung.\n[SPEAKER_01]: So, das gebe ich sehr gerne weiter, Frau Leibel. Wenn da Interesse besteht, wird sich Frau Munker bei Ihnen melden. Ansonsten besteht kein Interesse, nur damit Sie Bescheid wissen.\n[SPEAKER_02]: Ich bedanke mich.\n[SPEAKER_01]: Sehr gerne. Einen schönen Tag wünsche ich Ihnen noch.\n[SPEAKER_02]: Tschüss.\n[SPEAKER_01]: Tschüss.",
+    "entities": [
+        {
+            "text": "Elke Israel",
+            "type": "PER"
+        },
+        {
+            "text": "Leibel",
+            "type": "PER"
+        },
+        {
+            "text": "Manuav",
+            "type": "ORG"
+        },
+        {
+            "text": "Frau Munker",
+            "type": "PER"
+        },
+        {
+            "text": "Frau Leibel",
+            "type": "PER"
+        }
+    ]
+}

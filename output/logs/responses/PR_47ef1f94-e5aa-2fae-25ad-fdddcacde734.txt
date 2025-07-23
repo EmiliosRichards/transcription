@@ -1,0 +1,31 @@
+```json
+{
+  "full_transcript": "[SPEAKER_01]: Das Masch-Labor, Alexandra Rossa, guten Morgen.\n[SPEAKER_02]: Hallo, einen wunderschönen guten Tag. Mein Name ist Laibel, wir melden uns von Manuav.\n[SPEAKER_02]: Ich hätte gerne mit der CX-Leitung oder dem Sales Director gesprochen, bitte.\n[SPEAKER_01]: Worum geht es denn genau?\n[SPEAKER_02]: Es geht um das Thema Neukundengewinnung und Bestandskundenaktivierung.\n[SPEAKER_01]: Und von welcher Firma sind Sie?\n[SPEAKER_02]: Von Manuav.\n[SPEAKER_01]: Sind Sie schon mit uns in Kontakt gewesen oder haben Sie uns schon etwas geschickt?\n[SPEAKER_02]: Ja, an info@masch-labor.de, genau.\n[SPEAKER_01]: Okay, wann haben Sie da eine E-Mail geschickt?\n[SPEAKER_02]: Wie bitte?\n[SPEAKER_01]: Wann haben Sie da eine E-Mail an uns geschickt?\n[SPEAKER_02]: Am 10.12.\n[SPEAKER_01]: Am 10.12. Okay, dann haben wir da aber kein Interesse.\n[SPEAKER_01]: Das habe ich dann schon weitergeleitet und da kam die Info zurück, dass da kein Interesse besteht.\n[SPEAKER_02]: Okay, dann bedanke ich mich.\n[SPEAKER_01]: Danke Ihnen, tschüss.\n[SPEAKER_02]: Tschüss.",
+  "entities": [
+    {
+      "text": "Masch-Labor",
+      "type": "ORG"
+    },
+    {
+      "text": "Alexandra Rossa",
+      "type": "PER"
+    },
+    {
+      "text": "Laibel",
+      "type": "PER"
+    },
+    {
+      "text": "Manuav",
+      "type": "ORG"
+    },
+    {
+      "text": "masch-labor.de",
+      "type": "ORG"
+    },
+    {
+      "text": "10.12.",
+      "type": "DATE"
+    }
+  ]
+}
+```

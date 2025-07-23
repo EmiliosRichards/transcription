@@ -1,0 +1,73 @@
+{
+    "full_transcript": "[SPEAKER_02]: Vielen Dank, Herr Suchanek.\n[SPEAKER_01]: Schönen guten Tag.\n[SPEAKER_02]: Ja, hallo Herr Suchanek, Melanie Haas hier von Manuav. Ich grüße Sie.\n[SPEAKER_01]: Hallo, grüß Sie. Kann ich Ihnen helfen?\n[SPEAKER_02]: Wir hatten ja am 19.12. miteinander gesprochen. Es ging um das Thema Neukundengewinnung und Bestandskundenaktivierung, Thema Kaltakquise.\n[SPEAKER_01]: Ach ja. Ach, ich muss mal ganz kurz hier… Meinen E-Mail-Kontakt haben Sie ja, oder? torsten.suchanek@teletax.de.\n[SPEAKER_02]: Genau, das ist korrekt. Ich schaue mal nach.\n[SPEAKER_01]: Ja. Ich könnte es durchaus am Freitag machen, am 23. Da habe ich aber nur um 16:00 Uhr etwas frei. Das ist mir ein bisschen spät. Die Woche drauf… also nächste Woche Freitag hätte ich da vormittags auch was frei. Am Freitag, den 1. März.\n[SPEAKER_02]: Genau, 10:30 Uhr, 11:00 Uhr, 11:30 Uhr.\n[SPEAKER_01]: Ja, da bin ich flexibel.\n[SPEAKER_02]: Ja, 11:00 Uhr?\n[SPEAKER_01]: Ja, nehmen wir 11:00 Uhr. Das klingt ganz gut.\n[SPEAKER_02]: Super. Da habe ich kurz zwei Fragen an Sie, Herr Suchanek. Welche Zielgruppe haben Sie denn?\n[SPEAKER_01]: Unsere Zielgruppe sind Steuerberater, Steuerfachangestellte – also die, die in der Hierarchie unter den Steuerberatern sind. Steuerfachleute. Ja. Und auch Leute, die die Buchhaltung machen. Und die Leute, die die Buchhaltung machen, sind ja auch in den Steuerberaterkanzleien zu Hause. Das heißt quasi, diese Zielgruppe, die ich Ihnen genannt habe, ist unter dem Überbegriff der Steuerberaterkanzlei quasi unsere Zielgruppe. Und darin arbeiten halt die verschiedenen Berufsgruppen: also Steuerberater, Wirtschaftsprüfer könnte man noch nennen, dann Steuerfachangestellte, und dann gibt es, glaube ich, noch Steuerfachfrauen und Steuerfachmänner.\n[SPEAKER_02]: Genau.\n[SPEAKER_01]: Die brauchen ja verschiedenste Fortbildungen. Der eine muss sich mit Gesetzen auseinandersetzen, der andere muss wissen, wie er das bucht, sage ich jetzt mal auf Deutsch.\n[SPEAKER_02]: Richtig.\n[SPEAKER_01]: Genau, das ist eigentlich unsere Hauptzielgruppe. Und unsere, sage ich mal, Nebenzielgruppe, die wir auch gerne noch ansprechen wollen, was aber schwierig ist, sie zu erschließen, weil es eine neue Zielgruppe ist, sind quasi Unternehmen. Unternehmen in dem Sinne, dass die ja auch steuerrechtliche Dinge vorbereiten müssen. Und da gibt es in manchen Unternehmen eben auch jemanden, der eine buchhalterische Tätigkeit hat oder der ein Unternehmen aufbaut und dafür steuerliche Sachen wissen muss. Also, sozusagen die Steuerverantwortlichen in Unternehmen als noch eine weitere Zielgruppe außerhalb der Kanzleien.\n[SPEAKER_02]: Okay. Meine letzte Frage: Sind das dann auch über 500 Zielkunden, die man ansprechen kann?\n[SPEAKER_01]: Ja, natürlich. Nageln Sie mich nicht fest, aber es gibt, glaube ich, um die 40.000 Steuerberater oder Personen, die in ähnlichen Berufen tätig sind. Also ja, da gibt es viele, die wir ansprechen können, aber es gibt natürlich auch Konkurrenten.\n[SPEAKER_02]: Natürlich. Dann passt das ja eigentlich. Ich habe das jetzt so weit eingetragen. Sie bekommen eine E-Mail-Bestätigung, da haben Sie auch unsere Kontaktdaten. 1. März, 11:00 Uhr, Gespräch mit unserem Geschäftsführer, Herrn Lorenz Schrein.\n[SPEAKER_01]: Okay.\n[SPEAKER_02]: Das machen wir dann online.\n[SPEAKER_01]: Genau. Das schicken Sie mir dann.\n[SPEAKER_02]: Perfekt.\n[SPEAKER_01]: Super, Herr Suchanek.\n[SPEAKER_02]: Ich danke Ihnen ganz, ganz herzlich. Ich wünsche Ihnen eine schöne Woche. Bleiben Sie gesund. Bis dann.\n[SPEAKER_01]: Ja, danke. Wünsche ich Ihnen auch. Dankeschön. Tschüss.\n[SPEAKER_02]: Tschüss.",
+    "entities": [
+        {
+            "text": "Herr Suchanek",
+            "type": "PER"
+        },
+        {
+            "text": "Melanie Haas",
+            "type": "PER"
+        },
+        {
+            "text": "Manuav",
+            "type": "ORG"
+        },
+        {
+            "text": "19.12.",
+            "type": "DATE"
+        },
+        {
+            "text": "torsten.suchanek@teletax.de",
+            "type": "ORG"
+        },
+        {
+            "text": "Freitag, am 23.",
+            "type": "DATE"
+        },
+        {
+            "text": "16:00 Uhr",
+            "type": "DATE"
+        },
+        {
+            "text": "Woche",
+            "type": "DATE"
+        },
+        {
+            "text": "nächste Woche Freitag",
+            "type": "DATE"
+        },
+        {
+            "text": "vormittags",
+            "type": "DATE"
+        },
+        {
+            "text": "Freitag, den 1. März",
+            "type": "DATE"
+        },
+        {
+            "text": "10:30 Uhr",
+            "type": "DATE"
+        },
+        {
+            "text": "11:00 Uhr",
+            "type": "DATE"
+        },
+        {
+            "text": "11:30 Uhr",
+            "type": "DATE"
+        },
+        {
+            "text": "1. März",
+            "type": "DATE"
+        },
+        {
+            "text": "Herrn Lorenz Schrein",
+            "type": "PER"
+        },
+        {
+            "text": "Woche",
+            "type": "DATE"
+        }
+    ]
+}

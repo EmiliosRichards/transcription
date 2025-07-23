@@ -11,3 +11,4 @@ pyannote.audio
 scikit-learn
 google-generativeai
 python-dotenv
+mistralai>=0.4.0

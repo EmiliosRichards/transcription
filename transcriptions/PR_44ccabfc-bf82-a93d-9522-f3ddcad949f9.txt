@@ -1,0 +1,23 @@
+[SPEAKER_00]: Die Page von Nürnberg, haben Sie einen guten Tag?
+[SPEAKER_01]: Hallo, einen wunderschönen guten Tag, mein Name ist Leibel von Manuaz.
+[SPEAKER_01]: Könnten Sie mich bitte mit dem Sales Director verbinden?
+[SPEAKER_00]: Um was genau geht es denn?
+[SPEAKER_01]: Es geht um das Thema Neukundengewinnung und Resilienzbewertung.
+[SPEAKER_00]: Okay, darf ich Sie da einmal bitten, eine Mail zu schreiben und ich würde das dann an die Zuständigen...
+[SPEAKER_01]: www.page-one.de
+[SPEAKER_00]: Genau dahin.
+[SPEAKER_01]: Habe ich schon.
+[SPEAKER_00]: Wann denn?
+[SPEAKER_00]: Dann gucke ich nach.
+[SPEAKER_01]: Das war am 10.12.
+[SPEAKER_00]: Okay, dann schaue ich mal, weil dann hat das bestimmt eine Kollegin weitergeleitet
+[SPEAKER_00]: und der jeweilige Mitarbeiter wird sich dann, wenn Bedarf wäre, bei Ihnen melden.
+[SPEAKER_00]: Ich schaue aber gern nochmal nach.
+[SPEAKER_00]: Wie war die Firma bitte nochmal?
+[SPEAKER_00]: Manuaz.
+[SPEAKER_00]: So, genau, das ist an den Kollegen weitergeleitet.
+[SPEAKER_00]: Und wenn da Bedarf wäre, dann würde sich da jemand mit Ihnen in Verbindung setzen.
+[SPEAKER_01]: Okay, super, ich bedanke mich.
+[SPEAKER_00]: Gerne, kein Problem.
+[SPEAKER_00]: Wiedersehen.
+[UNKNOWN]: Vielen Dank.

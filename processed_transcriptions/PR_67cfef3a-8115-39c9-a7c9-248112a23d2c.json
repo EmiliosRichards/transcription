@@ -1,0 +1,41 @@
+{
+    "full_transcript": "[SPEAKER_01]: Caseware, Löscher mein Name.\n[SPEAKER_02]: Ja, schönen guten Tag, Frau Löscher. Melanie Haas hier nochmal von Berivo. Wir hatten ja vorgestern gesprochen. Ich hatte Ihnen ja eine E-Mail gesendet, das wollten Sie ja mal weiterleiten. Erinnern Sie sich noch daran?\n[SPEAKER_01]: Nein, tut mir leid.\n[SPEAKER_02]: Also, es ging ja um Folgendes: Wir hatten Sie auf der Steuerberatermesse dieses Jahr bemerkt, bei der wir beide als Aussteller vertreten waren. Da wollten wir mit der Ansprechperson sprechen, die für Neukundengewinnung zuständig ist.\n[SPEAKER_01]: Haben Sie eine E-Mail geschickt? Ich habe keine bekommen.\n[SPEAKER_02]: Doch, das war an info@caseware.\n[SPEAKER_01]: Ja, das ist aber nicht meine. Das ist eine allgemeine. Das ist nicht meine. Mit der Info-Adresse habe ich nichts zu tun. Das ist ein freies Forum, wo die Mitarbeiter selbstständig zugreifen können. Das heißt, jede Abteilung kann da rein und kann sich seine Mails rausholen. Das Marketing schaut da täglich rein. Und falls Interesse besteht, wird darauf geantwortet. Und falls kein Interesse besteht, wird nicht darauf geantwortet oder es dauert einen Moment, bis geantwortet wird.\n[SPEAKER_02]: Ja, dann warte ich einfach mal die Woche ab.\n[SPEAKER_01]: Genau, so läuft das dann. Deshalb war ich etwas verwundert, weil ich mit der Info-Adresse nichts zu tun habe. Da sammelt sich halt alles und das wird dann abgegriffen von den einzelnen Abteilungen.\n[SPEAKER_02]: Okay, alles klar. Danke Ihnen.\n[SPEAKER_01]: Sehr gerne.\n[SPEAKER_02]: Vielen Dank.\n[SPEAKER_01]: Sehr gerne. Tschüss.\n[SPEAKER_02]: Tschüss.",
+    "entities": [
+        {
+            "text": "Caseware",
+            "type": "ORG"
+        },
+        {
+            "text": "Löscher",
+            "type": "PER"
+        },
+        {
+            "text": "Frau Löscher",
+            "type": "PER"
+        },
+        {
+            "text": "Melanie Haas",
+            "type": "PER"
+        },
+        {
+            "text": "Berivo",
+            "type": "ORG"
+        },
+        {
+            "text": "vorgestern",
+            "type": "DATE"
+        },
+        {
+            "text": "dieses Jahr",
+            "type": "DATE"
+        },
+        {
+            "text": "caseware",
+            "type": "ORG"
+        },
+        {
+            "text": "Woche",
+            "type": "DATE"
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "full_transcript": "[SPEAKER_01]: Willkommen bei Flowtech. Mein Name ist Braun.\n[SPEAKER_02]: Guten Tag. Guten Tag, Melanie Haas hier von Berivo. Ich grüße Sie.\n[SPEAKER_01]: Hallo.\n[SPEAKER_02]: Ist Herr Hellfeld momentan erreichbar?\n[SPEAKER_01]: Muss ich gerade mal schauen. Einen kleinen Moment, bitte.\n[SPEAKER_02]: Ja.\n[SPEAKER_01]: So, vielen Dank fürs Warten. Ich habe ihn jetzt kurz gefragt. Wir brauchen aktuell keine neuen Gruppen.\n[SPEAKER_02]: Aber er weiß doch gar nicht, worum es sich handelt.\n[SPEAKER_01]: Wir haben doch gestern miteinander gesprochen. Es geht doch um Neukundengewinnung, oder nicht?\n[SPEAKER_02]: Richtig, aber wir hatten ja einige Themen, die wir gerne auch besprechen wollten. Also es hat jetzt nicht direkt mit Neukundengewinnung zu tun. Es handelt sich um Zusammenarbeit.\n[SPEAKER_01]: Okay, also ich habe ihn jetzt, wie gesagt, gefragt. Er saß gerade im Termin. Sie können aber gerne noch mal eine E-Mail an ihn schicken. Das tut mir leid.\n[SPEAKER_02]: Kein Problem. Ich danke Ihnen.\n[SPEAKER_01]: Gerne.\n[SPEAKER_02]: Tschüss.\n[SPEAKER_01]: Tschüss.",
+    "entities": [
+        {
+            "text": "Flowtech",
+            "type": "ORG"
+        },
+        {
+            "text": "Braun",
+            "type": "PER"
+        },
+        {
+            "text": "Melanie Haas",
+            "type": "PER"
+        },
+        {
+            "text": "Berivo",
+            "type": "ORG"
+        },
+        {
+            "text": "Herr Hellfeld",
+            "type": "PER"
+        },
+        {
+            "text": "gestern",
+            "type": "DATE"
+        }
+    ]
+}

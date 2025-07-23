@@ -1,0 +1,49 @@
+{
+    "full_transcript": "[AUTOMATED_MESSAGE]: Bei der Firma Formatik. Einen Moment bitte, wir sind sofort für Sie da.\n[SPEAKER_01]: Firma Formatik, Sandra Voss, guten Tag.\n[SPEAKER_02]: Sehr guten Tag, Melanie Haas hier von Berivo, ich grüße Sie.\n[SPEAKER_01]: Hallo.\n[SPEAKER_02]: Und zwar haben wir Sie auf der Steuerberatermesse dieses Jahr bemerkt, bei der wir beide als Aussteller vertreten waren.\n[SPEAKER_01]: Ja.\n[SPEAKER_02]: Wer ist denn bei Ihnen für Neukundengewinnung zuständig?\n[SPEAKER_01]: Das sind bei uns in der Regel die Außendienstkollegen, ja.\n[SPEAKER_02]: Ist da jemand erreichbar? Kann ich mit jemandem sprechen?\n[SPEAKER_01]: Da müsste ich Sie einmal kurz mit dem Herrn Scharfenort verbinden.\n[SPEAKER_02]: Herrn Scharfenort?\n[SPEAKER_01]: Scharfenort, genau. Ich würde Sie einmal kurz durchstellen, wenn er erreichbar ist. Einen Moment.\n[SPEAKER_02]: Danke.\n[SPEAKER_01]: Gerne.\n[SPEAKER_03]: Scharfenort, guten Tag.\n[SPEAKER_02]: Schönen guten Tag, Herr Scharfenort. Melanie Haas hier von Berivo. Ich wurde gerade zum Thema Neukundengewinnung zu Ihnen verbunden. Bin ich da bei Ihnen richtig?\n[SPEAKER_03]: Eigentlich schon, ja. Ich bin der Vertriebsleiter des Unternehmens.\n[SPEAKER_02]: Super, ich grüße Sie noch einmal. Herr Scharfenort, es geht um Folgendes: Viele Firmen, die Steuerberater als Zielgruppe haben, bieten exzellente Produkte oder Dienstleistungen an, verschenken jedoch das Potenzial der gezielten Ansprache durch Kaltakquise.\n[SPEAKER_02]: Wir beide wissen, Kaltakquise ist zeitaufwendig, anspruchsvoll und gehört nicht zu den beliebtesten Aufgaben. Bin ich da bei Ihnen?\n[SPEAKER_03]: Nö, da bin ich nicht bei Ihnen. Ich bin ein großer Fan von Kaltakquise.\n[SPEAKER_02]: Sie sind ein großer Fan.\n[SPEAKER_03]: Ich mache die meisten Neugewinnungen von Kunden über die Kaltakquise.\n[SPEAKER_02]: Oh, super. Das ist natürlich ein Klassiker und dieses Problem haben auch viele Firmen. Und zwar haben wir von Berivo uns auf die Akquise für Unternehmen spezialisiert, die Steuerberater als Zielgruppe haben. Genau hier setzen wir an. Durch unsere langjährige Erfahrung mit dieser spezifischen Zielgruppe wissen wir genau, wie wir Steuerberater effektiv und zielsicher ansprechen können. Aber nicht nur unsere Expertise macht uns zu einem idealen Partner für Sie. Was uns von anderen unterscheidet: Wir bieten unsere Leistung für nur 28 Euro pro Telefonstunde an – ohne versteckte Kosten, ohne langfristige Verträge. Das ermöglicht es Ihnen, schnell Erfolge zu sehen und Ihre Investition optimal zu nutzen. Was halten Sie grundsätzlich davon, darüber nachzudenken, die Kaltakquise auszulagern und Ihren Vertrieblern qualifizierte Leads zur Verfügung zu stellen, die bereits für den nächsten Schritt mit Ihnen bereit sind? Dazu wollte ich Sie zu einem Gespräch mit unserem Geschäftsführer Lorenz Schrader einladen.\n[SPEAKER_03]: Das ist sehr nett, aber ich glaube, dass das nicht unbedingt sinnvoll ist. Ich bin ein relativ alter Hase, was das betrifft. Ich betreue den Steuerberatermarkt seit über 30 Jahren und ich glaube, diese Expertise kann mir keiner nehmen. Wir haben so viel Erfahrung im Bereich der Steuerberatung. Und wenn Sie sich ein bisschen informiert hätten, was Formatik für den Steuerberater macht, würden Sie auch sehr schnell erkennen, dass wir im Bereich Digitalisierung nicht zu Hause sind, sondern mit unserem Produkt noch relativ old-school sind. Wir verkaufen und vertreiben Bindesysteme und alles drumherum. Und wie gesagt, der Steuerberater wird immer weniger binden.\n[SPEAKER_02]: Okay. Wenn Sie möchten, kann ich Ihnen vorab eine E-Mail mit allen Informationen zusenden. Sie können sich das ja mal durchlesen.",
+    "entities": [
+        {
+            "text": "Formatik",
+            "type": "ORG"
+        },
+        {
+            "text": "Sandra Voss",
+            "type": "PER"
+        },
+        {
+            "text": "Melanie Haas",
+            "type": "PER"
+        },
+        {
+            "text": "Berivo",
+            "type": "ORG"
+        },
+        {
+            "text": "dieses Jahr",
+            "type": "DATE"
+        },
+        {
+            "text": "Herrn Scharfenort",
+            "type": "PER"
+        },
+        {
+            "text": "Scharfenort",
+            "type": "PER"
+        },
+        {
+            "text": "Herr Scharfenort",
+            "type": "PER"
+        },
+        {
+            "text": "28 Euro",
+            "type": "MONEY"
+        },
+        {
+            "text": "Lorenz Schrader",
+            "type": "PER"
+        },
+        {
+            "text": "seit über 30 Jahren",
+            "type": "DATE"
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "full_transcript": "[AUTOMATED_MESSAGE]: ...verbinde Sie mit dem nächsten verfügbaren Mitarbeiter.\n[SPEAKER_01]: Verrechnungsstelle Peters, guten Tag.\n[SPEAKER_02]: Ich grüße Sie, Simon Peters mein Name. Ich hätte gerne mit der Vertriebsleitung gesprochen. Könnten Sie mir da weiterhelfen?\n[SPEAKER_01]: Ja, worum geht es denn?\n[SPEAKER_02]: Es geht um die Gewinnung von Neukunden und um die Generierung von Leads. In der Richtung würde ich mich gerne kurz austauschen.\n[SPEAKER_01]: Ja, einen Moment bitte.\n[SPEAKER_02]: Danke.",
+    "entities": [
+        {
+            "text": "Verrechnungsstelle Peters",
+            "type": "ORG"
+        },
+        {
+            "text": "Simon Peters",
+            "type": "PER"
+        }
+    ]
+}

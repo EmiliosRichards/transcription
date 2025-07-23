@@ -1,0 +1,36 @@
+[SPEAKER_00]: Hallo, ein wunderschönen guten Tag, mein Name ist Lai, ich möchte Sie bitten, dass Sie mal antworten, ich verstehe Sie ganz schlecht, hallo, können Sie, hallo?
+[SPEAKER_02]: Ja, ja, verstehen Sie mich jetzt besser?
+[SPEAKER_01]: Nach wie vor schlecht, ja, mit wem spreche ich bitte?
+[SPEAKER_02]: Ich spreche mit Frau Leibel von Manuaf, ich hätte den Herrn Joost gesprochen, bitte.
+[SPEAKER_01]: Welchen Herrn Joost hätten Sie denn gern gesprochen?
+[SPEAKER_02]: Den Ansprechpartner.
+[SPEAKER_01]: Für was?
+[SPEAKER_02]: Vertriebsleiter, Sales Director.
+[SPEAKER_01]: Wir haben hier zwei Herren Joost.
+[SPEAKER_02]: Aber einer ist ja für den Vertrieb zuständig, oder?
+[SPEAKER_02]: Ja, also wer gehört die E-Mail-Adresse a.joost.joost-ag.com?
+[SPEAKER_01]: Aha, wo haben Sie denn diese Adresse her?
+[SPEAKER_02]: Wir haben ja mit ihm gesprochen.
+[SPEAKER_01]: Sie haben mit ihm gesprochen?
+[SPEAKER_02]: Meine Kollegin, ja.
+[SPEAKER_01]: Okay, und worum geht es jetzt?
+[SPEAKER_02]: Kaltakquise.
+[SPEAKER_01]: Kaltakquise, da haben wir kein Interesse, sorry.
+[SPEAKER_02]: Okay, aber hier wurde ein anderer Vermerk gemacht.
+[SPEAKER_02]: Wir sollten Herrn Joost melden.
+[SPEAKER_01]: Und um was geht es da dann?
+[SPEAKER_02]: Wie gesagt, Kaltakquise, da war schon mal ein Gespräch mit ihm und wir sollten uns heute nochmal melden.
+[SPEAKER_02]: Und E-Mail-Verkehr war ja.
+[SPEAKER_01]: Ah, okay.
+[SPEAKER_01]: Dann, der Herr Joost ist heute gar nicht im Hause, dann schicken Sie ihm doch nochmal bitte eine E-Mail.
+[SPEAKER_02]: Ich versuche es dann morgen wieder.
+[SPEAKER_01]: Wenn Sie sowieso schon seinen E-Mail-Kontakt haben und auch über E-Mail kommuniziert haben mit ihm,
+[SPEAKER_01]: dann schicken Sie ihm doch nochmal bitte eine E-Mail.
+[SPEAKER_01]: Und dann versuchen Sie es bitte nochmal über E-Mail.
+[SPEAKER_02]: Super, mache ich dann.
+[SPEAKER_02]: Ich bedanke mich recht herzlich.
+[SPEAKER_01]: Ja, bitte.
+[SPEAKER_01]: Sehr gerne.
+[SPEAKER_01]: Das Gleiche.
+[SPEAKER_01]: Tschüss.
+[UNKNOWN]: Tschüss.

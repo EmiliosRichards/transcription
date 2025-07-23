@@ -1,0 +1,37 @@
+[SPEAKER_01]: Sie mit dem nächsten verfügbaren Mitarbeiter verbinden.
+[SPEAKER_01]: Verrechnungsstelle Peters, guten Tag.
+[SPEAKER_03]: Ich grüße Sie, Simon Peters mein Name.
+[SPEAKER_03]: Ich hätte gerne mit der Vertriebsleitung sprechen wollen.
+[SPEAKER_03]: Könnten Sie mir da eine Hilfe nennen?
+[SPEAKER_02]: Ja, worum geht es denn?
+[SPEAKER_03]: Es geht um Gewinnen von Neukunden und um Leads generiert.
+[SPEAKER_03]: In der Richtung hätte ich mich kurz befassen wollen.
+[SPEAKER_02]: Ja, einen Moment bitte.
+[SPEAKER_03]: Danke.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[SPEAKER_03]: Vielen Dank.
+[SPEAKER_03]: Vielen Dank.
+[SPEAKER_03]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[SPEAKER_03]: Vielen Dank.
+[SPEAKER_00]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.
+[UNKNOWN]: Vielen Dank.

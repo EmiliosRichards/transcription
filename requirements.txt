@@ -1,0 +1,13 @@
+whisperx
+faster-whisper
+argparse
+numpy
+torch
+torchvision
+torchaudio
+transformers
+scipy
+pyannote.audio
+scikit-learn
+google-generativeai
+python-dotenv

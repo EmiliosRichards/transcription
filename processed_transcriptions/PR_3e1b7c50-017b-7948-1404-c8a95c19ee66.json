@@ -1,0 +1,61 @@
+{
+    "full_transcript": "[SPEAKER_01]: Herzlich willkommen bei der Haufe Group mit ihren Marken Haufe, Haufe Akademie und FlexWerden. Mein Name ist Andrea Greco-Schulze, guten Tag.\n[SPEAKER_02]: Guten Tag, Melanie Haas hier von der Firma Berivo. Ist die Chefin, der Chef oder Frau Tomeo momentan erreichbar?\n[SPEAKER_01]: Einen Moment, bitte. Frau Tomeo ist im Moment nicht im Haus.\n[SPEAKER_02]: Ah, okay, dann melde ich mich nochmal. Oder wissen Sie, wer bei Ihnen für die Neukundengewinnung zuständig ist? Wir hatten Sie auf der Steuerberatermesse dieses Jahr bemerkt und es geht um das Thema Neukundengewinnung, Zielbereich Steuerberater.\n[SPEAKER_01]: Sie dürfen uns diesbezüglich gerne eine E-Mail schreiben. Frau Tomeo ist dafür gar nicht zuständig.\n[SPEAKER_02]: Okay. Wir hatten nur mit Frau Tomeo gesprochen, ihr auch eine E-Mail gesendet und sie wollte es weiterleiten.\n[SPEAKER_01]: Okay, dann wird sie das sicher gemacht haben. Sie können das aber auch gerne nochmal an hello@career.haufegroup.com senden.\n[SPEAKER_02]: Genau, an e-commit@haufe-lexware.com habe ich auch eine E-Mail gesendet.\n[SPEAKER_01]: Wunderbar, dann sind Sie da an der richtigen Adresse.\n[SPEAKER_02]: Gut, dann warte ich auf eine Rückmeldung.\n[SPEAKER_01]: Alles klar, vielen Dank.\n[SPEAKER_02]: Ich danke Ihnen. Tschüss.\n[SPEAKER_01]: Tschüss.",
+    "entities": [
+        {
+            "text": "Haufe Group",
+            "type": "ORG"
+        },
+        {
+            "text": "Haufe",
+            "type": "ORG"
+        },
+        {
+            "text": "Haufe Akademie",
+            "type": "ORG"
+        },
+        {
+            "text": "FlexWerden",
+            "type": "ORG"
+        },
+        {
+            "text": "Andrea Greco-Schulze",
+            "type": "PER"
+        },
+        {
+            "text": "Melanie Haas",
+            "type": "PER"
+        },
+        {
+            "text": "Berivo",
+            "type": "ORG"
+        },
+        {
+            "text": "Frau Tomeo",
+            "type": "PER"
+        },
+        {
+            "text": "Frau Tomeo",
+            "type": "PER"
+        },
+        {
+            "text": "dieses Jahr",
+            "type": "DATE"
+        },
+        {
+            "text": "Frau Tomeo",
+            "type": "PER"
+        },
+        {
+            "text": "Frau Tomeo",
+            "type": "PER"
+        },
+        {
+            "text": "Haufe Group",
+            "type": "ORG"
+        },
+        {
+            "text": "Haufe-Lexware",
+            "type": "ORG"
+        }
+    ]
+}

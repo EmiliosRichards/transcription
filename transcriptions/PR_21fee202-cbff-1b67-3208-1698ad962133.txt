@@ -1,0 +1,4 @@
+[SPEAKER_00]: Leider können Sie Ihren Anruf gerade nicht persönlich entgegennehmen.
+[SPEAKER_00]: Sie können uns nach dem Signalton eine Nachricht hinterlassen.
+[SPEAKER_00]: Wir melden uns schnellstmöglich bei Ihnen zurück.
+[SPEAKER_00]: Vielen Dank.

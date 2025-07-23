@@ -1,0 +1,17 @@
+[SPEAKER_01]: Hier ist die Firma Softwarepartner in Stemwede-Halden.
+[SPEAKER_01]: Der nächste freie Mitarbeiter freut sich auf Ihr Gespräch.
+[SPEAKER_01]: Bitte warten Sie.
+[SPEAKER_02]: Die Firma S&S, Dr. Partner Lievre, guten Morgen.
+[SPEAKER_00]: Ich verstehe Sie leider akustisch sehr, sehr schlecht.
+[SPEAKER_02]: Die Firma S&S, Dr. Partner Lievre.
+[SPEAKER_00]: Auch so leise?
+[SPEAKER_00]: Ich verstehe Sie nicht.
+[SPEAKER_02]: Ja, mein Name ist Lievre von der Firma S&S, Dr. Partner.
+[SPEAKER_00]: Lievre, mein Name, von der Firma Manuav.
+[SPEAKER_00]: Könnten Sie mich bitte mit der Vertriebsleitung oder dem Sales Director verbinden?
+[SPEAKER_02]: Da kann ich Sie leider nicht verbinden, aber Sie können gerne eine E-Mail schreiben an die Info-S-Software-Partner.net und dann kann ich das weiterleiten.
+[SPEAKER_00]: Mache ich dann.
+[SPEAKER_00]: Bedanke mich.
+[SPEAKER_00]: Wiederhören.
+[SPEAKER_02]: Gerne.
+[SPEAKER_02]: Tschüss.

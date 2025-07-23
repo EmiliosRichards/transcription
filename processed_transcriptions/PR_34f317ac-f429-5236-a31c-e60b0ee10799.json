@@ -1,0 +1,25 @@
+{
+    "full_transcript": "[SPEAKER_01]: Die Kodi, deutscher Konverterdienst, Kaumeier, guten Tag.\n[SPEAKER_02]: Einen wunderschönen guten Tag. Mein Name ist Laibel, ich melde mich von der Firma Manuav.\n[SPEAKER_02]: Ich hätte gerne die Vertriebsleitung oder den Sales Director gesprochen.\n[SPEAKER_01]: Um was geht es denn bitte?\n[SPEAKER_02]: Es geht um Neukundengewinnung und Bestandskundenaktivierung.\n[SPEAKER_01]: Brauchen wir nicht, danke schön.\n[SPEAKER_02]: Weil Sie selber akquirieren, oder was spricht dagegen?\n[SPEAKER_01]: Wir nutzen Mundpropaganda und haben unsere eigenen Vertriebskanäle.\n[SPEAKER_02]: Ach, Sie sind also schon die entscheidende Person.\n[SPEAKER_01]: Ich bin die Prokuristin.\n[SPEAKER_01]: Und wenn das eine Kaltakquise ist, haben wir kein Interesse. Danke.\n[SPEAKER_02]: Okay, dann bedanke ich mich.\n[SPEAKER_01]: Auf Wiederhören, tschüss.\n[SPEAKER_02]: Wiederhören.",
+    "entities": [
+        {
+            "text": "Kodi",
+            "type": "ORG"
+        },
+        {
+            "text": "deutscher Konverterdienst",
+            "type": "ORG"
+        },
+        {
+            "text": "Kaumeier",
+            "type": "PER"
+        },
+        {
+            "text": "Laibel",
+            "type": "PER"
+        },
+        {
+            "text": "Manuav",
+            "type": "ORG"
+        }
+    ]
+}

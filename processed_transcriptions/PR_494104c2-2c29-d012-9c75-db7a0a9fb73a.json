@@ -1,0 +1,25 @@
+{
+    "full_transcript": "[AUTOMATED_MESSAGE]: Hier ist die Firma Softwarepartner in Stemwede-Halden. Der nächste freie Mitarbeiter freut sich auf Ihr Gespräch. Bitte warten Sie.\n[SPEAKER_01]: S&S Software-Partner, guten Morgen.\n[SPEAKER_02]: Ich verstehe Sie leider akustisch sehr, sehr schlecht.\n[SPEAKER_01]: Die Firma S&S Software-Partner.\n[SPEAKER_01]: Immer noch so leise?\n[SPEAKER_02]: Ich verstehe Sie nicht.\n[SPEAKER_01]: Ja, von der Firma S&S Software-Partner.\n[SPEAKER_02]: Mein Name ist Lievre von der Firma Manuav.\n[SPEAKER_02]: Könnten Sie mich bitte mit der Vertriebsleitung oder dem Sales Director verbinden?\n[SPEAKER_01]: Da kann ich Sie leider nicht verbinden. Sie können aber gerne eine E-Mail an info@s-software-partner.net schreiben, die leite ich dann weiter.\n[SPEAKER_02]: Das mache ich. Vielen Dank. Wiederhören.\n[SPEAKER_01]: Gerne. Tschüss.",
+    "entities": [
+        {
+            "text": "Softwarepartner",
+            "type": "ORG"
+        },
+        {
+            "text": "Stemwede-Halden",
+            "type": "LOC"
+        },
+        {
+            "text": "S&S Software-Partner",
+            "type": "ORG"
+        },
+        {
+            "text": "Lievre",
+            "type": "PER"
+        },
+        {
+            "text": "Manuav",
+            "type": "ORG"
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+[SPEAKER_02]: Herzlich Willkommen bei der Service-Klick-Sprachgott.
+[SPEAKER_01]: Einen wunderschönen guten Tag, mein Name ist Leiby, wir melden uns von Manuar.
+[SPEAKER_01]: Ich hätte gerne die Vertriebsleitung besprochen oder den Sales Director, bitte.
+[SPEAKER_02]: Boah, um was geht es denn ungefähr, weil was haben wir eigentlich nicht?
+[SPEAKER_01]: Oh, okay, bei uns geht es nämlich um das Thema Neukundengewinnung, Bestandkundenaktivierung,
+[SPEAKER_01]: Leadsgenerierung, wer kümmert sich denn drum?
+[SPEAKER_02]: Boah, also, ich sage jetzt mal so, wir arbeiten hauptsächlich für Steuerkanzleien
+[SPEAKER_02]: und die Mandanten kommen dann zu uns von diesen Steuerkanzleien,
+[SPEAKER_02]: also wir sind da ein bisschen zu klein für sowas Großes.
+[SPEAKER_01]: Ah, okay, okay, okay, also Ihre Zielgröße ist dann nicht mehr als 500 Kunden, oder?
+[SPEAKER_01]: Richtig, richtig.
+[SPEAKER_01]: Okay, dann tut es mir leid, ja?
+[SPEAKER_01]: Kein Problem.
+[SPEAKER_01]: Wir danken mich recht herzlich.
+[SPEAKER_02]: Danke schön, tschüss.

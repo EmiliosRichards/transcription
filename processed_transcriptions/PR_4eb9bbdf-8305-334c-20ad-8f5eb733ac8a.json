@@ -1,0 +1,37 @@
+{
+    "full_transcript": "[SPEAKER_01]: Chef-Tresor, Jörg hier, guten Morgen.\n[SPEAKER_02]: Einen wunderschönen guten Morgen, Leibel ist mein Name, wir melden uns von der Firma Manuav.\n[SPEAKER_02]: Wir hatten mit dem Herrn P. gesprochen, ist er denn schon da, bitte?\n[SPEAKER_01]: Der ist gerade in einem Termin. Ich weiß jetzt nicht, wie lange der geht. Probieren Sie es einfach später noch einmal.\n[SPEAKER_02]: Mache ich dann gerne. Haben Sie eine Uhrzeit für mich?\n[SPEAKER_01]: Nee, ich weiß eben nicht genau, wie lange der geht. Er ging aber gerade erst los, so gegen halb. Es kann also ein Stückchen dauern, ich sage mal, frühestens in einer Stunde.\n[SPEAKER_02]: In einer Stunde?\n[SPEAKER_01]: Ja.\n[SPEAKER_02]: Okay, super, dann melde ich mich noch einmal, ja?\n[SPEAKER_01]: Ja, machen wir so.\n[SPEAKER_02]: Dankeschön, tschüss.\n[SPEAKER_01]: Ja, tschüss.",
+    "entities": [
+        {
+            "text": "Chef-Tresor",
+            "type": "ORG"
+        },
+        {
+            "text": "Jörg",
+            "type": "PER"
+        },
+        {
+            "text": "Leibel",
+            "type": "PER"
+        },
+        {
+            "text": "Manuav",
+            "type": "ORG"
+        },
+        {
+            "text": "Herrn P.",
+            "type": "PER"
+        },
+        {
+            "text": "später",
+            "type": "DATE"
+        },
+        {
+            "text": "gegen halb",
+            "type": "DATE"
+        },
+        {
+            "text": "in einer Stunde",
+            "type": "DATE"
+        }
+    ]
+}

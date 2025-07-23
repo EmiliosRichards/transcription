@@ -1,0 +1,25 @@
+{
+    "full_transcript": "[SPEAKER_01]: Page One Nürnberg, guten Tag.\n[SPEAKER_02]: Hallo, einen wunderschönen guten Tag. Mein Name ist Leibel von Manuaz.\n[SPEAKER_02]: Könnten Sie mich bitte mit dem Sales Director verbinden?\n[SPEAKER_01]: Um was genau geht es denn?\n[SPEAKER_02]: Es geht um das Thema Neukundengewinnung und Resilienzbewertung.\n[SPEAKER_01]: Okay, darf ich Sie da einmal bitten, eine E-Mail zu schreiben? Ich würde das dann an die Zuständigen weiterleiten.\n[SPEAKER_01]: www.page-one.de\n[SPEAKER_01]: Genau dahin.\n[SPEAKER_02]: Habe ich schon.\n[SPEAKER_01]: Wann denn? Dann gucke ich nach.\n[SPEAKER_02]: Das war am 10.12.\n[SPEAKER_01]: Okay, dann schaue ich mal. Dann hat das bestimmt eine Kollegin weitergeleitet und der jeweilige Mitarbeiter wird sich dann, wenn Bedarf wäre, bei Ihnen melden. Ich schaue aber gern noch mal nach.\n[SPEAKER_01]: Wie war die Firma bitte noch mal?\n[SPEAKER_02]: Manuaz.\n[SPEAKER_01]: So, genau, das ist an den Kollegen weitergeleitet. Und wenn da Bedarf wäre, dann würde sich da jemand mit Ihnen in Verbindung setzen.\n[SPEAKER_02]: Okay, super, ich bedanke mich.\n[SPEAKER_01]: Gerne, kein Problem.\n[SPEAKER_02]: Wiederhören.\n[SPEAKER_01]: Vielen Dank. Wiederhören.",
+    "entities": [
+        {
+            "text": "Page One",
+            "type": "ORG"
+        },
+        {
+            "text": "Nürnberg",
+            "type": "LOC"
+        },
+        {
+            "text": "Leibel",
+            "type": "PER"
+        },
+        {
+            "text": "Manuaz",
+            "type": "ORG"
+        },
+        {
+            "text": "10.12.",
+            "type": "DATE"
+        }
+    ]
+}

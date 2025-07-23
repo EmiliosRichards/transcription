@@ -1,0 +1,14 @@
+[SPEAKER_00]: Jörg hier.
+[SPEAKER_00]: Chef-Tresor, einen guten Morgen.
+[SPEAKER_01]: Einen wunderschönen guten Morgen, Leibel ist mein Name, wir melden uns von der Firma Manoir.
+[SPEAKER_01]: Mit dem Herrn P. habt ihr gesprochen, ist er denn schon da, bitte?
+[SPEAKER_00]: Der ist gerade im Termin, ich weiß jetzt nicht, wie lange der geht, probieren Sie es einfach später nochmal.
+[SPEAKER_01]: Mache ich dann gerne, haben Sie eine Uhrzeit für mich?
+[SPEAKER_00]: Nee, ich weiß jetzt eben nicht genau, wie lange der geht, der ging aber gerade los, halb jetzt.
+[SPEAKER_00]: Also es kann ein Stückchen dauern, also ich sag mal, frühestens in einer Stunde.
+[SPEAKER_01]: In einer Stunde?
+[SPEAKER_00]: Ja.
+[SPEAKER_01]: Okay, super, dann melde ich mich nochmal, ja?
+[SPEAKER_00]: Ja, machen wir so.
+[SPEAKER_01]: Dankeschön, tschüss.
+[SPEAKER_00]: Ja, tschüss.

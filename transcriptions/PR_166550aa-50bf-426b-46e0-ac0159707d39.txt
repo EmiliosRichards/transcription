@@ -1,0 +1,22 @@
+[SPEAKER_00]: Hi, Sie sprechen mit Peter Kohlen.
+[SPEAKER_02]: Hallo, einen wunderschönen guten Tag.
+[SPEAKER_02]: Mein Name ist Leibel, ich will nämlich von der Firma Manu aus.
+[SPEAKER_02]: Sie haben die Vertriebsleitung gesprochen oder den Sales Director, bitte.
+[SPEAKER_01]: Mit wem, ähm, worum geht es denn einmal?
+[SPEAKER_02]: Wie bitte?
+[SPEAKER_01]: Worum geht es denn einmal?
+[SPEAKER_02]: Mit dem Neukundengewinnung und Bestandskundenaktivierung, Kaltakquise.
+[SPEAKER_00]: Okay, danke.
+[SPEAKER_00]: Da haben wir tatsächlich kein Interesse.
+[SPEAKER_00]: Sie sprechen gerade mit dem Geschäftsführer.
+[SPEAKER_02]: Sie sind der Herr Kohlen, oder?
+[SPEAKER_00]: Richtig.
+[SPEAKER_00]: Richtig.
+[SPEAKER_02]: Okay, und was spricht dagegen Herr Kohlen?
+[SPEAKER_00]: Aktuell kein Bedarf.
+[SPEAKER_00]: Sie sind soweit gut aufgestellt.
+[SPEAKER_00]: Ja?
+[SPEAKER_02]: Okay, dann bedanke ich mich.
+[SPEAKER_00]: Ich danke, bis dahin.
+[SPEAKER_02]: Ja, tschüss.
+[SPEAKER_00]: Tschüss.

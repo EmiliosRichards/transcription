@@ -1,0 +1,61 @@
+{
+    "full_transcript": "[SPEAKER_02]: Schönen guten Tag, Herr Suchanek. Melanie Haas hier von Manuaf, ich grüße Sie.\n[SPEAKER_01]: Hallo, grüß Sie. Kann ich Ihnen helfen?\n[SPEAKER_02]: Wir hatten ja miteinander gesprochen am 19.12. Es ging um das Thema Neukundengewinnung und Bestandskundenaktivierung, Thema Kaltakquise.\n[SPEAKER_01]: Ach ja. Ich muss mal ganz kurz schauen. Meinen E-Mail-Kontakt haben Sie ja, oder? torsten.suchanek@teletax.de.\n[SPEAKER_02]: Genau, das ist korrekt. Ich schaue mal nach.\n[SPEAKER_01]: Ja. Ich könnte es am Freitag, dem 23., machen. Da hätte ich aber erst um 16 Uhr Zeit. Das ist mir ein bisschen zu spät. Wie sieht es die Woche drauf aus? Nächste Woche Freitag hätte ich vormittags auch Zeit, am Freitag, dem 1. März.\n[SPEAKER_02]: Genau, da hätte ich 10:30 Uhr, 11 Uhr oder 11:30 Uhr zur Auswahl.\n[SPEAKER_01]: Ja, da bin ich flexibel.\n[SPEAKER_02]: 11 Uhr?\n[SPEAKER_01]: Ja, nehmen wir 11 Uhr. Das klingt ganz gut.\n[SPEAKER_02]: Super. Dann hätte ich kurz zwei Fragen an Sie, Herr Suchanek: Welche Zielgruppe haben Sie denn?\n[SPEAKER_01]: Unsere Zielgruppe sind Steuerberater und Steuerfachangestellte, also diejenigen, die in der Hierarchie unter den Steuerberatern stehen. Auch Steuerfachwirte und Personen aus der Buchhaltung. Diese sind ja ebenfalls in den Steuerberaterkanzleien zu finden. Das heißt, die genannte Zielgruppe befindet sich unter dem Überbegriff „Steuerberaterkanzlei“. Darin arbeiten dann die verschiedenen Berufsgruppen: Steuerberater, Wirtschaftsprüfer könnte man noch nennen, dann Steuerfachangestellte und Steuerfachwirte. Diese benötigen ja verschiedenste Fortbildungen. Der eine muss sich mit diesen Gesetzen auseinandersetzen, der andere muss wissen, wie er etwas bucht, um es mal einfach auszudrücken.\n[SPEAKER_02]: Richtig.\n[SPEAKER_01]: Genau, das ist eigentlich unsere Hauptzielgruppe. Und unsere Nebenzielgruppe, die wir auch gerne noch ansprechen wollen – was aber schwierig ist, da es eine neue Zielgruppe ist – sind Unternehmen. In dem Sinne, dass diese sich ja auch auf steuerrechtliche Dinge vorbereiten müssen. Und da gibt es in manchen Unternehmen eben auch jemanden in der Buchhaltung oder eine Person, die ein Unternehmen aufbaut und dafür steuerliches Wissen benötigt. Also, kurz gesagt: Steuerverantwortliche in Unternehmen als weitere Zielgruppe außerhalb der Kanzleien.\n[SPEAKER_02]: Okay. Dann meine letzte Frage: Sind das mehr als 500 Zielkunden, die man ansprechen könnte?\n[SPEAKER_01]: Ja, natürlich. Es gibt, glaube ich, sehr viele. Nageln Sie mich nicht fest, aber es gibt um die 40.000 Steuerberater oder Personen, die in ähnlichen Berufen tätig sind. Also ja, da gibt es viele, die wir ansprechen können, aber es gibt natürlich auch Konkurrenten.\n[SPEAKER_02]: Natürlich. Dann passt das ja eigentlich. Ich habe das jetzt so weit eingetragen. Sie bekommen eine E-Mail-Bestätigung, da haben Sie auch unsere Kontaktdaten. 1. März, 11 Uhr, Gespräch mit unserem Geschäftsführer. Das ist der Herr Lorenz Schrader.\n[SPEAKER_01]: Okay. Das machen wir dann online.\n[SPEAKER_02]: Genau.\n[SPEAKER_01]: Das schicken Sie mir dann zu.\n[SPEAKER_02]: Genau. Perfekt.\n[SPEAKER_02]: Super, Herr Suchanek. Ich danke Ihnen ganz, ganz herzlich. Ich wünsche Ihnen eine schöne Woche und bleiben Sie gesund. Bis dann.\n[SPEAKER_01]: Ja, danke. Wünsche ich Ihnen auch. Dankeschön. Tschüss.\n[SPEAKER_02]: Tschüss.",
+    "entities": [
+        {
+            "text": "Herr Suchanek",
+            "type": "PER"
+        },
+        {
+            "text": "Melanie Haas",
+            "type": "PER"
+        },
+        {
+            "text": "Manuaf",
+            "type": "ORG"
+        },
+        {
+            "text": "19.12.",
+            "type": "DATE"
+        },
+        {
+            "text": "Teletax",
+            "type": "ORG"
+        },
+        {
+            "text": "Freitag, dem 23.",
+            "type": "DATE"
+        },
+        {
+            "text": "16 Uhr",
+            "type": "DATE"
+        },
+        {
+            "text": "nächste Woche Freitag",
+            "type": "DATE"
+        },
+        {
+            "text": "Freitag, dem 1. März",
+            "type": "DATE"
+        },
+        {
+            "text": "10:30 Uhr",
+            "type": "DATE"
+        },
+        {
+            "text": "11 Uhr",
+            "type": "DATE"
+        },
+        {
+            "text": "11:30 Uhr",
+            "type": "DATE"
+        },
+        {
+            "text": "1. März",
+            "type": "DATE"
+        },
+        {
+            "text": "Herr Lorenz Schrader",
+            "type": "PER"
+        }
+    ]
+}

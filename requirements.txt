@@ -14,3 +14,5 @@ python-dotenv
 mistralai>=0.4.0
 openai
 tiktoken
+tqdm
+chromadb

@@ -1,4 +1,5 @@
 import os
+import random
 import pandas as pd
 import chromadb
 from chromadb.utils import embedding_functions
@@ -95,6 +96,26 @@ def search_journeys(query_text, n_results=3, where_filter=None):
         where=where_filter
     )
 
+def get_random_journeys(n_results=5):
+    """
+    Retrieves a random sample of journeys from the collection.
+    """
+    collection = get_or_create_collection()
+    
+    # Get all document IDs from the collection
+    all_ids = collection.get(include=[])['ids']
+    
+    if not all_ids:
+        return None
+        
+    # Randomly select n_results IDs
+    # Ensure we don't request more samples than available
+    sample_size = min(n_results, len(all_ids))
+    random_ids = random.sample(all_ids, sample_size)
+    
+    # Retrieve the full documents for the selected IDs
+    return collection.get(ids=random_ids)
+
 # --- Main Execution for Testing ---
 if __name__ == '__main__':
     print("Testing vector_db.py...")
@@ -127,3 +148,23 @@ if __name__ == '__main__':
             print("Test search returned no documents.")
     else:
         print("No results found for the test query.")
+
+    print("\nPerforming a test for random sampling...")
+    random_results = get_random_journeys(n_results=3)
+
+    if random_results:
+        documents = random_results.get('documents', [])
+        metadatas = random_results.get('metadatas', [])
+        
+        if documents:
+            print(f"Found {len(documents)} random results.")
+            for i, doc in enumerate(documents):
+                metadata = metadatas[i] if metadatas and len(metadatas) > i else {}
+                print(f"\nRandom Result {i+1}:")
+                print(f"  - Customer ID: {metadata.get('customer_id', 'N/A')}")
+                print(f"  - Last Call Date: {metadata.get('last_call_date', 'N/A')}")
+                print(f"  - Transcript Snippet: {doc[:150]}...")
+        else:
+            print("Random sampling returned no documents.")
+    else:
+        print("No results found for random sampling.")

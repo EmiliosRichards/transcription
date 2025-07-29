@@ -1,18 +1,10 @@
-whisperx
-faster-whisper
-argparse
-numpy
-torch
-torchvision
-torchaudio
-transformers
-scipy
-pyannote.audio
-scikit-learn
+# This file is for general project dependencies.
+# For the chatbot, use chatbot_poc/backend/requirements.txt
+# For transcription scripts, use scripts/requirements.txt
+
+# Shared libraries can remain here if desired.
 google-generativeai
 python-dotenv
-mistralai>=0.4.0
 openai
 tiktoken
 tqdm
-chromadb

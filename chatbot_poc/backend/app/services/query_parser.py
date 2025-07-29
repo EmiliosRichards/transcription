@@ -1,9 +1,15 @@
 import re
 from datetime import datetime, timedelta
-from typing import Dict, Any, List, Callable, Optional, Tuple
+from typing import Dict, Any, List, Callable, Optional, Tuple, TypedDict, Pattern, Match
+
+# --- Type Definitions for Clarity ---
+class FilterRule(TypedDict):
+    name: str
+    pattern: Pattern[str]
+    handler: Callable[[Match[str]], Tuple[str, Dict[str, Any]]]
 
 # --- Structured Filter Configuration ---
-FILTER_RULES: List[Dict[str, Any]] = [
+FILTER_RULES: List[FilterRule] = [
     {
         "name": "date_filter",
         "pattern": re.compile(r"\b(last|past)\s+(\d+)\s+days?\b", re.IGNORECASE),

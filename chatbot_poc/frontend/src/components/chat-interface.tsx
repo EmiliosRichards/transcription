@@ -18,9 +18,8 @@ interface SourceDocument {
 }
 
 export interface Message {
-  sender: "user" | "bot";
-  text?: string;
-  llm_response?: string;
+  role: "user" | "assistant";
+  content: string;
   source_documents?: SourceDocument[];
 }
 
@@ -38,8 +37,10 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState("Thinking...");
   const [selectedTranscript, setSelectedTranscript] = useState<SourceDocument | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -53,23 +54,47 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
   const handleSendMessage = async (query?: string) => {
     const messageText = query || inputValue;
     if (messageText.trim() && !isLoading) {
-      const userMessage: Message = { sender: "user", text: messageText };
-      setMessages(prevMessages => [...prevMessages, userMessage]);
+      const userMessage: Message = { role: "user", content: messageText };
+      setMessages(prev => [...prev, userMessage]);
       setInputValue("");
       setIsLoading(true);
       setIsStreaming(false);
+      setCurrentStatus("Sending request...");
 
       // Add a placeholder for the bot's response
-      const botMessagePlaceholder: Message = { sender: "bot", llm_response: "", source_documents: [] };
-      setMessages(prevMessages => [...prevMessages, botMessagePlaceholder]);
+      const botMessagePlaceholder: Message = { role: "assistant", content: "", source_documents: [] };
+      setMessages(prev => [...prev, botMessagePlaceholder]);
+
+      // Set a timeout for the request
+      timeoutRef.current = setTimeout(() => {
+        handleError("The request timed out. Please try again.");
+      }, 30000); // 30 seconds
+
+      const handleError = (errorMessage: string) => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        setMessages(prev => {
+          const lastMessage = prev[prev.length - 1];
+          if (lastMessage?.role === 'assistant' && !lastMessage.content) {
+            return [...prev.slice(0, -1), { role: 'assistant', content: errorMessage }];
+          }
+          return [...prev, { role: 'assistant', content: errorMessage }];
+        });
+        setIsLoading(false);
+        setIsStreaming(false);
+      };
 
       try {
+        // Prepare history from the state *before* the new user message and placeholder were added
+        const history = messages.slice(-6).map(({ role, content }) => ({ role, content }));
+
         const response = await fetch("http://localhost:8000/api/search", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ query: messageText, stream: true }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: messageText,
+            stream: true,
+            history: history.slice(-6) // Send the last 6 messages
+          }),
         });
 
         if (!response.ok || !response.body) {
@@ -87,45 +112,49 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
 
             buffer += decoder.decode(value, { stream: true });
             const lines = buffer.split('\n\n');
-            buffer = lines.pop() || ''; // Keep the last partial message
+            buffer = lines.pop() || '';
 
             for (const line of lines) {
-              const eventMatch = line.match(/event: (.*)/);
-              const dataMatch = line.match(/data: (.*)/);
+              if (!line.startsWith('event:')) continue;
+              
+              const event = line.match(/event: (.*)/)?.[1];
+              const dataString = line.match(/data: (.*)/)?.[1];
+              if (!event || !dataString) continue;
 
-              if (eventMatch && dataMatch) {
-                const event = eventMatch[1];
-                const data = dataMatch[1];
+              try {
+                const data = JSON.parse(dataString);
 
-                try {
-                  if (event === 'sources') {
-                    const sources = JSON.parse(data);
-                    setMessages(prev => prev.map((msg, i) => i === prev.length - 1 ? { ...msg, source_documents: sources } : msg));
-                  } else if (event === 'llm_response_chunk') {
-                    if (!isStreaming) setIsStreaming(true);
-                    const chunk = JSON.parse(data);
-                    setMessages(prev => prev.map((msg, i) => i === prev.length - 1 ? { ...msg, llm_response: (msg.llm_response || "") + chunk.token } : msg));
-                  } else if (event === 'stream_end') {
-                    setIsLoading(false);
-                    setIsStreaming(false);
+                if (event === 'status_update') {
+                  setCurrentStatus(data.status);
+                } else if (event === 'sources') {
+                  setMessages(prev => prev.map((msg, i) => i === prev.length - 1 ? { ...msg, source_documents: data.sources } : msg));
+                } else if (event === 'llm_response_chunk') {
+                  if (!isStreaming) {
+                    setIsStreaming(true);
+                    setCurrentStatus("Generating answer..."); // Final status before text appears
                   }
-                } catch (e) {
-                  console.error("Error parsing SSE data:", e);
+                  setMessages(prev => prev.map((msg, i) => i === prev.length - 1 ? { ...msg, content: (msg.content || "") + data.token } : msg));
+                } else if (event === 'error') {
+                  handleError(data.message || "An unknown error occurred.");
+                  return; // Stop processing on error
+                } else if (event === 'stream_end') {
+                  if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                  setIsLoading(false);
+                  setIsStreaming(false);
+                  return; // End of stream
                 }
+              } catch (e) {
+                console.error("Error parsing SSE data:", e);
               }
             }
           }
         };
 
-        processStream();
+        await processStream();
 
       } catch (error) {
-        console.error("Failed to fetch search results:", error);
-        setMessages(prev => prev.slice(0, -1)); // Remove placeholder
-        const errorMessage: Message = { sender: "bot", text: "Sorry, I had trouble getting results. Please try again." };
-        setMessages(prevMessages => [...prevMessages, errorMessage]);
-        setIsLoading(false);
-        setIsStreaming(false);
+        const message = error instanceof Error ? error.message : "An unknown error occurred.";
+        handleError(`Failed to fetch search results: ${message}`);
       }
     }
   };
@@ -138,50 +167,46 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
         ) : (
           <div className="space-y-4">
             {messages.map((message, index) => (
-              <div key={index} className={`flex items-start gap-4 ${message.sender === "user" ? "justify-end" : ""}`}>
-                {message.sender === "bot" && (
+              <div key={index} className={`flex items-start gap-4 ${message.role === "user" ? "justify-end" : ""}`}>
+                {message.role === "assistant" && (
                   <Avatar>
                     <AvatarFallback>B</AvatarFallback>
                   </Avatar>
                 )}
-                <div className={`rounded-lg p-3 ${message.sender === "user" ? "bg-gray-200" : "bg-muted"} ${message.sender === 'bot' ? 'animate-fade-in' : ''}`}>
-                  {message.text ? (
-                    <p className="text-gray-800 font-normal">{message.text}</p>
-                  ) : (
-                    <div className="space-y-4">
-                      {isLoading && !isStreaming && index === messages.length - 1 ? (
-                        <StatusBox />
-                      ) : (
-                        <>
-                          <div className="prose">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                              {message.llm_response}
-                            </ReactMarkdown>
+                <div className={`rounded-lg p-3 ${message.role === "user" ? "bg-gray-200" : "bg-muted"} ${message.role === 'assistant' ? 'animate-fade-in' : ''}`}>
+                  <div className="space-y-4">
+                    {isLoading && !isStreaming && index === messages.length - 1 && !message.content ? (
+                      <StatusBox status={currentStatus} />
+                    ) : (
+                      <>
+                        <div className="prose prose-sm max-w-full">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
+                        {message.source_documents && message.source_documents.length > 0 && (
+                          <div>
+                            <details>
+                              <summary className="text-sm font-semibold cursor-pointer">
+                                View Sources ({message.source_documents.length})
+                              </summary>
+                              <div className="mt-2 space-y-2">
+                                {message.source_documents.map((doc) => (
+                                  <div key={doc.customer_id} className="p-2 border rounded bg-background/50 cursor-pointer hover:bg-muted" onClick={() => setSelectedTranscript(doc)}>
+                                    <p className="text-sm font-bold">Customer ID: {doc.customer_id}</p>
+                                    <p className="text-xs text-muted-foreground">Call IDs: {doc.call_ids}</p>
+                                    <p className="text-sm mt-1 italic">"{doc.full_journey.substring(0, 200)}..."</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </details>
                           </div>
-                          {message.source_documents && message.source_documents.length > 0 && (
-                            <div>
-                              <details>
-                                <summary className="text-sm font-semibold cursor-pointer">
-                                  View Sources ({message.source_documents.length})
-                                </summary>
-                                <div className="mt-2 space-y-2">
-                                  {message.source_documents.map((doc) => (
-                                    <div key={doc.customer_id} className="p-2 border rounded bg-background/50 cursor-pointer hover:bg-muted" onClick={() => setSelectedTranscript(doc)}>
-                                      <p className="text-sm font-bold">Customer ID: {doc.customer_id}</p>
-                                      <p className="text-xs text-muted-foreground">Call IDs: {doc.call_ids}</p>
-                                      <p className="text-sm mt-1 italic">"{doc.full_journey.substring(0, 200)}..."</p>
-                                    </div>
-                                  ))}
-                                </div>
-                              </details>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  )}
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
-                {message.sender === "user" && (
+                {message.role === "user" && (
                   <Avatar>
                     <AvatarFallback>U</AvatarFallback>
                   </Avatar>

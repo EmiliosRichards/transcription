@@ -1,30 +1,16 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
-const messages = [
-  "Understanding your request...",
-  "Finding relevant transcripts...",
-  "Analyzing the data...",
-  "Compiling the answer...",
-];
+interface StatusBoxProps {
+  status: string;
+}
 
-export function StatusBox() {
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
-    }, 2000); // Change message every 2 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-
+export function StatusBox({ status }: StatusBoxProps) {
   return (
-    <div className="flex items-center justify-center p-4 rounded-lg bg-muted">
+    <div className="flex items-center justify-center p-4 rounded-lg bg-muted animate-pulse">
       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-      <p className="text-sm text-muted-foreground">{messages[currentMessageIndex]}</p>
+      <p className="text-sm text-muted-foreground">{status}</p>
     </div>
   );
 }

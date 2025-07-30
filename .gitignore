@@ -13,3 +13,6 @@ llm_response/
 data/audio/
 output/
 output/customer_journey_poc/
+
+node_modules/
+dist/

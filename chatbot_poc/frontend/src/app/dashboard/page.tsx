@@ -71,10 +71,10 @@ export default function DashboardPage() {
   const campaigns = ["all", ...[...new Set(data.map((item) => item.campaign_name))]];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 min-h-screen">
       {/* Top Title */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl text-gray-800 dark:text-white">📊 Call Analytics Dashboard</h1>
+        <h1 className="text-3xl text-gray-800 dark:text-white">📊 Placeholder Call Analytics Dashboard</h1>
         <div className="flex items-center gap-4">
           <Select onValueChange={setSelectedCampaign} defaultValue="all">
             <SelectTrigger className="w-[180px]">
@@ -88,7 +88,6 @@ export default function DashboardPage() {
               ))}
             </SelectContent>
           </Select>
-          <ModeToggle />
           <Link href="/">
             <Button>Back to Chatbot</Button>
           </Link>

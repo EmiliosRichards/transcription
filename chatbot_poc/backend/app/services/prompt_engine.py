@@ -1,4 +1,25 @@
+import os
 from typing import List, Dict
+
+def create_prompt_from_template(template_name: str, variables: Dict[str, str]) -> str:
+    """
+    Loads a prompt template from the 'prompts' directory, formats it with the
+    provided variables, and returns the final prompt string.
+    """
+    # Build a robust path to the project's root directory
+    # __file__ is .../transcription/chatbot_poc/backend/app/services/prompt_engine.py
+    # We want to get to .../transcription/
+    project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
+    template_path = os.path.join(project_root, 'prompts', template_name)
+    
+    try:
+        with open(template_path, 'r', encoding='utf-8') as f:
+            template_str = f.read()
+        return template_str.format(**variables)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Prompt template not found at: {template_path}")
+    except KeyError as e:
+        raise KeyError(f"Missing variable {e} in the provided dictionary for template {template_name}")
 
 def create_prompt(query: str, search_results: List[Dict]) -> str:
     """

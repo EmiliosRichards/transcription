@@ -4,11 +4,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.api import router as api_router
 from app.services import vector_db
+from app.database import create_db_and_tables
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # --- Startup ---
     print("Application startup...")
+    print("Initializing database and tables...")
+    create_db_and_tables()
+    print("Database and tables are ready.")
     print("Initializing vector database collection...")
     vector_db.get_or_create_collection()
     print("Vector database collection is ready.")

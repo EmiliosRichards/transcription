@@ -45,37 +45,38 @@ def get_or_create_collection():
         print(f"Collection '{COLLECTION_NAME}' not found. Creating and populating a new one...")
         collection = client.create_collection(name=COLLECTION_NAME, embedding_function=openai_ef) # type: ignore
         
-        if not os.path.exists(EMBEDDINGS_CSV_PATH):
-            raise FileNotFoundError(f"Embeddings CSV file not found at: {EMBEDDINGS_CSV_PATH}")
+        print("Skipping collection population because embeddings file is missing.")
+        # if not os.path.exists(EMBEDDINGS_CSV_PATH):
+        #     raise FileNotFoundError(f"Embeddings CSV file not found at: {EMBEDDINGS_CSV_PATH}")
         
-        df = pd.read_csv(EMBEDDINGS_CSV_PATH)
+        # df = pd.read_csv(EMBEDDINGS_CSV_PATH)
         
-        def safe_literal_eval(embedding_str):
-            try:
-                return ast.literal_eval(embedding_str)
-            except (ValueError, SyntaxError):
-                return None
+        # def safe_literal_eval(embedding_str):
+        #     try:
+        #         return ast.literal_eval(embedding_str)
+        #     except (ValueError, SyntaxError):
+        #         return None
         
-        df['embedding'] = df['embedding'].apply(safe_literal_eval)
-        df.dropna(subset=['embedding'], inplace=True)
+        # df['embedding'] = df['embedding'].apply(safe_literal_eval)
+        # df.dropna(subset=['embedding'], inplace=True)
 
-        if df.empty:
-            print("ERROR: No valid embeddings found after parsing.")
-            return collection
+        # if df.empty:
+        #     print("ERROR: No valid embeddings found after parsing.")
+        #     return collection
 
-        documents = df["full_journey"].tolist()
-        embeddings = df["embedding"].tolist()
-        metadata_cols = [col for col in df.columns if col not in ["full_journey", "embedding"]]
-        metadatas = df[metadata_cols].fillna("").to_dict('records')
-        ids = [str(i) for i in range(len(documents))]
+        # documents = df["full_journey"].tolist()
+        # embeddings = df["embedding"].tolist()
+        # metadata_cols = [col for col in df.columns if col not in ["full_journey", "embedding"]]
+        # metadatas = df[metadata_cols].fillna("").to_dict('records')
+        # ids = [str(i) for i in range(len(documents))]
         
-        collection.add(
-            embeddings=embeddings,
-            documents=documents,
-            metadatas=metadatas, # type: ignore
-            ids=ids
-        )
-        print("Successfully populated the collection.")
+        # collection.add(
+        #     embeddings=embeddings,
+        #     documents=documents,
+        #     metadatas=metadatas, # type: ignore
+        #     ids=ids
+        # )
+        # print("Successfully populated the collection.")
         return collection
 
 def search_journeys(query_text, n_results=3, where_filter=None):
@@ -115,6 +116,13 @@ def get_random_journeys(n_results=5):
     
     # Retrieve the full documents for the selected IDs
     return collection.get(ids=random_ids)
+
+def get_collection_count():
+    """
+    Returns the number of documents in the collection.
+    """
+    collection = get_or_create_collection()
+    return collection.count()
 
 # --- Main Execution for Testing ---
 if __name__ == '__main__':

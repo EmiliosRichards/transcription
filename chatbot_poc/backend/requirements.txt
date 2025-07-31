@@ -1,9 +1,13 @@
 fastapi
 uvicorn[standard]
-chromadb==0.4.24
+chromadb
 openai
 python-dotenv
 pandas
 instructor
-numpy<2.0
+numpy
 mistralai
+python-multipart
+sqlalchemy
+asyncpg
+psycopg2-binary

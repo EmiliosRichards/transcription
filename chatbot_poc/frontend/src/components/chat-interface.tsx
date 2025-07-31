@@ -6,9 +6,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Trash2 } from "lucide-react";
 import { createParser } from 'eventsource-parser';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface SourceDocument {
   customer_id: string;
@@ -18,6 +29,7 @@ interface SourceDocument {
 }
 
 export interface Message {
+  id?: number; // Add id to the message interface
   role: "user" | "assistant";
   content: string;
   source_documents?: SourceDocument[];
@@ -31,14 +43,18 @@ import { StatusBox } from "./status-box";
 interface ChatInterfaceProps {
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  sessionId: string | null;
+  setSessionId: React.Dispatch<React.SetStateAction<string | null>>;
+  onNewChat: () => void;
 }
 
-export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
+export function ChatInterface({ messages, setMessages, sessionId, setSessionId, onNewChat }: ChatInterfaceProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentStatus, setCurrentStatus] = useState("Thinking...");
   const [selectedTranscript, setSelectedTranscript] = useState<SourceDocument | null>(null);
+  const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -73,10 +89,14 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
       const handleError = (errorMessage: string) => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         setMessages(prev => {
-          const lastMessage = prev[prev.length - 1];
-          if (lastMessage?.role === 'assistant' && !lastMessage.content) {
-            return [...prev.slice(0, -1), { role: 'assistant', content: errorMessage }];
+          const newMessages = [...prev];
+          const lastMessage = newMessages[newMessages.length - 1];
+          if (lastMessage && lastMessage.role === 'assistant') {
+            // Replace the placeholder with the error message
+            newMessages[newMessages.length - 1].content = errorMessage;
+            return newMessages;
           }
+          // Fallback if something went wrong
           return [...prev, { role: 'assistant', content: errorMessage }];
         });
         setIsLoading(false);
@@ -84,16 +104,13 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
       };
 
       try {
-        // Prepare history from the state *before* the new user message and placeholder were added
-        const history = messages.slice(-6).map(({ role, content }) => ({ role, content }));
-
-        const response = await fetch("http://localhost:8000/api/search", {
+        const response = await fetch("/api/search", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             query: messageText,
             stream: true,
-            history: history.slice(-6) // Send the last 6 messages
+            session_id: sessionId,
           }),
         });
 
@@ -124,24 +141,52 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
               try {
                 const data = JSON.parse(dataString);
 
-                if (event === 'status_update') {
+                if (event === 'user_message_saved') {
+                  // Set the session ID if it's a new chat
+                  if (data.session_id && !sessionId) {
+                    setSessionId(data.session_id);
+                    onNewChat(); // Trigger the sidebar refresh
+                  }
+                  // Update the user message with its ID from the database
+                  setMessages(prev => {
+                    const newMessages = [...prev];
+                    const userMessageIndex = newMessages.findLastIndex(m => m.role === 'user');
+                    if (userMessageIndex !== -1) {
+                      newMessages[userMessageIndex].id = data.user_message_id;
+                    }
+                    return newMessages;
+                  });
+                } else if (event === 'status_update') {
                   setCurrentStatus(data.status);
                 } else if (event === 'sources') {
                   setMessages(prev => prev.map((msg, i) => i === prev.length - 1 ? { ...msg, source_documents: data.sources } : msg));
                 } else if (event === 'llm_response_chunk') {
                   if (!isStreaming) {
                     setIsStreaming(true);
-                    setCurrentStatus("Generating answer..."); // Final status before text appears
+                    // On first chunk, clear the content of the placeholder before appending
+                    setMessages(prev => prev.map((msg, i) => i === prev.length - 1 ? { ...msg, content: '' } : msg));
                   }
                   setMessages(prev => prev.map((msg, i) => i === prev.length - 1 ? { ...msg, content: (msg.content || "") + data.token } : msg));
                 } else if (event === 'error') {
                   handleError(data.message || "An unknown error occurred.");
-                  return; // Stop processing on error
+                  return;
                 } else if (event === 'stream_end') {
                   if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                  const finalData = JSON.parse(dataString);
+                  // Update the assistant message with its final ID
+                  if (finalData.assistant_message_id) {
+                    setMessages(prev => {
+                      const newMessages = [...prev];
+                      const assistantMessageIndex = newMessages.findLastIndex(m => m.role === 'assistant');
+                      if (assistantMessageIndex !== -1) {
+                        newMessages[assistantMessageIndex].id = finalData.assistant_message_id;
+                      }
+                      return newMessages;
+                    });
+                  }
                   setIsLoading(false);
                   setIsStreaming(false);
-                  return; // End of stream
+                  return;
                 }
               } catch (e) {
                 console.error("Error parsing SSE data:", e);
@@ -159,6 +204,41 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
     }
   };
 
+  const handleDeleteMessage = async () => {
+    if (!messageToDelete?.id) return;
+
+    try {
+      const response = await fetch(`/api/chats/messages/${messageToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete message');
+      }
+
+      const messageIndex = messages.findIndex(msg => msg.id === messageToDelete.id);
+      if (messageIndex !== -1) {
+        // Check if it's the first message in the session
+        const isFirstMessage = messages[messageIndex].id === messages[0].id;
+
+        if (isFirstMessage) {
+            // If the first message is deleted, the whole session is gone.
+            setMessages([]);
+            setSessionId(null);
+            onNewChat(); // To refresh sidebar
+        } else {
+            // Remove this message and all subsequent messages
+            setMessages(prev => prev.slice(0, messageIndex));
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      // Optionally, show an error to the user
+    } finally {
+      setMessageToDelete(null);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-grow overflow-y-auto p-6">
@@ -167,15 +247,17 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
         ) : (
           <div className="space-y-4">
             {messages.map((message, index) => (
-              <div key={index} className={`flex items-start gap-4 ${message.role === "user" ? "justify-end" : ""}`}>
-                {message.role === "assistant" && (
-                  <Avatar>
-                    <AvatarFallback>B</AvatarFallback>
-                  </Avatar>
+              <div key={index} className={`group flex items-center gap-2 w-full ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+
+                {message.role === "user" && message.id && (
+                  <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setMessageToDelete(message)}>
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
                 )}
+
                 <div className={`rounded-lg p-3 ${message.role === "user" ? "bg-gray-200" : "bg-muted"} ${message.role === 'assistant' ? 'animate-fade-in' : ''}`}>
                   <div className="space-y-4">
-                    {isLoading && !isStreaming && index === messages.length - 1 && !message.content ? (
+                    {isLoading && !isStreaming && index === messages.length - 1 ? (
                       <StatusBox status={currentStatus} />
                     ) : (
                       <>
@@ -206,11 +288,8 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
                     )}
                   </div>
                 </div>
-                {message.role === "user" && (
-                  <Avatar>
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                )}
+
+
               </div>
             ))}
           </div>
@@ -241,6 +320,25 @@ export function ChatInterface({ messages, setMessages }: ChatInterfaceProps) {
         onOpenChange={(isOpen) => !isOpen && setSelectedTranscript(null)}
         transcript={selectedTranscript}
       />
+      <AlertDialog open={!!messageToDelete} onOpenChange={(open) => !open && setMessageToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete this message and all subsequent messages in this conversation. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteMessage}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

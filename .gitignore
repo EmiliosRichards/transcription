@@ -1,14 +1,14 @@
-.env
-.venv
-.venv-313
-.venv-311
+# Environment variables
+.env*
+*.env
+*.env.local
 
+# Python
+.venv*
 *.pyc
 __pycache__/
-llm_context/
-llm_response/
-llm_context/
-llm_response/
+/data/audio/
+/output/
 
 data/audio/
 output/

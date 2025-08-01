@@ -17,7 +17,8 @@
       "name": "frontend",
       "rootDir": "./chatbot_app/frontend",
       "build": {
-        "builder": "NIXPACKS"
+        "builder": "NIXPACKS",
+        "buildCommand": "npm run build"
       },
       "deploy": {
         "startCommand": "npm run start",

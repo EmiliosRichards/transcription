@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import List, AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func, desc, select
+from sqlalchemy import func, desc, select, delete
 
 from app import database
 
@@ -94,7 +94,8 @@ async def delete_chat_session(session_id: str, db: AsyncSession = Depends(get_db
             raise HTTPException(status_code=404, detail="Chat session not found")
         
         # Delete all logs for the session
-        await db.execute(database.ChatLog.__table__.delete().where(database.ChatLog.session_id == session_id))
+        stmt = delete(database.ChatLog).where(database.ChatLog.session_id == session_id)
+        await db.execute(stmt)
         await db.commit()
         return
     except Exception as e:
@@ -125,16 +126,16 @@ async def delete_chat_message(message_id: int, db: AsyncSession = Depends(get_db
         if message_id == first_message_id:
             # If it's the first message, delete the entire session
             logger.info(f"Message {message_id} is the first in session {session_id}. Deleting entire session.")
-            await db.execute(database.ChatLog.__table__.delete().where(database.ChatLog.session_id == session_id))
+            stmt = delete(database.ChatLog).where(database.ChatLog.session_id == session_id)
+            await db.execute(stmt)
         else:
             # Otherwise, delete this message and all subsequent ones
             logger.info(f"Deleting messages from session {session_id} starting from message {message_id}.")
-            await db.execute(
-                database.ChatLog.__table__.delete().where(
-                    database.ChatLog.session_id == session_id,
-                    database.ChatLog.id >= message_id
-                )
+            stmt = delete(database.ChatLog).where(
+                database.ChatLog.session_id == session_id,
+                database.ChatLog.id >= message_id
             )
+            await db.execute(stmt)
         
         await db.commit()
         return

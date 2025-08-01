@@ -10,8 +10,8 @@ from app.services.query_agent import QueryAgent
 from app.services.status_manager import status_manager
 import json
 import uuid
-from sqlalchemy.orm import Session
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, select, delete
+from sqlalchemy.ext.asyncio import AsyncSession
 from app import database
 import datetime
 
@@ -22,13 +22,10 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 query_agent = QueryAgent()
 
-# --- DB Dependency ---
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# --- DB Dependency (Async) ---
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with database.AsyncSessionLocal() as session:
+        yield session
 
 # --- Pydantic Models ---
 class ChatMessage(BaseModel):
@@ -86,7 +83,7 @@ class ChatLogInfo(BaseModel):
         from_attributes = True
 
 # --- Helper for Streaming ---
-async def stream_generator(query: str, db: Session, session_id: str) -> AsyncGenerator[str, None]:
+async def stream_generator(query: str, db: AsyncSession, session_id: str) -> AsyncGenerator[str, None]:
     """
     A generator that yields Server-Sent Events for the RAG pipeline,
     routing based on the user's detected intent and saving the conversation.
@@ -95,11 +92,12 @@ async def stream_generator(query: str, db: Session, session_id: str) -> AsyncGen
     full_response = ""
     try:
         # 1. Fetch conversation history for context
-        # Fetch the last 10 messages to use as context
-        db_history_messages = db.query(database.ChatLog).filter(database.ChatLog.session_id == session_id).order_by(database.ChatLog.id.desc()).limit(10).all()
+        stmt = select(database.ChatLog).filter(database.ChatLog.session_id == session_id).order_by(database.ChatLog.id.desc()).limit(10)
+        result = await db.execute(stmt)
+        db_history_messages = list(result.scalars().all())
         db_history_messages.reverse() # Order from oldest to newest
         history = [ChatMessage.from_orm(msg) for msg in db_history_messages]
-        history_dicts = [msg.dict() for msg in history]
+        history_dicts = [msg.model_dump() for msg in history]
 
         # 2. Deconstruct Query to determine intent
         yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('understanding')})}\n\n"
@@ -149,10 +147,10 @@ async def stream_generator(query: str, db: Session, session_id: str) -> AsyncGen
                     distance=dist
                 ) for doc, md, dist in zip(documents, metadatas, distances)
             ]
-            yield f"event: sources\ndata: {json.dumps({'sources': [doc.dict() for doc in source_documents]})}\n\n"
+            yield f"event: sources\ndata: {json.dumps({'sources': [doc.model_dump() for doc in source_documents]})}\n\n"
 
             yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('synthesizing')})}\n\n"
-            prompt = prompt_engine.create_prompt(deconstructed_query.semantic_query, [doc.dict() for doc in source_documents])
+            prompt = prompt_engine.create_prompt(deconstructed_query.semantic_query, [doc.model_dump() for doc in source_documents])
             
             async for token in llm_handler.get_llm_response_stream(prompt, history=history_dicts):
                 full_response += token
@@ -185,10 +183,10 @@ async def stream_generator(query: str, db: Session, session_id: str) -> AsyncGen
                     distance=0.0
                 ) for doc, md in zip(documents, metadatas)
             ]
-            yield f"event: sources\ndata: {json.dumps({'sources': [doc.dict() for doc in source_documents]})}\n\n"
+            yield f"event: sources\ndata: {json.dumps({'sources': [doc.model_dump() for doc in source_documents]})}\n\n"
 
             yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('synthesizing')})}\n\n"
-            prompt = prompt_engine.create_prompt("Summarize the key themes from this random sample of customer interactions.", [doc.dict() for doc in source_documents])
+            prompt = prompt_engine.create_prompt("Summarize the key themes from this random sample of customer interactions.", [doc.model_dump() for doc in source_documents])
             
             async for token in llm_handler.get_llm_response_stream(prompt, history=history_dicts):
                 full_response += token
@@ -203,8 +201,8 @@ async def stream_generator(query: str, db: Session, session_id: str) -> AsyncGen
         if full_response:
             assistant_log = database.ChatLog(session_id=session_id, role="assistant", content=full_response)
             db.add(assistant_log)
-            db.commit()
-            db.refresh(assistant_log)
+            await db.commit()
+            await db.refresh(assistant_log)
             assistant_log_id = assistant_log.id
             logger.info(f"Saved assistant response for session {session_id} with ID {assistant_log_id}")
         # 6. Signal the end of the stream, and send back the session_id and the new message ID
@@ -212,7 +210,7 @@ async def stream_generator(query: str, db: Session, session_id: str) -> AsyncGen
 
 
 @router.post("/search", tags=["Search"])
-async def search(search_query: SearchQuery, db: Session = Depends(get_db)):
+async def search(search_query: SearchQuery, db: AsyncSession = Depends(get_db)):
     """
     Performs a RAG-based search. Can return a normal JSON response or a stream
     of Server-Sent Events based on the `stream` parameter.
@@ -225,8 +223,8 @@ async def search(search_query: SearchQuery, db: Session = Depends(get_db)):
         # Save user's message before starting the stream
         user_log = database.ChatLog(session_id=session_id, role="user", content=search_query.query)
         db.add(user_log)
-        db.commit()
-        db.refresh(user_log)
+        await db.commit()
+        await db.refresh(user_log)
         logger.info(f"Saved user query for session {session_id} with ID {user_log.id}")
 
         async def combined_generator():
@@ -246,13 +244,15 @@ async def search(search_query: SearchQuery, db: Session = Depends(get_db)):
             # Save user message first
             user_log = database.ChatLog(session_id=session_id, role="user", content=search_query.query)
             db.add(user_log)
-            db.commit() # Commit the user log here
+            await db.commit()
             
             # Fetch history from DB for context
-            db_history_messages = db.query(database.ChatLog).filter(database.ChatLog.session_id == session_id).order_by(database.ChatLog.id.desc()).limit(10).all()
+            stmt = select(database.ChatLog).filter(database.ChatLog.session_id == session_id).order_by(database.ChatLog.id.desc()).limit(10)
+            result = await db.execute(stmt)
+            db_history_messages = list(result.scalars().all())
             db_history_messages.reverse()
             history = [ChatMessage.from_orm(msg) for msg in db_history_messages]
-            history_dicts = [msg.dict() for msg in history]
+            history_dicts = [msg.model_dump() for msg in history]
 
             deconstructed_query = await query_agent.deconstruct_query(search_query.query, history=history_dicts)
             logger.info(f"Deconstructed query: '{deconstructed_query.semantic_query}' with intent: {deconstructed_query.intent}")
@@ -287,7 +287,7 @@ async def search(search_query: SearchQuery, db: Session = Depends(get_db)):
                             distance=dist
                         ) for doc, md, dist in zip(documents, metadatas, distances)
                     ]
-                    prompt = prompt_engine.create_prompt(deconstructed_query.semantic_query, [doc.dict() for doc in source_documents])
+                    prompt = prompt_engine.create_prompt(deconstructed_query.semantic_query, [doc.model_dump() for doc in source_documents])
                     llm_response = await llm_handler.get_llm_response(prompt, history=history_dicts)
                 else:
                     llm_response = "Could not find any relevant documents."
@@ -309,7 +309,7 @@ async def search(search_query: SearchQuery, db: Session = Depends(get_db)):
                             distance=0.0
                         ) for doc, md in zip(documents, metadatas)
                     ]
-                    prompt = prompt_engine.create_prompt("Summarize this sample.", [doc.dict() for doc in source_documents])
+                    prompt = prompt_engine.create_prompt("Summarize this sample.", [doc.model_dump() for doc in source_documents])
                     llm_response = await llm_handler.get_llm_response(prompt, history=history_dicts)
                 else:
                     llm_response = "Could not retrieve a sample of documents."
@@ -317,7 +317,7 @@ async def search(search_query: SearchQuery, db: Session = Depends(get_db)):
             # Save assistant response
             assistant_log = database.ChatLog(session_id=session_id, role="assistant", content=llm_response)
             db.add(assistant_log)
-            db.commit()
+            await db.commit()
             
             return SearchResponse(llm_response=llm_response, source_documents=source_documents)
 
@@ -326,7 +326,7 @@ async def search(search_query: SearchQuery, db: Session = Depends(get_db)):
             raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.post("/transcribe", tags=["Transcription"])
-async def transcribe(file: Optional[UploadFile] = File(None), url: Optional[str] = Form(None), db: Session = Depends(get_db)):
+async def transcribe(file: Optional[UploadFile] = File(None), url: Optional[str] = Form(None), db: AsyncSession = Depends(get_db)):
     """
     Transcribes an audio file from a file upload or a URL and saves the raw
     transcription to the database.
@@ -361,8 +361,8 @@ async def transcribe(file: Optional[UploadFile] = File(None), url: Optional[str]
                 raw_transcription=transcript_text
             )
             db.add(new_transcription)
-            db.commit()
-            db.refresh(new_transcription)
+            await db.commit()
+            await db.refresh(new_transcription)
             
             return {"transcription": transcript_text, "transcription_id": new_transcription.id}
 
@@ -371,7 +371,7 @@ async def transcribe(file: Optional[UploadFile] = File(None), url: Optional[str]
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 @router.post("/post-process-transcription", tags=["Transcription"])
-async def post_process_transcription(request: TranscriptionProcessRequest, db: Session = Depends(get_db)):
+async def post_process_transcription(request: TranscriptionProcessRequest, db: AsyncSession = Depends(get_db)):
     """
     Receives a raw transcription and its ID, post-processes it, and saves
     the processed version to the database.
@@ -390,7 +390,6 @@ async def post_process_transcription(request: TranscriptionProcessRequest, db: S
         logger.info("Received response from LLM.")
 
         # 3. Parse the JSON response from the LLM
-        # The response is often wrapped in ```json ... ```, so we need to extract it.
         try:
             json_start = llm_response_str.find('{')
             json_end = llm_response_str.rfind('}') + 1
@@ -411,12 +410,14 @@ async def post_process_transcription(request: TranscriptionProcessRequest, db: S
             raise HTTPException(status_code=500, detail="LLM response did not contain 'full_transcript'.")
 
         # Update database
-        db_transcription = db.query(database.Transcription).filter(database.Transcription.id == request.transcription_id).first()
+        stmt = select(database.Transcription).filter(database.Transcription.id == request.transcription_id)
+        result = await db.execute(stmt)
+        db_transcription = result.scalars().first()
         if not db_transcription:
             raise HTTPException(status_code=404, detail="Transcription not found")
         
         db_transcription.processed_transcription = processed_transcript
-        db.commit()
+        await db.commit()
 
         return {"processed_transcription": processed_transcript}
 
@@ -425,7 +426,7 @@ async def post_process_transcription(request: TranscriptionProcessRequest, db: S
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 @router.post("/correct-company-name", tags=["Transcription"])
-async def correct_company_name(request: CompanyNameCorrectionRequest, db: Session = Depends(get_db)):
+async def correct_company_name(request: CompanyNameCorrectionRequest, db: AsyncSession = Depends(get_db)):
     """
     Receives a processed transcript and its ID, and a correct company name,
     and uses an LLM to replace the incorrect company name.
@@ -463,12 +464,14 @@ async def correct_company_name(request: CompanyNameCorrectionRequest, db: Sessio
             raise HTTPException(status_code=500, detail="LLM correction response did not contain 'corrected_transcript'.")
 
         # Update database
-        db_transcription = db.query(database.Transcription).filter(database.Transcription.id == request.transcription_id).first()
+        stmt = select(database.Transcription).filter(database.Transcription.id == request.transcription_id)
+        result = await db.execute(stmt)
+        db_transcription = result.scalars().first()
         if not db_transcription:
             raise HTTPException(status_code=404, detail="Transcription not found")
 
         db_transcription.corrected_transcription = corrected_transcript
-        db.commit()
+        await db.commit()
 
         return {"corrected_transcript": corrected_transcript}
 
@@ -477,44 +480,38 @@ async def correct_company_name(request: CompanyNameCorrectionRequest, db: Sessio
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 @router.get("/transcriptions", tags=["Transcription"], response_model=List[TranscriptionInfo])
-async def get_transcriptions(db: Session = Depends(get_db)):
+async def get_transcriptions(db: AsyncSession = Depends(get_db)):
     """
     Retrieves a list of all past transcriptions from the database.
     """
     logger.info("Received request to /transcriptions")
     try:
-        transcriptions = db.query(database.Transcription).order_by(database.Transcription.created_at.desc()).all()
+        stmt = select(database.Transcription).order_by(database.Transcription.created_at.desc())
+        result = await db.execute(stmt)
+        transcriptions = result.scalars().all()
         
-        # Convert SQLAlchemy objects to Pydantic models using from_orm
         return [TranscriptionInfo.from_orm(t) for t in transcriptions]
     except Exception as e:
         logger.error(f"An error occurred while fetching transcriptions: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 @router.get("/chats", tags=["Chat"], response_model=List[ChatSessionInfo])
-async def get_chat_sessions(db: Session = Depends(get_db)):
+async def get_chat_sessions(db: AsyncSession = Depends(get_db)):
     """
     Retrieves a list of all past chat sessions from the database.
     """
     logger.info("Received request to /chats")
     try:
-        # This is a simplified way to get chat sessions.
-        # A more robust implementation might involve a separate table for sessions.
-        # To order by the *most recent activity*, we need to find the MAX timestamp for each session.
-        # 1. Find the most recent timestamp and the first message for each session.
-        
-        # Subquery to get the first message (user's initial query) for each session
-        first_message_subq = db.query(
+        first_message_subq = select(
             database.ChatLog.session_id,
             database.ChatLog.content.label('initial_message')
         ).filter(
             database.ChatLog.id.in_(
-                db.query(func.min(database.ChatLog.id)).group_by(database.ChatLog.session_id)
+                select(func.min(database.ChatLog.id)).group_by(database.ChatLog.session_id)
             )
         ).subquery('first_messages')
 
-        # Main query to get session info and order by the latest message in each session
-        sessions = db.query(
+        stmt = select(
             database.ChatLog.session_id,
             func.max(database.ChatLog.created_at).label('last_activity'),
             first_message_subq.c.initial_message
@@ -526,12 +523,15 @@ async def get_chat_sessions(db: Session = Depends(get_db)):
             first_message_subq.c.initial_message
         ).order_by(
             desc('last_activity')
-        ).all()
+        )
+        
+        result = await db.execute(stmt)
+        sessions = result.all()
 
         return [
             ChatSessionInfo(
                 session_id=session.session_id,
-                start_time=session.last_activity, # Using last_activity for sorting, but can be named anything
+                start_time=session.last_activity,
                 initial_message=session.initial_message[:100]
             ) for session in sessions
         ]
@@ -540,27 +540,28 @@ async def get_chat_sessions(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 @router.delete("/chats/{session_id}", tags=["Chat"], status_code=204)
-async def delete_chat_session(session_id: str, db: Session = Depends(get_db)):
+async def delete_chat_session(session_id: str, db: AsyncSession = Depends(get_db)):
     """
     Deletes all logs for a specific chat session.
     """
     logger.info(f"Received request to delete chat session ID: {session_id}")
     try:
-        # Check if any logs exist for this session
-        chat_logs = db.query(database.ChatLog).filter(database.ChatLog.session_id == session_id).first()
+        stmt = select(database.ChatLog).filter(database.ChatLog.session_id == session_id)
+        result = await db.execute(stmt)
+        chat_logs = result.scalars().first()
         if not chat_logs:
             raise HTTPException(status_code=404, detail="Chat session not found")
         
-        # Delete all logs for the session
-        db.query(database.ChatLog).filter(database.ChatLog.session_id == session_id).delete(synchronize_session=False)
-        db.commit()
+        delete_stmt = delete(database.ChatLog).filter(database.ChatLog.session_id == session_id)
+        await db.execute(delete_stmt)
+        await db.commit()
         return
     except Exception as e:
         logger.error(f"An error occurred while deleting chat session {session_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 @router.delete("/chats/messages/{message_id}", tags=["Chat"], status_code=204)
-async def delete_chat_message(message_id: int, db: Session = Depends(get_db)):
+async def delete_chat_message(message_id: int, db: AsyncSession = Depends(get_db)):
     """
     Deletes a message.
     - If it's the first message, the entire chat session is deleted.
@@ -568,42 +569,46 @@ async def delete_chat_message(message_id: int, db: Session = Depends(get_db)):
     """
     logger.info(f"Received request to delete chat message ID: {message_id}")
     try:
-        # Find the message to delete
-        chat_log_entry = db.query(database.ChatLog).filter(database.ChatLog.id == message_id).first()
+        stmt = select(database.ChatLog).filter(database.ChatLog.id == message_id)
+        result = await db.execute(stmt)
+        chat_log_entry = result.scalars().first()
         if not chat_log_entry:
             raise HTTPException(status_code=404, detail="Chat message not found")
 
         session_id = chat_log_entry.session_id
 
-        # Check if this is the first message in the session
-        first_message_id = db.query(func.min(database.ChatLog.id)).filter(database.ChatLog.session_id == session_id).scalar()
+        first_message_id_stmt = select(func.min(database.ChatLog.id)).filter(database.ChatLog.session_id == session_id)
+        result = await db.execute(first_message_id_stmt)
+        first_message_id = result.scalar_one_or_none()
 
         if message_id == first_message_id:
-            # If it's the first message, delete the entire session
             logger.info(f"Message {message_id} is the first in session {session_id}. Deleting entire session.")
-            db.query(database.ChatLog).filter(database.ChatLog.session_id == session_id).delete(synchronize_session=False)
+            delete_stmt = delete(database.ChatLog).filter(database.ChatLog.session_id == session_id)
+            await db.execute(delete_stmt)
         else:
-            # Otherwise, delete this message and all subsequent ones
             logger.info(f"Deleting messages from session {session_id} starting from message {message_id}.")
-            db.query(database.ChatLog).filter(
+            delete_stmt = delete(database.ChatLog).filter(
                 database.ChatLog.session_id == session_id,
                 database.ChatLog.id >= message_id
-            ).delete(synchronize_session=False)
+            )
+            await db.execute(delete_stmt)
         
-        db.commit()
+        await db.commit()
         return
     except Exception as e:
         logger.error(f"An error occurred while deleting chat message {message_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 @router.get("/chats/{session_id}", tags=["Chat"], response_model=List[ChatLogInfo])
-async def get_chat_log(session_id: str, db: Session = Depends(get_db)):
+async def get_chat_log(session_id: str, db: AsyncSession = Depends(get_db)):
     """
     Retrieves all messages for a specific chat session.
     """
     logger.info(f"Received request for chat log for session ID: {session_id}")
     try:
-        chat_logs = db.query(database.ChatLog).filter(database.ChatLog.session_id == session_id).order_by(database.ChatLog.created_at).all()
+        stmt = select(database.ChatLog).filter(database.ChatLog.session_id == session_id).order_by(database.ChatLog.created_at)
+        result = await db.execute(stmt)
+        chat_logs = result.scalars().all()
         if not chat_logs:
             raise HTTPException(status_code=404, detail="Chat session not found")
         return [ChatLogInfo.from_orm(log) for log in chat_logs]
@@ -612,31 +617,35 @@ async def get_chat_log(session_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 @router.delete("/transcriptions/{transcription_id}", tags=["Transcription"], status_code=204)
-async def delete_transcription(transcription_id: int, db: Session = Depends(get_db)):
+async def delete_transcription(transcription_id: int, db: AsyncSession = Depends(get_db)):
     """
     Deletes a transcription by its ID.
     """
     logger.info(f"Received request to delete transcription ID: {transcription_id}")
     try:
-        db_transcription = db.query(database.Transcription).filter(database.Transcription.id == transcription_id).first()
+        stmt = select(database.Transcription).filter(database.Transcription.id == transcription_id)
+        result = await db.execute(stmt)
+        db_transcription = result.scalars().first()
         if not db_transcription:
             raise HTTPException(status_code=404, detail="Transcription not found")
         
-        db.delete(db_transcription)
-        db.commit()
+        await db.delete(db_transcription)
+        await db.commit()
         return
     except Exception as e:
         logger.error(f"An error occurred while deleting transcription {transcription_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 @router.get("/transcriptions/{transcription_id}", tags=["Transcription"])
-async def get_transcription(transcription_id: int, db: Session = Depends(get_db)):
+async def get_transcription(transcription_id: int, db: AsyncSession = Depends(get_db)):
     """
     Retrieves a single transcription by its ID.
     """
     logger.info(f"Received request for transcription ID: {transcription_id}")
     try:
-        db_transcription = db.query(database.Transcription).filter(database.Transcription.id == transcription_id).first()
+        stmt = select(database.Transcription).filter(database.Transcription.id == transcription_id)
+        result = await db.execute(stmt)
+        db_transcription = result.scalars().first()
         if not db_transcription:
             raise HTTPException(status_code=404, detail="Transcription not found")
         

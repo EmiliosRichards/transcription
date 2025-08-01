@@ -1,20 +1,21 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
+from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.orm import DeclarativeBase
+from app.config import settings
 import datetime
 
-load_dotenv()
+# The asyncpg driver expects SSL settings in connect_args, not the URL query.
+db_url_without_query = settings.DATABASE_URL.split('?')[0]
+engine = create_async_engine(
+    db_url_without_query,
+    pool_pre_ping=True,
+    connect_args={'ssl': 'require'}
+)
+AsyncSessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-if not DATABASE_URL:
-    raise ValueError("No DATABASE_URL set for the project. Please set it in the .env file.")
-
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+class Base(DeclarativeBase):
+    pass
 
 # --- Database Models ---
 
@@ -39,5 +40,6 @@ class ChatLog(Base):
 
 # --- Utility to create tables ---
 
-def create_db_and_tables():
-    Base.metadata.create_all(bind=engine)
+async def create_db_and_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

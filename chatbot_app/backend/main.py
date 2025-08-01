@@ -12,7 +12,7 @@ async def lifespan(app: FastAPI):
     # --- Startup ---
     print("Application startup...")
     print("Initializing database and tables...")
-    await create_db_and_tables()
+    create_db_and_tables()
     print("Database and tables are ready.")
     print("Initializing vector database collection...")
     vector_db.get_or_create_collection()

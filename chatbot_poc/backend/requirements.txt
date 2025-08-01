@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+chromadb
+openai
+python-dotenv
+pandas
+instructor
+numpy
+mistralai
+python-multipart
+sqlalchemy
+asyncpg
+psycopg2-binary

@@ -23,6 +23,9 @@ class Settings:
     # --- Data Paths ---
     EMBEDDINGS_CSV_PATH: str = os.getenv("EMBEDDINGS_CSV_PATH", "output/journeys_with_embeddings.csv")
 
+    # --- Security ---
+    API_KEY: str = os.getenv("API_KEY", "")
+
 
 # Instantiate the settings
 settings = Settings()

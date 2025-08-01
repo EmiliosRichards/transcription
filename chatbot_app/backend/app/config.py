@@ -1,8 +1,10 @@
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from a .env file
-load_dotenv()
+# Define the path to the root of the project
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+# Load environment variables from the .env file in the project root
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
 
 class Settings:
     # --- Database ---

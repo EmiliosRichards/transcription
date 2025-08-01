@@ -16,3 +16,22 @@ output/customer_journey_poc/
 
 node_modules/
 dist/
+
+# Local Database
+chroma_db/
+
+# Large Data Files (in data_pipelines)
+data_pipelines/data/
+
+# Node / Frontend
+node_modules/
+dist/
+.next/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE / OS
+.vscode/
+.idea/
+*.DS_Store

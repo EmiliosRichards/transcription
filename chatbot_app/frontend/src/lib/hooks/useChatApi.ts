@@ -11,6 +11,7 @@ export function useChatApi() {
     updateLastMessage,
     setLastMessageSourceDocuments,
     setMessages,
+    setChatSessions,
   } = useChatStore();
 
   const handleSendMessage = async (query: string, sessionId: string | null) => {
@@ -133,5 +134,18 @@ export function useChatApi() {
     }
   };
 
-  return { handleSendMessage, handleDeleteMessage };
+  const handleFetchChatSessions = async () => {
+    try {
+      const response = await fetch("/api/chats");
+      if (!response.ok) {
+        throw new Error('Failed to fetch chat sessions');
+      }
+      const sessions = await response.json();
+      setChatSessions(sessions);
+    } catch (error) {
+      console.error("Error fetching chat sessions:", error);
+    }
+  };
+
+  return { handleSendMessage, handleDeleteMessage, handleFetchChatSessions };
 }

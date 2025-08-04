@@ -511,7 +511,7 @@ async def get_chat_sessions(db: AsyncSession = Depends(get_db)):
 
         stmt = select(
             database.ChatLog.session_id,
-            func.max(database.ChatLog.created_at).label('last_activity'),
+            func.max(database.ChatLog.created_at).label('start_time'),
             first_message_subq.c.initial_message
         ).join(
             first_message_subq,
@@ -520,13 +520,14 @@ async def get_chat_sessions(db: AsyncSession = Depends(get_db)):
             database.ChatLog.session_id,
             first_message_subq.c.initial_message
         ).order_by(
-            desc('last_activity')
+            desc('start_time')
         )
         
         result = await db.execute(stmt)
         sessions = result.all()
 
-        return [ChatSessionInfo.model_validate(session) for session in sessions]
+        # Convert SQLAlchemy Row objects to a dict-like structure for Pydantic validation
+        return [ChatSessionInfo.model_validate(session._mapping) for session in sessions]
     except Exception as e:
         logger.error(f"An error occurred while fetching chat sessions: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { Message } from '@/components/chat-interface';
+import { ChatSession } from '@/lib/types';
 
 interface ChatState {
   messages: Message[];
@@ -7,6 +8,7 @@ interface ChatState {
   isLoading: boolean;
   isStreaming: boolean;
   currentStatus: string;
+  chatSessions: ChatSession[];
   setMessages: (messages: Message[]) => void;
   addMessage: (message: Message) => void;
   updateLastMessage: (content: string) => void;
@@ -15,6 +17,7 @@ interface ChatState {
   setIsLoading: (isLoading: boolean) => void;
   setIsStreaming: (isStreaming: boolean) => void;
   setCurrentStatus: (status: string) => void;
+  setChatSessions: (sessions: ChatSession[]) => void;
   reset: () => void;
 }
 
@@ -24,6 +27,7 @@ export const useChatStore = create<ChatState>()((set) => ({
   isLoading: false,
   isStreaming: false,
   currentStatus: "Thinking...",
+  chatSessions: [],
   setMessages: (messages: Message[]) => set({ messages }),
   addMessage: (message: Message) => set((state: ChatState) => ({ messages: [...state.messages, message] })),
   updateLastMessage: (content: string) =>
@@ -48,5 +52,6 @@ export const useChatStore = create<ChatState>()((set) => ({
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
   setIsStreaming: (isStreaming: boolean) => set({ isStreaming }),
   setCurrentStatus: (currentStatus: string) => set({ currentStatus }),
+  setChatSessions: (sessions: ChatSession[]) => set({ chatSessions: sessions }),
   reset: () => set({ messages: [], sessionId: null, isLoading: false, isStreaming: false, currentStatus: "Thinking..." }),
 }));

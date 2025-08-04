@@ -2,19 +2,18 @@
 
 import { MessageBubble } from "./MessageBubble";
 import { WelcomeScreen } from "../welcome-screen";
+import { StatusDisplay } from "./StatusDisplay";
 import { Message } from '../chat-interface';
+import { useChatStore } from '@/lib/stores/useChatStore';
 
 interface MessageListProps {
-  messages: Message[];
-  isLoading: boolean;
-  isStreaming: boolean;
-  currentStatus: string;
   onDeleteMessage: (message: Message) => void;
   onSourceClick: (source: any) => void;
   onWelcomePrompt: (prompt: string) => void;
 }
 
-export function MessageList({ messages, isLoading, isStreaming, currentStatus, onDeleteMessage, onSourceClick, onWelcomePrompt }: MessageListProps) {
+export function MessageList({ onDeleteMessage, onSourceClick, onWelcomePrompt }: MessageListProps) {
+  const { messages, isLoading, isStreaming, currentStatus, statusVersion } = useChatStore();
   if (messages.length === 0) {
     return <WelcomeScreen onPromptClick={onWelcomePrompt} />;
   }
@@ -22,17 +21,18 @@ export function MessageList({ messages, isLoading, isStreaming, currentStatus, o
   return (
     <div className="flex-grow overflow-y-auto p-6">
       <div className="space-y-4">
-        {messages.map((message, index) => (
-          <MessageBubble
-            key={index}
-            message={message}
-            isLoading={isLoading && index === messages.length - 1}
-            isStreaming={isStreaming && index === messages.length - 1}
-            currentStatus={currentStatus}
-            onDelete={onDeleteMessage}
-            onSourceClick={onSourceClick}
-          />
-        ))}
+        {messages.map((message, index) => {
+          const isLastMessage = index === messages.length - 1;
+          return (
+            <MessageBubble
+              key={message.id}
+              message={message}
+              isStreaming={isLastMessage && isStreaming}
+              onDelete={onDeleteMessage}
+              onSourceClick={onSourceClick}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ def create_prompt_from_template(template_name: str, variables: Dict[str, str]) -
     # __file__ is .../transcription/chatbot_poc/backend/app/services/prompt_engine.py
     # We want to get to .../transcription/
     project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
-    template_path = os.path.join(project_root, 'prompts', template_name)
+    template_path = os.path.join(project_root, 'data_pipelines', 'prompts', template_name)
     
     try:
         with open(template_path, 'r', encoding='utf-8') as f:

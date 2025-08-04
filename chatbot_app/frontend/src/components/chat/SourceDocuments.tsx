@@ -24,8 +24,8 @@ export function SourceDocuments({ sourceDocuments, onSourceClick }: SourceDocume
           View Sources ({sourceDocuments.length})
         </summary>
         <div className="mt-2 space-y-2">
-          {sourceDocuments.map((doc) => (
-            <div key={doc.customer_id} className="p-2 border rounded bg-background/50 cursor-pointer hover:bg-muted" onClick={() => onSourceClick(doc)}>
+          {sourceDocuments.map((doc, index) => (
+            <div key={`${doc.customer_id}-${index}`} className="p-2 border rounded bg-background/50 cursor-pointer hover:bg-muted" onClick={() => onSourceClick(doc)}>
               <p className="text-sm font-bold">Customer ID: {doc.customer_id}</p>
               <p className="text-xs text-muted-foreground">Call IDs: {doc.call_ids}</p>
               <p className="text-sm mt-1 italic">"{doc.full_journey.substring(0, 200)}..."</p>

@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useChatStore } from "@/lib/stores/useChatStore";
 import { useChatApi } from "@/lib/hooks/useChatApi";
 import { MessageList } from "./chat/MessageList";
@@ -29,7 +29,7 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ onNewChat }: ChatInterfaceProps) {
-  const { messages, sessionId, isLoading, isStreaming, currentStatus } = useChatStore();
+  const { messages, sessionId, isLoading } = useChatStore();
   const { handleSendMessage, handleDeleteMessage } = useChatApi();
   const [inputValue, setInputValue] = useState("");
   const [selectedTranscript, setSelectedTranscript] = useState<SourceDocument | null>(null);
@@ -50,27 +50,24 @@ export function ChatInterface({ onNewChat }: ChatInterfaceProps) {
     setInputValue("");
   };
 
-  const onDeleteConfirm = () => {
+  const onDeleteConfirm = useCallback(() => {
     if (messageToDelete) {
       handleDeleteMessage(messageToDelete, messages, sessionId);
       setMessageToDelete(null);
       onNewChat();
     }
-  };
+  }, [messageToDelete, handleDeleteMessage, messages, sessionId, onNewChat]);
+
+  const handleWelcomePrompt = useCallback((prompt: string) => {
+    handleSendMessage(prompt, sessionId);
+  }, [handleSendMessage, sessionId]);
 
   return (
     <div className="flex flex-col h-full">
       <MessageList
-        messages={messages}
-        isLoading={isLoading}
-        isStreaming={isStreaming}
-        currentStatus={currentStatus}
         onDeleteMessage={setMessageToDelete}
         onSourceClick={setSelectedTranscript}
-        onWelcomePrompt={(prompt) => {
-          setInputValue(prompt);
-          handleSendMessage(prompt, sessionId);
-        }}
+        onWelcomePrompt={handleWelcomePrompt}
       />
       <ChatInput
         inputValue={inputValue}

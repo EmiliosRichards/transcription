@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter, HTTPException, Request, File, UploadFile, Form, Depends
+from fastapi import APIRouter, HTTPException, Request, File, UploadFile, Form, Depends, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, Dict, Any, AsyncGenerator, List, Literal
@@ -98,6 +98,7 @@ async def stream_generator(query: str, db: AsyncSession, session_id: str) -> Asy
         history_dicts = [msg.model_dump() for msg in history]
 
         # 2. Deconstruct Query to determine intent
+        logger.info("STREAM: Yielding status_update: understanding")
         yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('understanding')})}\n\n"
         deconstructed_query = await query_agent.deconstruct_query(query, history=history_dicts)
         logger.info(f"Deconstructed query: '{deconstructed_query.semantic_query}' with intent: {deconstructed_query.intent}")
@@ -110,9 +111,11 @@ async def stream_generator(query: str, db: AsyncSession, session_id: str) -> Asy
                 return
 
             if deconstructed_query.hypothetical_document:
+                logger.info("STREAM: Yielding status_update: hyde")
                 yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('hyde')})}\n\n"
                 logger.info(f"HyDE document generated: {deconstructed_query.hypothetical_document}")
 
+            logger.info("STREAM: Yielding status_update: searching")
             yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('searching')})}\n\n"
             search_text = deconstructed_query.hypothetical_document or deconstructed_query.semantic_query
             where_filter = {}
@@ -145,23 +148,30 @@ async def stream_generator(query: str, db: AsyncSession, session_id: str) -> Asy
                     distance=dist
                 ) for doc, md, dist in zip(documents, metadatas, distances)
             ]
+            logger.info("STREAM: Yielding sources")
             yield f"event: sources\ndata: {json.dumps({'sources': [doc.model_dump() for doc in source_documents]})}\n\n"
 
+            logger.info("STREAM: Yielding status_update: synthesizing")
             yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('synthesizing')})}\n\n"
             prompt = prompt_engine.create_prompt(deconstructed_query.semantic_query, [doc.model_dump() for doc in source_documents])
             
             async for token in llm_handler.get_llm_response_stream(prompt, history=history_dicts):
                 full_response += token
+                logger.debug(f"STREAM: Yielding llm_response_chunk: {token}")
                 yield f"event: llm_response_chunk\ndata: {json.dumps({'token': token})}\n\n"
 
         elif deconstructed_query.intent == "chitchat":
+            logger.info("STREAM: Yielding status_update: chitchat")
             yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('chitchat')})}\n\n"
+            logger.info("STREAM: Yielding sources (empty for chitchat)")
             yield f"event: sources\ndata: {json.dumps({'sources': []})}\n\n"
             async for token in llm_handler.get_llm_response_stream(deconstructed_query.semantic_query, is_chitchat=True, history=history_dicts):
                 full_response += token
+                logger.debug(f"STREAM: Yielding llm_response_chunk: {token}")
                 yield f"event: llm_response_chunk\ndata: {json.dumps({'token': token})}\n\n"
 
         elif deconstructed_query.intent == "sampling":
+            logger.info("STREAM: Yielding status_update: sampling")
             yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('sampling')})}\n\n"
             search_results = vector_db.get_random_journeys(n_results=deconstructed_query.n_results)
             documents = search_results.get('documents') if search_results else None
@@ -181,17 +191,21 @@ async def stream_generator(query: str, db: AsyncSession, session_id: str) -> Asy
                     distance=0.0
                 ) for doc, md in zip(documents, metadatas)
             ]
+            logger.info("STREAM: Yielding sources (sampling)")
             yield f"event: sources\ndata: {json.dumps({'sources': [doc.model_dump() for doc in source_documents]})}\n\n"
 
+            logger.info("STREAM: Yielding status_update: synthesizing (sampling)")
             yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('synthesizing')})}\n\n"
             prompt = prompt_engine.create_prompt("Summarize the key themes from this random sample of customer interactions.", [doc.model_dump() for doc in source_documents])
             
             async for token in llm_handler.get_llm_response_stream(prompt, history=history_dicts):
                 full_response += token
+                logger.debug(f"STREAM: Yielding llm_response_chunk: {token}")
                 yield f"event: llm_response_chunk\ndata: {json.dumps({'token': token})}\n\n"
             
     except Exception as e:
         logger.error(f"Error during stream generation: {e}", exc_info=True)
+        logger.error(f"STREAM: Yielding error: {e}")
         yield f"event: error\ndata: {json.dumps({'message': str(e)})}\n\n"
     finally:
         # 5. Save the assistant's full response
@@ -204,55 +218,68 @@ async def stream_generator(query: str, db: AsyncSession, session_id: str) -> Asy
             assistant_log_id = assistant_log.id
             logger.info(f"Saved assistant response for session {session_id} with ID {assistant_log_id}")
         # 6. Signal the end of the stream, and send back the session_id and the new message ID
+        logger.info("STREAM: Yielding stream_end")
         yield f"event: stream_end\ndata: {json.dumps({'session_id': session_id, 'assistant_message_id': assistant_log_id})}\n\n"
 
 
-@router.post("/search", tags=["Search"])
-async def search(search_query: SearchQuery, db: AsyncSession = Depends(get_db)):
+async def streaming_search_generator(query: str, session_id: Optional[str]):
+    """A self-contained generator that manages its own DB session for streaming."""
+    async with database.AsyncSessionLocal() as db:
+        current_session_id = session_id if session_id else str(uuid.uuid4())
+        
+        # Save user's message before starting the stream
+        user_log = database.ChatLog(session_id=current_session_id, role="user", content=query)
+        db.add(user_log)
+        await db.commit()
+        await db.refresh(user_log)
+        logger.info(f"Saved user query for session {current_session_id} with ID {user_log.id}")
+
+        # First, yield the user message ID so the frontend can update its state
+        logger.info("STREAM: Yielding user_message_saved")
+        yield f"event: user_message_saved\ndata: {json.dumps({'user_message_id': user_log.id, 'session_id': current_session_id})}\n\n"
+        
+        # Then, yield everything from the main stream generator
+        logger.info("STREAM: Starting main stream generator")
+        async for chunk in stream_generator(query, db, current_session_id):
+            yield chunk
+        logger.info("STREAM: Finished main stream generator")
+
+@router.get("/search", tags=["Search"])
+async def search(
+    query: str = Query(..., description="The search query."),
+    stream: bool = Query(False, description="Whether to stream the response."),
+    session_id: Optional[str] = Query(None, description="The session ID for the chat."),
+    db: AsyncSession = Depends(get_db)
+):
     """
     Performs a RAG-based search. Can return a normal JSON response or a stream
     of Server-Sent Events based on the `stream` parameter.
     """
-    logger.info(f"Received search query: '{search_query.query}' with stream={search_query.stream}")
+    logger.info(f"Received search query: '{query}' with stream={stream}")
     
-    session_id = search_query.session_id if search_query.session_id else str(uuid.uuid4())
-
-    if search_query.stream:
-        # Save user's message before starting the stream
-        user_log = database.ChatLog(session_id=session_id, role="user", content=search_query.query)
-        db.add(user_log)
-        await db.commit()
-        await db.refresh(user_log)
-        logger.info(f"Saved user query for session {session_id} with ID {user_log.id}")
-
-        async def combined_generator():
-            # First, yield the user message ID so the frontend can update its state
-            yield f"event: user_message_saved\ndata: {json.dumps({'user_message_id': user_log.id, 'session_id': session_id})}\n\n"
-            # Then, yield everything from the main stream generator
-            async for chunk in stream_generator(search_query.query, db, session_id):
-                yield chunk
-
+    if stream:
         return StreamingResponse(
-            combined_generator(),
+            streaming_search_generator(query, session_id),
             media_type="text/event-stream"
         )
     else:
         # Non-streaming logic with intent routing
         try:
+            current_session_id = session_id if session_id else str(uuid.uuid4())
             # Save user message first
-            user_log = database.ChatLog(session_id=session_id, role="user", content=search_query.query)
+            user_log = database.ChatLog(session_id=current_session_id, role="user", content=query)
             db.add(user_log)
             await db.commit()
             
             # Fetch history from DB for context
-            stmt = select(database.ChatLog).filter(database.ChatLog.session_id == session_id).order_by(database.ChatLog.id.desc()).limit(10)
+            stmt = select(database.ChatLog).filter(database.ChatLog.session_id == current_session_id).order_by(database.ChatLog.id.desc()).limit(10)
             result = await db.execute(stmt)
             db_history_messages = list(result.scalars().all())
             db_history_messages.reverse()
             history = [ChatMessage.model_validate(msg) for msg in db_history_messages]
             history_dicts = [msg.model_dump() for msg in history]
 
-            deconstructed_query = await query_agent.deconstruct_query(search_query.query, history=history_dicts)
+            deconstructed_query = await query_agent.deconstruct_query(query, history=history_dicts)
             logger.info(f"Deconstructed query: '{deconstructed_query.semantic_query}' with intent: {deconstructed_query.intent}")
 
             llm_response = ""
@@ -313,7 +340,7 @@ async def search(search_query: SearchQuery, db: AsyncSession = Depends(get_db)):
                     llm_response = "Could not retrieve a sample of documents."
 
             # Save assistant response
-            assistant_log = database.ChatLog(session_id=session_id, role="assistant", content=llm_response)
+            assistant_log = database.ChatLog(session_id=current_session_id, role="assistant", content=llm_response)
             db.add(assistant_log)
             await db.commit()
             
@@ -342,7 +369,8 @@ async def transcribe(file: Optional[UploadFile] = File(None), url: Optional[str]
             if file and file.filename:
                 temp_path = os.path.join(temp_dir, file.filename)
                 with open(temp_path, "wb") as buffer:
-                    buffer.write(await file.read())
+                    while content := await file.read(1024 * 1024):  # Read in 1MB chunks
+                        buffer.write(content)
                 audio_path = temp_path
             elif url:
                 audio_path = transcription.download_file(url, temp_dir)

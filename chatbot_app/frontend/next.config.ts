@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000",
   },
   async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+    let backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+    if (process.env.NODE_ENV === "production" && !backendUrl.startsWith("http")) {
+      backendUrl = `https://${backendUrl}`;
+    }
     return [
       {
         source: "/api/:path*",

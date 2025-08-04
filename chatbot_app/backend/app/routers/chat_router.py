@@ -1,7 +1,7 @@
 import logging
 import datetime
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,17 +22,16 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 # --- Pydantic Models ---
 class ChatSessionInfo(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     session_id: str
     start_time: datetime.datetime
     initial_message: str
 
 class ChatLogInfo(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     role: str
     content: str
-
-    class Config:
-        from_attributes = True
 
 # --- API Endpoints ---
 @router.get("/chats", tags=["Chat"], response_model=List[ChatSessionInfo])
@@ -69,13 +68,7 @@ async def get_chat_sessions(db: AsyncSession = Depends(get_db)):
         result = await db.execute(stmt)
         sessions = result.all()
 
-        return [
-            ChatSessionInfo(
-                session_id=session.session_id,
-                start_time=session.last_activity,
-                initial_message=session.initial_message[:100]
-            ) for session in sessions
-        ]
+        return [ChatSessionInfo.model_validate(session) for session in sessions]
     except Exception as e:
         logger.error(f"An error occurred while fetching chat sessions: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
@@ -154,7 +147,7 @@ async def get_chat_log(session_id: str, db: AsyncSession = Depends(get_db)):
         chat_logs = result.scalars().all()
         if not chat_logs:
             raise HTTPException(status_code=404, detail="Chat session not found")
-        return [ChatLogInfo.from_orm(log) for log in chat_logs]
+        return [ChatLogInfo.model_validate(log) for log in chat_logs]
     except Exception as e:
         logger.error(f"An error occurred while fetching chat log for session {session_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")

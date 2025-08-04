@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter, HTTPException, Request, File, UploadFile, Form, Depends
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, Dict, Any, AsyncGenerator, List, Literal
 from app.services import vector_db, prompt_engine, llm_handler, transcription
 import tempfile
@@ -32,8 +32,7 @@ class ChatMessage(BaseModel):
     role: Literal["user", "assistant"]
     content: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class SearchQuery(BaseModel):
     query: str
@@ -66,10 +65,10 @@ class TranscriptionInfo(BaseModel):
     audio_source: Optional[str] = None
     created_at: datetime.datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ChatSessionInfo(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     session_id: str
     start_time: datetime.datetime
     initial_message: str
@@ -79,8 +78,7 @@ class ChatLogInfo(BaseModel):
     role: str
     content: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # --- Helper for Streaming ---
 async def stream_generator(query: str, db: AsyncSession, session_id: str) -> AsyncGenerator[str, None]:
@@ -96,7 +94,7 @@ async def stream_generator(query: str, db: AsyncSession, session_id: str) -> Asy
         result = await db.execute(stmt)
         db_history_messages = list(result.scalars().all())
         db_history_messages.reverse() # Order from oldest to newest
-        history = [ChatMessage.from_orm(msg) for msg in db_history_messages]
+        history = [ChatMessage.model_validate(msg) for msg in db_history_messages]
         history_dicts = [msg.model_dump() for msg in history]
 
         # 2. Deconstruct Query to determine intent
@@ -251,7 +249,7 @@ async def search(search_query: SearchQuery, db: AsyncSession = Depends(get_db)):
             result = await db.execute(stmt)
             db_history_messages = list(result.scalars().all())
             db_history_messages.reverse()
-            history = [ChatMessage.from_orm(msg) for msg in db_history_messages]
+            history = [ChatMessage.model_validate(msg) for msg in db_history_messages]
             history_dicts = [msg.model_dump() for msg in history]
 
             deconstructed_query = await query_agent.deconstruct_query(search_query.query, history=history_dicts)
@@ -490,7 +488,7 @@ async def get_transcriptions(db: AsyncSession = Depends(get_db)):
         result = await db.execute(stmt)
         transcriptions = result.scalars().all()
         
-        return [TranscriptionInfo.from_orm(t) for t in transcriptions]
+        return [TranscriptionInfo.model_validate(t, from_attributes=True) for t in transcriptions]
     except Exception as e:
         logger.error(f"An error occurred while fetching transcriptions: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
@@ -528,13 +526,7 @@ async def get_chat_sessions(db: AsyncSession = Depends(get_db)):
         result = await db.execute(stmt)
         sessions = result.all()
 
-        return [
-            ChatSessionInfo(
-                session_id=session.session_id,
-                start_time=session.last_activity,
-                initial_message=session.initial_message[:100]
-            ) for session in sessions
-        ]
+        return [ChatSessionInfo.model_validate(session) for session in sessions]
     except Exception as e:
         logger.error(f"An error occurred while fetching chat sessions: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
@@ -611,7 +603,7 @@ async def get_chat_log(session_id: str, db: AsyncSession = Depends(get_db)):
         chat_logs = result.scalars().all()
         if not chat_logs:
             raise HTTPException(status_code=404, detail="Chat session not found")
-        return [ChatLogInfo.from_orm(log) for log in chat_logs]
+        return [ChatLogInfo.model_validate(log, from_attributes=True) for log in chat_logs]
     except Exception as e:
         logger.error(f"An error occurred while fetching chat log for session {session_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")

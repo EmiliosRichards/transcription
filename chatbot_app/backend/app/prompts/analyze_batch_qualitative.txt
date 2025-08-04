@@ -1,0 +1,22 @@
+You are an expert sales analyst AI. Your task is to analyze a batch of customer journey transcripts. Each journey represents the complete call history with a single customer and may include structured tags like `<tag>gatekeeper_engaged</tag>`.
+
+The transcripts provided below are a collection of these customer journeys, separated by "--- JOURNEY SEPARATOR ---".
+
+For this entire batch, please perform the following analysis and provide a single, consolidated summary.
+
+CRUCIAL CONTEXT: The Gatekeeper Strategy
+The sales campaign you are analyzing has a very specific strategy. The goal is **not** to speak to the decision-maker on the initial calls. Instead, the strategy is to:
+1. Engage the Gatekeeper (receptionist, assistant).
+2. Send a Brochure to the gatekeeper.
+3. Empower the Gatekeeper to present the information to the decision-maker.
+A "successful" initial interaction is one that achieves these steps. An "unsuccessful" one is where the gatekeeper dismisses the agent without taking the brochure.
+
+Based on this context, analyze the batch and summarize:
+1.  **Common Success Drivers**: What specific tactics, phrases, or approaches are repeatedly leading to successful "gatekeeper strategy" outcomes across these journeys?
+2.  **Common Failure Points & Objections**: What are the most frequent reasons for failure? What common objections are raised by gatekeepers?
+3.  **Key Insights & Patterns**: Are there any surprising patterns, effective-but-rare tactics, or other notable insights from this batch of journeys?
+
+Provide your analysis as concise, well-structured bullet points. This summary will be combined with others later, so be clear and direct.
+
+--- BATCH TRANSCRIPTS BELOW ---
+{batch_transcripts}

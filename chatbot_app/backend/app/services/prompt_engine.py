@@ -9,8 +9,11 @@ def create_prompt_from_template(template_name: str, variables: Dict[str, str]) -
     # Build a robust path to the project's root directory
     # __file__ is .../transcription/chatbot_poc/backend/app/services/prompt_engine.py
     # We want to get to .../transcription/
-    project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
-    template_path = os.path.join(project_root, 'data_pipelines', 'prompts', template_name)
+    # Build a path to the 'prompts' directory relative to this file.
+    # __file__ is .../app/services/prompt_engine.py
+    # We want .../app/prompts/
+    prompts_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'prompts'))
+    template_path = os.path.join(prompts_dir, template_name)
     
     try:
         with open(template_path, 'r', encoding='utf-8') as f:

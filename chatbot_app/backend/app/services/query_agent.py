@@ -44,23 +44,25 @@ class QueryAgent:
     def __init__(self):
         self.client = client
 
-    async def deconstruct_query(self, query: str, history: Optional[List[Dict[str, Any]]] = None) -> DeconstructedQuery:
+    def deconstruct_query(self, query: str, history: Optional[List[Dict[str, Any]]] = None) -> DeconstructedQuery:
         """
         Processes a raw query using an LLM to get a structured output including
         the user's intent, a semantic query, and any extracted filters.
         It uses the provided conversation history to better understand context.
+        NOTE: This function is synchronous because the 'instructor' library, when used
+        with 'response_model', makes the underlying API call blocking.
         """
         system_prompt = self._get_system_prompt()
-        
+
         messages = [{"role": "system", "content": system_prompt}]
         if history:
             messages.extend(history)
         messages.append({"role": "user", "content": f"Deconstruct the following user query: \"{query}\""})
 
-        response = await self.client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model=settings.MAIN_LLM_MODEL,
             messages=messages,
-            response_model=DeconstructedQuery, # type: ignore
+            response_model=DeconstructedQuery,  # type: ignore
             temperature=0.0,
         )
         return response

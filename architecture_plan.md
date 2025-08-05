@@ -1,118 +1,46 @@
-# Streaming Chat Feature: Architecture Analysis and Plan
+# Transcription Pipeline Architecture Plan
 
-This document outlines the analysis of the current implementation of the streaming chat feature, identifies the root cause of the failure, and proposes a new, robust architecture.
+This document outlines the plan for re-architecting the transcription processing pipeline to handle long-form, complex conversations.
 
-## 1. The Problem: Stale Renders Caused by Prop-Drilling
+## 1. Problem Statement
 
-After a full-stack code review, the root cause of the UI not updating has been identified as a classic React state management issue. The parent component, `ChatInterface`, subscribes to a subset of the chat state and passes it down as props to `MessageList`. `MessageList` *also* subscribes to the store to get the rest of the state it needs.
+The current system fails on long transcripts because:
+-   It uses naive character-based chunking, which destroys conversational context.
+-   It cannot maintain speaker identity across chunks.
+-   The LLM prompts are not sophisticated enough to handle complex, multi-topic conversations.
 
-This creates a situation where the store can be updated (e.g., `isStreaming` becomes `true`), but because the state that `ChatInterface` is subscribed to hasn't changed, it doesn't re-render. Consequently, `MessageList` is not re-rendered by its parent, and the UI does not reflect the latest state, even though `MessageList`'s own subscription has the new data.
+## 2. Proposed Architecture
 
-### Flawed Data Flow Diagram
+We will implement a multi-stage processing pipeline:
 
-```mermaid
-graph TD
-    subgraph "Frontend"
-        subgraph "State (useChatStore)"
-            A[messages]
-            B[isLoading]
-            C[isStreaming]
-            D[currentStatus]
-        end
+1.  **Transcription & Diarization**: Transcribe audio to text with generic speaker labels.
+2.  **Speaker Identification**: Use a dedicated service to replace generic labels with identified speaker names.
+3.  **Intelligent Segmentation**: Use an LLM to segment the transcript by topic.
+4.  **Enriched Chunk Processing**: Process each segment with global and local context.
+5.  **Final Aggregation**: Combine the processed segments into a final, structured document.
 
-        subgraph "Components"
-            CI(ChatInterface)
-            ML(MessageList)
-            SD(StatusDisplay)
-        end
+## 3. Phase 1: Speaker Identification
 
-        A --> CI
-        B --> CI
+### 3.1. Technology Selection
 
-        CI -- "props (messages, isLoading)" --> ML
+**Decision**: We will use **Azure AI Speech** for Speaker Recognition.
 
-        C --> ML
-        D --> ML
+**Reasoning**:
+-   High accuracy.
+-   User-friendly API and SDK.
+-   The Voice Profile Enrollment feature is a direct fit for our needs.
 
-        ML --> SD
-    end
+### 3.2. Implementation Steps
 
-    subgraph "Backend"
-        API(API Endpoint /api/search)
-    end
-
-    CI -- "API Call via useChatApi" --> API
-    API -- "SSE Events" --> C & D
-
-    style CI fill:#f9f,stroke:#333,stroke-width:2px
-    style ML fill:#f9f,stroke:#333,stroke-width:2px
-    style A fill:#ccf,stroke:#333,stroke-width:2px
-    style B fill:#ccf,stroke:#333,stroke-width:2px
-    style C fill:#f99,stroke:#333,stroke-width:2px
-    style D fill:#f99,stroke:#333,stroke-width:2px
-
-    note for C "State updates, but..."
-    note for CI "...ChatInterface does not re-render, so MessageList is stale."
-```
-
-## 2. The Solution: Decouple Components with Direct State Subscription
-
-The solution is to decouple `MessageList` from `ChatInterface`. `MessageList` should not receive `messages` or `isLoading` as props. Instead, it should subscribe directly to the `useChatStore` for all the state it requires.
-
-This ensures that whenever any relevant piece of state (`messages`, `isLoading`, `isStreaming`, `currentStatus`) is updated in the store, `MessageList` will automatically re-render itself with the latest data, regardless of whether its parent component re-renders.
-
-### Proposed Corrected Data Flow
-
-```mermaid
-graph TD
-    subgraph "Frontend"
-        subgraph "State (useChatStore)"
-            A[messages]
-            B[isLoading]
-            C[isStreaming]
-            D[currentStatus]
-        end
-
-        subgraph "Components"
-            CI(ChatInterface)
-            ML(MessageList)
-            SD(StatusDisplay)
-        end
-
-        A --> ML
-        B --> ML
-        C --> ML
-        D --> ML
-
-        CI -- "No more props!" --> ML
-        ML --> SD
-    end
-
-    subgraph "Backend"
-        API(API Endpoint /api/search)
-    end
-
-    CI -- "API Call via useChatApi" --> API
-    API -- "SSE Events" --> A & B & C & D
-
-    style ML fill:#9cf,stroke:#333,stroke-width:2px
-    style A fill:#9cf,stroke:#333,stroke-width:2px
-    style B fill:#9cf,stroke:#333,stroke-width:2px
-    style C fill:#9cf,stroke:#333,stroke-width:2px
-    style D fill:#9cf,stroke:#333,stroke-width:2px
-
-    note for ML "MessageList is now fully reactive to all required state changes."
-```
-
-## 3. Implementation Plan
-
-To implement this corrected architecture, the following changes are required:
-
-1.  **Modify `MessageList.tsx`**:
-    *   Remove `messages` and `isLoading` from `MessageListProps`.
-    *   Get `messages` and `isLoading` directly from the `useChatStore` hook.
-
-2.  **Modify `ChatInterface.tsx`**:
-    *   Remove the `messages` and `isLoading` props being passed to the `MessageList` component.
-
-This is a small but critical architectural change that will make the UI robust and reactive.
+-   **[ ] Step 1: Set up Azure Account & Resources**:
+    -   Create a free Azure account if one does not exist.
+    -   Create a new "Speech service" resource in the Azure portal.
+    -   Securely store the API key and region information in our application's configuration.
+-   **[ ] Step 2: Implement Voice Enrollment Workflow**:
+    -   Create a simple UI or a script that allows an administrator to upload a short audio file (15-30 seconds of clear speech) for each known speaker.
+    -   Use the Azure Speech SDK to create a unique voice profile for each speaker from their audio sample.
+    -   Store the mapping between our internal user/speaker ID and the Azure-generated `profileId` in our database.
+-   **[ ] Step 3: Integrate into Transcription Pipeline**:
+    -   Modify the transcription process to call the Azure batch transcription API with the list of enrolled `profileId`s.
+    -   The API will return a transcript with identified speakers.
+    -   Save this enriched transcript to the database.

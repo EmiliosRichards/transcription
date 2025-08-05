@@ -1,0 +1,65 @@
+[0000.00 -> 0003.00]  Rosenberg in Bad Rieburg, hoffen Sie auf einen guten Tag.
+[0003.00 -> 0006.00]  Guten Tag, Timo Neumann von MedLytics rufe ich an.
+[0006.00 -> 0010.00]  Ich wünsche Ihnen das Chefarztsekretariat der Inneren Medizin, wenn Sie haben.
+[0010.00 -> 0013.00]  Ja, ich versuche es mal eben, einen kleinen Moment.
+[0013.00 -> 0014.00]  Dankeschön.
+[0023.00 -> 0027.00]  Ja, grüß Sie, Timo Neumann ist mein Name von MedLytics.
+[0027.00 -> 0030.00]  Bin ich da jetzt im Chefarztsekretariat der Inneren Medizin?
+[0030.00 -> 0031.00]  Ja, das ist richtig.
+[0031.00 -> 0034.00]  Ja, prima, weil ich habe folgendes Anliegen.
+[0034.00 -> 0038.00]  Wir haben also ein KI-gestütztes digitales Frühwarnsystem entwickelt,
+[0038.00 -> 0042.00]  das bei Patienten, die sich im stationären Aufenthalt befinden,
+[0042.00 -> 0045.00]  frühzeitige Komplikationen erkennt in vier Bereichen.
+[0045.00 -> 0050.00]  Und zwar wären das akutes Nierenversagen, Sepsis, Deliriummangelernährung.
+[0050.00 -> 0053.00]  Ich muss Sie mal einmal jetzt gerade unterbrechen.
+[0053.00 -> 0056.00]  Also wir sind schon seit zwei Stunden eigentlich nicht mehr hier.
+[0056.00 -> 0058.00]  Ja, ich habe es auch gewundert.
+[0058.00 -> 0062.00]  Wir sind gerade durchgestellt worden und das ist dann auch Thema der EDV.
+[0062.00 -> 0066.00]  Also die bündeln diese ganzen Angebote, die wir jetzt hier einflattern
+[0066.00 -> 0069.00]  und suchen dann für uns irgendwann mal das Beste aus.
+[0069.00 -> 0073.00]  Ich kann Ihnen aber da schon Zahn ziehen, weil wir sind ein DRV-gesteuertes Haus
+[0073.00 -> 0077.00]  und wenn wird sowas überhaupt über Münster implementiert?
+[0077.00 -> 0079.00]  Also die Meinung des Chefarztes...
+[0079.00 -> 0082.00]  Also Sie müssen sich dann vielleicht besser an DRV Münster wenden,
+[0082.00 -> 0085.00]  weil wir haben ja mehrere Reha-Einrichtungen.
+[0085.00 -> 0087.00]  Also wenn wird das zentral gesteuert?
+[0087.00 -> 0089.00]  Okay, gut, dann machen wir das auch so.
+[0089.00 -> 0092.00]  Das ist für Sie vielleicht auch einfacher.
+[0092.00 -> 0097.00]  Ja, das Problem ist, bei der Verwaltung, die suchen sich da irgendwas raus,
+[0097.00 -> 0101.00]  wie Sie selber sagen, nur die Chefärzte, die müssen damit arbeiten.
+[0101.00 -> 0104.00]  Ja, aber die stimmen das ja wiederum mit uns ab.
+[0104.00 -> 0106.00]  Also das geht hier kreuz und quer, diese ganze Thematik.
+[0106.00 -> 0108.00]  Und wir können ja jetzt nicht alle anfangen.
+[0108.00 -> 0112.00]  Und ich sage, letztendlich entscheidet das sowieso das DRV-Haus in Münster,
+[0112.00 -> 0117.00]  was dann für die Kliniken implementiert wird, unter Absprache natürlich mit den Ärzten.
+[0117.00 -> 0120.00]  Genau, und mein Anliegen war, deshalb habe ich auch angerufen,
+[0120.00 -> 0125.00]  wir haben hier Unterlagen zusammengestellt für die ärztliche Leitung, für die Innere.
+[0125.00 -> 0128.00]  Und wir schicken das dann postalisch raus.
+[0128.00 -> 0132.00]  Das geht nicht nur um das Patientenwohl, es geht auch um die ganzen Erlöse,
+[0132.00 -> 0134.00]  wo die Systeme nicht greifen.
+[0134.00 -> 0137.00]  Zum Beispiel Delhi ist so eine Grauzone.
+[0137.00 -> 0141.00]  Da werden sehr viele Erlöse liegen gelassen, im sechsstelligen Bereich.
+[0141.00 -> 0144.00]  Das ist alles in dem Report vermerkt.
+[0144.00 -> 0147.00]  Für den Chefarzt wäre das eventuell ein gutes Argument zu sagen,
+[0147.00 -> 0149.00]  wenn es wieder heißt, keine Gelder da.
+[0149.00 -> 0153.00]  Zu sagen, okay, hier liegen aber die Erlöse, die ihr liegen lasst.
+[0153.00 -> 0157.00]  Wie gesagt, Sie können das gerne, aber wir werden das hier sicherlich nicht entscheiden.
+[0157.00 -> 0160.00]  Nein, um Gottes Willen, darum geht es uns gar nicht, dass wir das entscheiden.
+[0160.00 -> 0163.00]  Es geht nur darum, dass wir das mal sehen, der Chefarzt zumindest.
+[0163.00 -> 0166.00]  Und das mal begutachtet, weil wir stellen es dann auch vor.
+[0166.00 -> 0170.00]  Übrigens, da steht auch drin, dass wir eine Potenzialanalyse durchführen können,
+[0170.00 -> 0173.00]  bis auf die Einzelfallebene, kostenfrei.
+[0173.00 -> 0176.00]  Aber ich sage ja, da geht es wieder um Datenschutzthemen.
+[0176.00 -> 0179.00]  Nein, das ist alles abgesegnet, weil wir sind ja nicht neu.
+[0179.00 -> 0182.00]  Von wem, von unserem DRV-Haus?
+[0182.00 -> 0184.00]  Nein, gesetzlich.
+[0184.00 -> 0188.00]  Ja, deswegen sage ich, Daten laufen nur, weil das läuft bei uns alles zentral zusammen.
+[0188.00 -> 0190.00]  Also, okay.
+[0190.00 -> 0193.00]  Deswegen, wenn dann da besser auch erstmal mit der EDV sprechen,
+[0193.00 -> 0198.00]  das macht ja alles so, wenn die Wünsche hier, die sind hier nämlich teilweise schon gestellt.
+[0198.00 -> 0203.00]  Also, das ist ein Hin und Her, ein Beispiel, was wir hier auch nicht auffangen wollen.
+[0203.00 -> 0208.00]  Da müssen wir eher unsere Energie, da sind wir jetzt gerade bei ärztlicherseits,
+[0208.00 -> 0213.00]  erstmal in die Patienten stecken, bis alle anderen Instanzen das dann entschieden haben.
+[0213.00 -> 0215.00]  Okay, gut.
+[0215.00 -> 0217.00]  Ja, Dankeschön.
+[0217.00 -> 0219.00]  Tschüss Wochenende, tschüss.

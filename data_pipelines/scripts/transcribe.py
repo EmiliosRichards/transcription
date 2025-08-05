@@ -9,7 +9,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from dotenv import load_dotenv
 from .mistral_transcribe import transcribe_with_mistral
+from .pipeline.providers import openai_api
 from data_pipelines import config
+from . import post_process
 
 def parse_range(range_str):
     """Parses a range string (e.g., '5', '-5', '5-', '10-15') and returns a slice object."""
@@ -176,7 +178,8 @@ def main():
     
     parser = argparse.ArgumentParser(description="Transcribe and diarise audio files.")
     # Existing arguments
-    parser.add_argument("-r", "--range", type=str, default=None, help="Range of files to process.")
+    parser.add_argument("-r", "--range", type=str, default=None, help="Range of files to process from a directory.")
+    parser.add_argument("-f", "--file", type=str, default=None, help="Path to a single audio file to process.")
     parser.add_argument("-m", "--model", type=str, default="large-v3", help="Whisper model to use.")
     parser.add_argument("--language", type=str, default="de", help="Language of the audio.")
     # New arguments
@@ -190,12 +193,11 @@ def main():
     parser.add_argument("--recognition_threshold", type=float, default=0.7, help="Confidence threshold for speaker recognition.")
     parser.add_argument("--post_process", action="store_true", help="Enable post-processing of transcriptions.")
     parser.add_argument("--audio_source", type=str, default="unprocessed", help="Specify the audio source directory (e.g., 'unprocessed' or 'testing/duygu mp3 calls').")
-    parser.add_argument("--transcription_provider", type=str, default="whisperx", help="Choose the transcription provider: 'whisperx' or 'mistral'.")
+    parser.add_argument("--transcription_provider", type=str, default="whisperx", help="Choose the transcription provider: 'whisperx', 'mistral', or 'openai'.")
     args = parser.parse_args()
 
     load_dotenv()
 
-    audio_dir = os.path.join(config.AUDIO_DIR, args.audio_source)
     output_dir = config.TRANSCRIPTIONS_DIR
     temp_dir = config.TEMP_DIR
     os.makedirs(output_dir, exist_ok=True)
@@ -203,12 +205,23 @@ def main():
 
     speaker_profiles = load_speaker_profiles() if args.recognize_speakers else None
 
-    all_files = sorted([f for f in os.listdir(audio_dir) if f.endswith(".mp3")])
-    file_slice = parse_range(args.range)
-    files_to_process = all_files[file_slice]
+    files_to_process = []
+    if args.file:
+        if not os.path.exists(args.file):
+            print(f"Error: File not found at {args.file}")
+            return
+        files_to_process.append(args.file)
+    else:
+        audio_dir = os.path.join(config.AUDIO_DIR, args.audio_source)
+        if not os.path.isdir(audio_dir):
+            print(f"Error: Audio source directory not found at {audio_dir}")
+            return
+        all_files = sorted([os.path.join(audio_dir, f) for f in os.listdir(audio_dir) if f.endswith(".mp3")])
+        file_slice = parse_range(args.range)
+        files_to_process = all_files[file_slice]
 
-    for filename in files_to_process:
-        input_path = os.path.join(audio_dir, filename)
+    for input_path in files_to_process:
+        filename = os.path.basename(input_path)
         processed_path = input_path
 
         if args.preprocess:
@@ -228,6 +241,13 @@ def main():
             output_path = os.path.join(config.MISTRAL_TRANSCRIPTIONS_DIR, output_filename)
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(result)
+        elif args.transcription_provider == "openai":
+            result = openai_api.transcribe(processed_path)
+            output_filename = os.path.splitext(filename)[0] + ".txt"
+            output_path = os.path.join(config.OPENAI_TRANSCRIPTIONS_DIR, output_filename)
+            os.makedirs(config.OPENAI_TRANSCRIPTIONS_DIR, exist_ok=True)
+            with open(output_path, "w", encoding="utf-8") as f:
+                f.write(result)
         else:
             result = transcribe_and_diarise(processed_path, args, speaker_profiles)
             output_filename = os.path.splitext(filename)[0] + ".txt"
@@ -238,15 +258,10 @@ def main():
             print(f"Post-processing {output_path}...")
             post_processed_output_path = os.path.splitext(output_path)[0] + ".json"
             try:
-                subprocess.run(
-                    ["python", "scripts/post_process.py", output_path, post_processed_output_path],
-                    check=True,
-                    capture_output=True,
-                    text=True
-                )
+                post_process.post_process(output_path, post_processed_output_path)
                 print(f"Post-processing complete: {post_processed_output_path}")
-            except subprocess.CalledProcessError as e:
-                print(f"Error during post-processing: {e.stderr}")
+            except Exception as e:
+                print(f"Error during post-processing: {e}")
 
 
         if args.preprocess and processed_path and os.path.exists(processed_path):

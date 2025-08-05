@@ -1,10 +1,14 @@
 from typing import Optional, List, Dict, Any
+import logging
 import openai
 import instructor
 from app.config import settings
 
+logger = logging.getLogger(__name__)
+
 # Patch the client with instructor
-client = instructor.patch(openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY))
+async_client = instructor.patch(openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY))
+client = instructor.patch(openai.OpenAI(api_key=settings.OPENAI_API_KEY))
 
 # --- System Prompts ---
 CHITCHAT_SYSTEM_PROMPT = """
@@ -30,15 +34,16 @@ async def get_structured_response(prompt: str, response_model: Any) -> Any:
     based on the provided Pydantic model.
     """
     try:
-        response = await client.chat.completions.create(
+        response = await async_client.chat.completions.create(
             model=settings.MAIN_LLM_MODEL,
             messages=[{"role": "user", "content": prompt}], # type: ignore
             response_model=response_model,
             temperature=0.0,
         )
+        logger.info(f"LLM structured response received: {response.model_dump_json(indent=2)}")
         return response
     except Exception as e:
-        print(f"An error occurred while communicating with the OpenAI API: {e}")
+        logger.error(f"An error occurred in get_structured_response: {e}", exc_info=True)
         return None
 
 
@@ -55,15 +60,16 @@ async def get_llm_response(prompt: str, is_chitchat: bool = False, history: Opti
     messages.append({"role": "user", "content": prompt})
 
     try:
-        response = await client.chat.completions.create(
+        response = await async_client.chat.completions.create(
             model=settings.MAIN_LLM_MODEL,
             messages=messages, # type: ignore
             temperature=0.7,
             max_tokens=1024,
         )
+        logger.info(f"LLM response received: {response.choices[0].message.content}")
         return response.choices[0].message.content or "No response from the model."
     except Exception as e:
-        print(f"An error occurred while communicating with the OpenAI API: {e}")
+        logger.error(f"An error occurred in get_llm_response: {e}", exc_info=True)
         return "Sorry, I encountered an error while generating a response."
 
 async def get_llm_response_stream(prompt: str, is_chitchat: bool = False, history: Optional[List[Dict[str, Any]]] = None):
@@ -79,7 +85,7 @@ async def get_llm_response_stream(prompt: str, is_chitchat: bool = False, histor
     messages.append({"role": "user", "content": prompt})
 
     try:
-        stream = await client.chat.completions.create(
+        stream = await async_client.chat.completions.create(
             model=settings.MAIN_LLM_MODEL,
             messages=messages, # type: ignore
             temperature=0.7,
@@ -87,9 +93,34 @@ async def get_llm_response_stream(prompt: str, is_chitchat: bool = False, histor
             stream=True,
         )
         async for chunk in stream:
+            logger.info(f"LLM stream chunk received: {chunk.model_dump_json()}")
             content = chunk.choices[0].delta.content
             if content:
                 yield content
     except Exception as e:
-        print(f"An error occurred while communicating with the OpenAI API: {e}")
+        logger.error(f"An error occurred in get_llm_response_stream: {e}", exc_info=True)
         yield "Sorry, I encountered an error while generating a response."
+
+def get_llm_response_sync(prompt: str, is_chitchat: bool = False, history: Optional[List[Dict[str, Any]]] = None) -> str:
+    """
+    Synchronous version of get_llm_response.
+    """
+    system_prompt = CHITCHAT_SYSTEM_PROMPT if is_chitchat else RAG_SYSTEM_PROMPT
+    
+    messages = [{"role": "system", "content": system_prompt}]
+    if history:
+        messages.extend(history)
+    messages.append({"role": "user", "content": prompt})
+
+    try:
+        response = client.chat.completions.create(
+            model=settings.MAIN_LLM_MODEL,
+            messages=messages, # type: ignore
+            temperature=0.7,
+            max_tokens=1024,
+        )
+        logger.info(f"LLM sync response received: {response.choices[0].message.content}")
+        return response.choices[0].message.content or "No response from the model."
+    except Exception as e:
+        logger.error(f"An error occurred in get_llm_response_sync: {e}", exc_info=True)
+        return "Sorry, I encountered an error while generating a response."

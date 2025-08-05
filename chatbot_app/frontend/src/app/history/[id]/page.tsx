@@ -28,32 +28,34 @@ interface TranscriptionData {
 export default function TranscriptionViewerPage() {
   const params = useParams();
   const router = useRouter();
-  const id = params.id;
+  const id = params.id as string;
 
   const [data, setData] = useState<TranscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState<string | null>(null);
+  const [processingProgress, setProcessingProgress] = useState(0);
+
+  async function fetchTranscription() {
+    if (!id) return;
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/transcriptions/${id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch transcription');
+      }
+      const fetchedData = await response.json();
+      setData(fetchedData);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    if (id) {
-      async function fetchTranscription() {
-        try {
-          setLoading(true);
-          const response = await fetch(`/api/transcriptions/${id}`);
-          if (!response.ok) {
-            throw new Error('Failed to fetch transcription');
-          }
-          const fetchedData = await response.json();
-          setData(fetchedData);
-        } catch (err: any) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      }
-
-      fetchTranscription();
-    }
+    fetchTranscription();
   }, [id]);
 
   const finalTranscript = data?.corrected_transcription || data?.processed_transcription;
@@ -73,12 +75,82 @@ export default function TranscriptionViewerPage() {
     }
   }
 
+  async function handleProcess() {
+    if (!id) return;
+    setIsProcessing(true);
+    setProcessingStatus("Starting post-processing...");
+    setError(null);
+
+    try {
+      const response = await fetch('/api/post-process-transcription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcription_id: parseInt(id) }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to start processing task');
+      }
+
+      const { task_id } = await response.json();
+
+      // Poll for status
+      const interval = setInterval(async () => {
+        try {
+          const statusResponse = await fetch(`/api/transcribe/status/${task_id}`);
+          if (!statusResponse.ok) {
+            // If the task is not found, it might have been cleaned up.
+            // We assume it's done and stop polling.
+            if (statusResponse.status === 404) {
+              setProcessingStatus("Task completed and status cleared.");
+              clearInterval(interval);
+              setIsProcessing(false);
+              fetchTranscription(); // Re-fetch data to show the processed transcript
+              return;
+            }
+            throw new Error('Failed to get task status');
+          }
+
+          const statusData = await statusResponse.json();
+          setProcessingStatus(statusData.message);
+          setProcessingProgress(statusData.progress);
+
+          if (statusData.status === 'SUCCESS') {
+            clearInterval(interval);
+            setIsProcessing(false);
+            setProcessingStatus("Processing complete!");
+            fetchTranscription(); // Re-fetch data
+          } else if (statusData.status === 'ERROR') {
+            clearInterval(interval);
+            setIsProcessing(false);
+            setError(statusData.result || 'An unknown error occurred during processing.');
+          }
+        } catch (pollError: any) {
+          clearInterval(interval);
+          setIsProcessing(false);
+          setError(pollError.message);
+        }
+      }, 2000);
+
+    } catch (err: any) {
+      setIsProcessing(false);
+      setError(err.message);
+    }
+  }
+
   return (
     <div className="container mx-auto p-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Transcription Details (ID: {id})</CardTitle>
           <div className="flex items-center space-x-2">
+            {data?.raw_transcription && !finalTranscript && !isProcessing && (
+              <Button onClick={handleProcess}>Process Transcription</Button>
+            )}
+            {finalTranscript && !isProcessing && (
+              <Button onClick={handleProcess} variant="secondary">Re-process Transcript</Button>
+            )}
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive">Delete</Button>
@@ -105,6 +177,14 @@ export default function TranscriptionViewerPage() {
         <CardContent>
           {loading && <p>Loading...</p>}
           {error && <p className="text-red-500">Error: {error}</p>}
+          {isProcessing && (
+            <div className="my-4">
+              <p>{processingStatus}</p>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
+                <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${processingProgress}%` }}></div>
+              </div>
+            </div>
+          )}
           {data && (
             <Tabs defaultValue="raw" className="w-full">
               <TabsList>

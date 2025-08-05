@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { Progress } from "@/components/ui/progress";
 import { useTranscribeStore } from "@/lib/stores/useTranscribeStore";
 import { useTranscribeApi } from "@/lib/hooks/useTranscribeApi";
 import { FileUpload } from "@/components/transcribe/FileUpload";
@@ -19,9 +20,13 @@ export default function TranscribePage() {
     url,
     transcription,
     processedTranscription,
+    audioUrl,
     isLoading,
     isProcessing,
     error,
+    progress,
+    progressMessage,
+    estimatedTime,
     setFile,
     setUrl,
   } = useTranscribeStore();
@@ -55,12 +60,23 @@ export default function TranscribePage() {
           <CardContent className="flex flex-col gap-6">
             <FileUpload file={file} onFileChange={setFile} />
             <UrlInput url={url} onUrlChange={setUrl} />
-            <div className="mt-6 flex justify-center">
-              <Button onClick={handleSubmit} disabled={isLoading || (!file && !url)}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Transcribing..." : "Transcribe"}
-              </Button>
-            </div>
+            {isLoading ? (
+              <div className="flex flex-col items-center gap-2">
+                 <Progress value={progress} className="w-full" />
+                 <p className="text-sm text-muted-foreground">{progressMessage}</p>
+                 {estimatedTime && (
+                   <p className="text-xs text-muted-foreground">
+                     (Estimated time: ~{Math.ceil(estimatedTime / 60)} minutes)
+                   </p>
+                 )}
+               </div>
+            ) : (
+              <div className="mt-6 flex justify-center">
+                <Button onClick={handleSubmit} disabled={!file && !url}>
+                  Transcribe
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
         <div className="w-full max-w-4xl mt-4 text-center">
@@ -74,6 +90,9 @@ export default function TranscribePage() {
             processedTranscription={processedTranscription}
             isProcessing={isProcessing}
             onPostProcess={handlePostProcess}
+            progress={progress}
+            progressMessage={progressMessage}
+            audioUrl={audioUrl}
           />
         </div>
         <div className="h-96" />

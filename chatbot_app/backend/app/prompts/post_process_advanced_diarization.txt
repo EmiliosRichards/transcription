@@ -15,6 +15,8 @@ When dialogue explicitly references "acquiring new customers," "collaboration," 
 
 Use these insights to make accurate inferences and adjustments when assigning speaker labels, especially if transcription errors or conversational corrections occur.
 
+Some transcripts may be from longer meetings where a ManuAv agent or salesperson explains the business model in detail to a potential client. In these scenarios, the agent will typically dominate the conversation by explaining services, while the client (decision-maker or other) will interject with questions or feedback. Conversely, in some calls, the potential client or decision-maker might explain their own business at length to explore how a collaboration with ManuAv could be mutually beneficial.
+
 ### Conversational Dynamics and Common Scenarios:
 
 These transcripts are from outbound business calls conducted by our call center. Typically, our agents (caller) represent either our own company (ManuAv) or one of our customers, contacting recipients to offer or discuss services aimed at acquiring new customers or establishing collaboration.
@@ -49,6 +51,7 @@ When assigning speaker labels, carefully analyze linguistic cues, tone, and conv
         *   **[DECISION_MAKER]:** The target of the call, the person with authority to make a decision (e.g., Frau Groß, a chief physician).
         *   **[OTHER]:** Any other participant who doesn't fit the above roles, or an automated system (e.g., a voicemail prompt).
     *   Ensure the same speaker consistently has the same label throughout the conversation.
+    *   The input is provided as timestamped segments of speech, line by line. As you process each line, assess whether the speaker is a representative of ManuAv/Berivo or another party. Decide if the line is a continuation from the previous speaker or a switch to a different speaker, and assign the appropriate role label.
 
 3.  **Output Format (STRICT JSON Structure):**
     Return only a single JSON object with EXACTLY one key:
@@ -67,7 +70,35 @@ When assigning speaker labels, carefully analyze linguistic cues, tone, and conv
     *   If unclear, ambiguous, or mistyped names appear, intelligently correct them by selecting the most probable, relevant, or common name given conversational context.
 
 ### EXAMPLE INPUT (without speaker labels):
-Danke schön, guten Tag, mein Name ist Mandy Klein, ich melde mich von der Firma Metrotix. Ich hätte gerne die Frau Nina Groß gesprochen. Gerne, ich verbinde Sie. Danke. Gerne. Danke, Josephs Hospital Rheingau Engel, guten Tag. Ja, hallo, einen wunderschönen guten Tag, mein Name ist Mandy Klein von Metrotix. Ich hätte gerne die Frau Nina Groß gesprochen. Welche Firma war das? Metrotix. Kleinen Moment gerade, ja? Danke. Firma Metrotix? Metrotix? Groß, guten Morgen. Ja, hallo, einen wunderschönen guten Morgen, Frau Groß. Mein Name ist Mandy Klein von der Firma Metrotix. Frau Groß, es ging um Folgendes. Sie hatten Ende Juni mit meinem Kollegen, mit dem Herrn Preuss, gesprochen gehabt. Da ging es ja um das Thema, dass wir ein KI-gestütztes digitales Frühwarnsystem haben. Frühwarnsystem, genau, ja. Genau, das hat er Ihnen ja postalisch rausgeschickt. Ist das jetzt angekommen? Das ist angekommen, das habe ich dem Chef auch vorgelegt. Und er wollte es sich angucken, er hat aber Urlaub. Er hat Urlaub, wann kommt er denn zu? Er ist also die Woche gar nicht im Haus. Er ist nächste Woche wieder da, aber dann wird Minimum nochmal eine Woche vergehen, bis er dazu kommt. Na, kein Problem, dann würde ich mich einfach Anfang August nochmal melden. Genau, das ist ein guter Plan. Ja, mach mal. Danke Ihnen. Ja, bitte, tschüss. Vielen Dank noch, tschüss.
+[0000.12 -> 0004.82] Danke schön, guten Tag, mein Name ist Mandy Klein, ich melde mich von der Firma Metrotix.
+[0004.95 -> 0006.51] Ich hätte gerne die Frau Nina Groß gesprochen.
+[0007.01 -> 0008.22] Gerne, ich verbinde Sie.
+[0008.53 -> 0008.91] Danke.
+[0009.12 -> 0009.55] Gerne.
+[0010.21 -> 0012.45] Danke, Josephs Hospital Rheingau Engel, guten Tag.
+[0012.88 -> 0016.12] Ja, hallo, einen wunderschönen guten Tag, mein Name ist Mandy Klein von Metrotix.
+[0016.21 -> 0017.88] Ich hätte gerne die Frau Nina Groß gesprochen.
+[0018.32 -> 0019.45] Welche Firma war das?
+[0019.71 -> 0020.11] Metrotix.
+[0020.55 -> 0021.88] Kleinen Moment gerade, ja?
+[0022.12 -> 0022.53] Danke.
+[0022.91 -> 0023.67] Firma Metrotix?
+[0023.82 -> 0024.22] Metrotix?
+[0024.91 -> 0026.01] Groß, guten Morgen.
+[0026.35 -> 0033.81] Ja, hallo, einen wunderschönen guten Morgen, Frau Groß. Mein Name ist Mandy Klein von der Firma Metrotix. Frau Groß, es ging um Folgendes. Sie hatten Ende Juni mit meinem Kollegen, mit dem Herrn Preuss, gesprochen gehabt.
+[0033.95 -> 0036.55] Da ging es ja um das Thema, dass wir ein KI-gestütztes digitales Frühwarnsystem haben.
+[0036.99 -> 0038.34] Frühwarnsystem, genau, ja.
+[0038.67 -> 0040.21] Genau, das hat er Ihnen ja postalisch rausgeschickt. Ist das jetzt angekommen?
+[0041.53 -> 0045.01] Das ist angekommen, das habe ich dem Chef auch vorgelegt. Und er wollte es sich angucken, er hat aber Urlaub.
+[0045.41 -> 0046.82] Er hat Urlaub, wann kommt er denn zu?
+[0047.11 -> 0048.88] Er ist also die Woche gar nicht im Haus.
+[0049.01 -> 0052.99] Er ist nächste Woche wieder da, aber dann wird Minimum nochmal eine Woche vergehen, bis er dazu kommt.
+[0053.45 -> 0055.71] Na, kein Problem, dann würde ich mich einfach Anfang August nochmal melden.
+[0056.12 -> 0057.53] Genau, das ist ein guter Plan.
+[0057.81 -> 0058.32] Ja, mach mal.
+[0058.65 -> 0059.21] Danke Ihnen.
+[0059.55 -> 0060.21] Ja, bitte, tschüss.
+[0060.51 -> 0061.45] Vielen Dank noch, tschüss.
 
 ### EXAMPLE OUTPUT:
 ```json

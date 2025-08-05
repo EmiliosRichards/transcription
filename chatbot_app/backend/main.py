@@ -1,5 +1,6 @@
 import uvicorn
 import os
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -7,19 +8,24 @@ from app.api import router as api_router
 from app.services import vector_db
 from app.database import create_db_and_tables
 
+# --- Logging Configuration ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # --- Startup ---
-    print("Application startup...")
-    print("Initializing database and tables...")
+    logger.info("Application startup...")
+    logger.info("Initializing database and tables...")
     await create_db_and_tables()
-    print("Database and tables are ready.")
-    print("Initializing vector database collection...")
+    await create_db_and_tables()
+    logger.info("Database and tables are ready.")
+    logger.info("Initializing vector database collection...")
     vector_db.get_or_create_collection()
-    print("Vector database collection is ready.")
+    logger.info("Vector database collection is ready.")
     yield
     # --- Shutdown ---
-    print("Application shutdown...")
+    logger.info("Application shutdown...")
 
 # Create FastAPI app instance
 app = FastAPI(

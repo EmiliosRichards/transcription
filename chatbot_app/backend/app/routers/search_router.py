@@ -1,11 +1,13 @@
 import logging
-from fastapi import APIRouter, HTTPException, Request, File, UploadFile, Form, Depends, Query
-from fastapi.responses import StreamingResponse
+import time
+from fastapi import APIRouter, HTTPException, Request, File, UploadFile, Form, Depends, Query, BackgroundTasks
+from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, Dict, Any, AsyncGenerator, List, Literal
-from app.services import vector_db, prompt_engine, llm_handler, transcription
+from typing import Optional, Dict, Any, AsyncGenerator, List, Literal, cast
+from app.services import vector_db, prompt_engine, llm_handler, transcription, task_manager, diarization
 import tempfile
 import os
+import shutil
 from app.services.query_agent import QueryAgent
 from app.services.status_manager import status_manager
 import json
@@ -53,7 +55,6 @@ class SearchResponse(BaseModel):
 
 class TranscriptionProcessRequest(BaseModel):
     transcription_id: int
-    transcription: str
 
 class CompanyNameCorrectionRequest(BaseModel):
     transcription_id: int
@@ -100,7 +101,7 @@ async def stream_generator(query: str, db: AsyncSession, session_id: str) -> Asy
         # 2. Deconstruct Query to determine intent
         logger.info("STREAM: Yielding status_update: understanding")
         yield f"event: status_update\ndata: {json.dumps({'status': status_manager.get_message('understanding')})}\n\n"
-        deconstructed_query = await query_agent.deconstruct_query(query, history=history_dicts)
+        deconstructed_query = query_agent.deconstruct_query(query, history=history_dicts)
         logger.info(f"Deconstructed query: '{deconstructed_query.semantic_query}' with intent: {deconstructed_query.intent}")
 
         # 2. Route based on intent
@@ -279,7 +280,7 @@ async def search(
             history = [ChatMessage.model_validate(msg) for msg in db_history_messages]
             history_dicts = [msg.model_dump() for msg in history]
 
-            deconstructed_query = await query_agent.deconstruct_query(query, history=history_dicts)
+            deconstructed_query = query_agent.deconstruct_query(query, history=history_dicts)
             logger.info(f"Deconstructed query: '{deconstructed_query.semantic_query}' with intent: {deconstructed_query.intent}")
 
             llm_response = ""
@@ -350,106 +351,259 @@ async def search(
             logger.error(f"An error occurred during non-streaming search: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@router.post("/transcribe", tags=["Transcription"])
-async def transcribe(file: Optional[UploadFile] = File(None), url: Optional[str] = Form(None), db: AsyncSession = Depends(get_db)):
+def run_transcription_task(
+    task_id: str,
+    audio_path: str,
+    audio_source: str,
+    temp_dir: str
+):
     """
-    Transcribes an audio file from a file upload or a URL and saves the raw
-    transcription to the database.
+    The actual transcription process, designed to be run in the background.
+    This function is synchronous and self-contained. It now saves the
+    timestamped segments as a JSON string in the database.
+    """
+    # --- Define a permanent directory for audio files ---
+    permanent_audio_dir = os.path.join(os.path.dirname(__file__), '..', 'audio_files')
+    os.makedirs(permanent_audio_dir, exist_ok=True)
+    
+    # --- Generate a unique filename to prevent overwrites ---
+    original_filename = os.path.basename(audio_path)
+    _, file_extension = os.path.splitext(original_filename)
+    unique_filename = f"{uuid.uuid4()}{file_extension}"
+    permanent_audio_path = os.path.join(permanent_audio_dir, unique_filename)
+
+    try:
+        # --- Move the audio file to the permanent location ---
+        shutil.copy(audio_path, permanent_audio_path)
+        logger.info(f"Copied audio file to permanent storage: {permanent_audio_path}")
+
+        # This needs its own database session because it runs in a separate thread
+        with database.SessionLocal() as db:
+            logger.info(f"Background task started for task_id: {task_id}")
+            
+            transcription_segments = transcription.transcribe_audio(audio_path, task_id)
+            logger.info(f"Transcription successful for task_id: {task_id}.")
+
+            # Serialize the list of segments into a JSON string for DB storage
+            raw_transcription_json = json.dumps(transcription_segments)
+
+            logger.info(f"Saving transcription to database for task_id: {task_id}...")
+            new_transcription = database.Transcription(
+                audio_source=audio_source,
+                raw_transcription=raw_transcription_json,
+                audio_file_path=permanent_audio_path  # --- Save the permanent path ---
+            )
+            db.add(new_transcription)
+            db.commit()
+            db.refresh(new_transcription)
+            
+            result = {"transcription_segments": transcription_segments, "transcription_id": new_transcription.id}
+            task_manager.set_task_success(task_id, result)
+            logger.info(f"Background task finished successfully for task_id: {task_id}.")
+
+    except Exception as e:
+        logger.error(f"An error occurred during background transcription for task_id {task_id}: {e}", exc_info=True)
+        task_manager.set_task_error(task_id, f"Internal Server Error: {e}")
+    finally:
+        # Clean up the temporary directory
+        try:
+            shutil.rmtree(temp_dir)
+            logger.info(f"Successfully cleaned up temporary directory: {temp_dir}")
+        except Exception as e:
+            logger.error(f"Failed to clean up temporary directory {temp_dir}: {e}", exc_info=True)
+
+@router.post("/transcribe", tags=["Transcription"], status_code=202)
+async def transcribe(
+    background_tasks: BackgroundTasks,
+    file: Optional[UploadFile] = File(None),
+    url: Optional[str] = Form(None)
+):
+    """
+    Starts a transcription task in the background.
     """
     logger.info("Received request to /transcribe")
     if not file and not url:
         logger.error("No file or URL provided.")
         raise HTTPException(status_code=400, detail="Either a file or a URL must be provided.")
 
+    task_id = task_manager.create_task()
     audio_source = file.filename if file and file.filename else url
 
+    if not audio_source:
+        task_manager.set_task_error(task_id, "Could not determine audio source from request.")
+        raise HTTPException(status_code=400, detail="Could not determine audio source from request.")
+
     try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            logger.info(f"Created temporary directory: {temp_dir}")
-            if file and file.filename:
-                temp_path = os.path.join(temp_dir, file.filename)
-                with open(temp_path, "wb") as buffer:
-                    while content := await file.read(1024 * 1024):  # Read in 1MB chunks
-                        buffer.write(content)
-                audio_path = temp_path
-            elif url:
-                audio_path = transcription.download_file(url, temp_dir)
-            else:
-                raise HTTPException(status_code=400, detail="No file or URL provided")
+        # Create a persistent temporary directory that will be cleaned up by the background task
+        temp_dir = tempfile.mkdtemp()
+        logger.info(f"Created temporary directory for task {task_id}: {temp_dir}")
 
-            logger.info("Starting transcription...")
-            transcript_text = transcription.transcribe_audio(audio_path)
-            logger.info("Transcription successful.")
+        if file and file.filename:
+            temp_path = os.path.join(temp_dir, file.filename)
+            task_manager.update_task_status(task_id, "PROCESSING", 2, f"Uploading file: {file.filename}")
+            logger.info(f"Saving uploaded file to: {temp_path}")
+            with open(temp_path, "wb") as buffer:
+                while content := await file.read(1024 * 1024):  # Read in 1MB chunks
+                    buffer.write(content)
+            audio_path = temp_path
+            logger.info(f"File saved successfully for task {task_id}.")
+        elif url:
+            logger.info(f"Downloading file from URL for task {task_id}: {url}")
+            # Note: download_file is synchronous, but should be fast enough.
+            # For very large remote files, this could also be backgrounded.
+            audio_path = transcription.download_file(url, temp_dir, task_id)
+            logger.info(f"File downloaded successfully to: {audio_path}")
+        else:
+            # This case is already checked, but as a safeguard:
+            raise HTTPException(status_code=400, detail="No file or URL provided")
 
-            # Save to database
-            new_transcription = database.Transcription(
-                audio_source=audio_source,
-                raw_transcription=transcript_text
-            )
-            db.add(new_transcription)
-            await db.commit()
-            await db.refresh(new_transcription)
-            
-            return {"transcription": transcript_text, "transcription_id": new_transcription.id}
+        background_tasks.add_task(
+            run_transcription_task,
+            task_id=task_id,
+            audio_path=audio_path,
+            audio_source=audio_source,
+            temp_dir=temp_dir
+        )
+
+        return {"task_id": task_id, "message": "Transcription task started."}
 
     except Exception as e:
-        logger.error(f"An error occurred during transcription: {e}", exc_info=True)
+        logger.error(f"An error occurred starting the transcription task {task_id}: {e}", exc_info=True)
+        task_manager.set_task_error(task_id, f"Failed to start transcription task: {e}")
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
-@router.post("/post-process-transcription", tags=["Transcription"])
-async def post_process_transcription(request: TranscriptionProcessRequest, db: AsyncSession = Depends(get_db)):
+@router.get("/transcribe/status/{task_id}", tags=["Transcription"])
+async def get_transcription_status(task_id: str):
     """
-    Receives a raw transcription and its ID, post-processes it, and saves
-    the processed version to the database.
+    Retrieves the status of a transcription task.
     """
-    logger.info(f"Received request to /post-process-transcription for ID: {request.transcription_id}")
+    logger.info(f"Received status request for task ID: {task_id}")
+    status = task_manager.get_task_status(task_id)
+    if status is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    # The task is no longer removed immediately upon completion to prevent a race
+    # condition where the frontend might poll for status after the task is already
+    # deleted. A more robust solution would involve a TTL or a separate cleanup job.
+    return JSONResponse(content=status)
+
+def run_post_processing_task(task_id: str, transcription_id: int):
+    """
+    The actual post-processing logic, designed to be run in the background.
+    It now deserializes the timestamped segments from the database and passes
+    them to the appropriate processing pipeline.
+    """
+    transcription_segments = []
+    # --- Step 1: Fetch data in a short-lived session ---
     try:
-        # 1. Create the prompt using the new template
-        prompt = prompt_engine.create_prompt_from_template(
-            "post_process_advanced_diarization.txt",
-            {"transcription_text": request.transcription}
-        )
-        logger.info("Generated advanced diarization prompt.")
+        with database.SessionLocal() as db:
+            db_transcription = db.get(database.Transcription, transcription_id)
+            if not db_transcription:
+                raise ValueError(f"Transcription with ID {transcription_id} not found.")
+            
+            raw_json_content = cast(str, db_transcription.raw_transcription)
+            if not raw_json_content:
+                raise ValueError("Transcription has no raw text to process.")
+            
+            transcription_segments = json.loads(raw_json_content)
+            if not isinstance(transcription_segments, list):
+                 raise ValueError("Deserialized transcription is not a list.")
 
-        # 2. Get the response from the LLM
-        llm_response_str = await llm_handler.get_llm_response(prompt)
-        logger.info("Received response from LLM.")
+    except Exception as e:
+        logger.error(f"Failed to fetch and parse transcription for task {task_id}: {e}", exc_info=True)
+        task_manager.set_task_error(task_id, f"Failed to fetch transcription: {e}")
+        return  # Exit if we can't even get the data
 
-        # 3. Parse the JSON response from the LLM
-        try:
+    # --- Step 2: Process transcript based on length ---
+    try:
+        # Reconstruct the full text to check its length
+        full_text_for_length_check = " ".join(seg['text'] for seg in transcription_segments)
+
+        if len(full_text_for_length_check) > 3000:
+            # Use the robust Gemini pipeline for long transcripts, passing the structured segments
+            task_manager.update_task_status(
+                task_id, "PROCESSING", 50, "Transcript is long, using advanced diarization pipeline..."
+            )
+            processed_data = diarization.process_full_transcript(transcription_segments, task_id)
+            full_processed_transcript = processed_data.get("full_transcript")
+            if not full_processed_transcript:
+                raise ValueError("The advanced diarization pipeline did not return a 'full_transcript'.")
+        else:
+            # For shorter transcripts, format the segments and use the OpenAI model.
+            task_manager.update_task_status(
+                task_id, "PROCESSING", 50, "Processing short transcript..."
+            )
+            formatted_transcript = "\n".join(
+                f"[{segment['start']:07.2f} -> {segment['end']:07.2f}] {segment['text']}"
+                for segment in transcription_segments
+            )
+            prompt = prompt_engine.create_prompt_from_template(
+                "post_process_advanced_diarization.txt", {"transcription_text": formatted_transcript}
+            )
+            llm_response_str = llm_handler.get_llm_response_sync(prompt)
+            
+            # --- Save response for debugging ---
+            try:
+                logs_dir = os.path.join(os.path.dirname(__file__), '..', 'llm_logs')
+                os.makedirs(logs_dir, exist_ok=True)
+                log_file_path = os.path.join(logs_dir, f"{task_id}_openai_response.txt")
+                with open(log_file_path, "w", encoding="utf-8") as f:
+                    f.write(llm_response_str)
+                logger.info(f"Saved OpenAI response to {log_file_path}")
+            except Exception as log_e:
+                logger.error(f"Failed to save LLM log file: {log_e}", exc_info=True)
+            # ---
+
             json_start = llm_response_str.find('{')
             json_end = llm_response_str.rfind('}') + 1
-            if json_start == -1 or json_end == 0:
-                raise ValueError("No JSON object found in the LLM response.")
             
-            json_str = llm_response_str[json_start:json_end]
-            response_data = json.loads(json_str)
-            logger.info("Successfully parsed JSON from LLM response.")
-        except (json.JSONDecodeError, ValueError) as e:
-            logger.error(f"Failed to parse JSON from LLM response: {e}")
-            logger.error(f"Raw LLM response was: {llm_response_str}")
-            raise HTTPException(status_code=500, detail="Failed to parse response from the language model.")
-
-        # 4. Return the processed transcript
-        processed_transcript = response_data.get("full_transcript")
-        if not processed_transcript:
-            raise HTTPException(status_code=500, detail="LLM response did not contain 'full_transcript'.")
-
-        # Update database
-        stmt = select(database.Transcription).filter(database.Transcription.id == request.transcription_id)
-        result = await db.execute(stmt)
-        db_transcription = result.scalars().first()
-        if not db_transcription:
-            raise HTTPException(status_code=404, detail="Transcription not found")
-        
-        db_transcription.processed_transcription = processed_transcript
-        await db.commit()
-
-        return {"processed_transcription": processed_transcript}
+            if json_start != -1 and json_end != 0:
+                json_str = llm_response_str[json_start:json_end]
+                response_data = json.loads(json_str)
+                full_processed_transcript = response_data.get("full_transcript")
+                if not full_processed_transcript:
+                    raise ValueError("LLM response did not contain 'full_transcript'.")
+            else:
+                raise ValueError("No JSON object found in the LLM response.")
 
     except Exception as e:
-        logger.error(f"An error occurred during transcription post-processing: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
+        logger.error(f"An error occurred during transcript processing for task {task_id}: {e}", exc_info=True)
+        task_manager.set_task_error(task_id, f"Internal Server Error during processing: {e}")
+        return
+
+    # --- Step 3: Save results in a new short-lived session ---
+    try:
+        with database.SessionLocal() as db:
+            db_transcription = db.get(database.Transcription, transcription_id)
+            if not db_transcription:
+                 raise ValueError(f"Transcription with ID {transcription_id} vanished from DB.")
+            
+            setattr(db_transcription, 'processed_transcription', full_processed_transcript)
+            db.commit()
+
+            result = {"processed_transcription": full_processed_transcript}
+            task_manager.set_task_success(task_id, result)
+            logger.info(f"Background post-processing finished successfully for task_id: {task_id}.")
+
+    except Exception as e:
+        logger.error(f"Failed to save processed transcription for task {task_id}: {e}", exc_info=True)
+        task_manager.set_task_error(task_id, f"Failed to save result: {e}")
+
+@router.post("/post-process-transcription", tags=["Transcription"], status_code=202)
+async def post_process_transcription(request: TranscriptionProcessRequest, background_tasks: BackgroundTasks):
+    """
+    Starts a post-processing task in the background.
+    """
+    logger.info(f"Received request to /post-process-transcription for ID: {request.transcription_id}")
+    task_id = task_manager.create_task()
+    
+    background_tasks.add_task(
+        run_post_processing_task,
+        task_id=task_id,
+        transcription_id=request.transcription_id
+    )
+
+    return {"task_id": task_id, "message": "Post-processing task started."}
 
 @router.post("/correct-company-name", tags=["Transcription"])
 async def correct_company_name(request: CompanyNameCorrectionRequest, db: AsyncSession = Depends(get_db)):

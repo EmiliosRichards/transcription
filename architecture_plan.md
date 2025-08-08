@@ -1,46 +1,119 @@
-# Transcription Pipeline Architecture Plan
+# Transcription Feature Architecture Plan
 
-This document outlines the plan for re-architecting the transcription processing pipeline to handle long-form, complex conversations.
+This document outlines the architectural changes required to fix the transcription feature. The plan is divided into two main sections: Backend Modifications and Frontend Modifications.
 
-## 1. Problem Statement
+## Backend Modifications
 
-The current system fails on long transcripts because:
--   It uses naive character-based chunking, which destroys conversational context.
--   It cannot maintain speaker identity across chunks.
--   The LLM prompts are not sophisticated enough to handle complex, multi-topic conversations.
+The backend requires a new endpoint to check the status of a transcription task. This endpoint will be added to the existing `transcription_router.py` to maintain a clean and organized routing structure.
 
-## 2. Proposed Architecture
+### 1. File to Modify
 
-We will implement a multi-stage processing pipeline:
+- **File:** `chatbot_app/backend/app/routers/transcription_router.py`
 
-1.  **Transcription & Diarization**: Transcribe audio to text with generic speaker labels.
-2.  **Speaker Identification**: Use a dedicated service to replace generic labels with identified speaker names.
-3.  **Intelligent Segmentation**: Use an LLM to segment the transcript by topic.
-4.  **Enriched Chunk Processing**: Process each segment with global and local context.
-5.  **Final Aggregation**: Combine the processed segments into a final, structured document.
+### 2. New Endpoint Design
 
-## 3. Phase 1: Speaker Identification
+A new `GET` endpoint will be added to the router to handle task status polling.
 
-### 3.1. Technology Selection
+- **Route:** `/tasks/{task_id}`
+- **Method:** `GET`
+- **Description:** Retrieves the status of a transcription task by its ID.
 
-**Decision**: We will use **Azure AI Speech** for Speaker Recognition.
+### 3. Implementation Details
 
-**Reasoning**:
--   High accuracy.
--   User-friendly API and SDK.
--   The Voice Profile Enrollment feature is a direct fit for our needs.
+The following code should be added to `transcription_router.py`:
 
-### 3.2. Implementation Steps
+```python
+from app.services import task_manager
 
--   **[ ] Step 1: Set up Azure Account & Resources**:
-    -   Create a free Azure account if one does not exist.
-    -   Create a new "Speech service" resource in the Azure portal.
-    -   Securely store the API key and region information in our application's configuration.
--   **[ ] Step 2: Implement Voice Enrollment Workflow**:
-    -   Create a simple UI or a script that allows an administrator to upload a short audio file (15-30 seconds of clear speech) for each known speaker.
-    -   Use the Azure Speech SDK to create a unique voice profile for each speaker from their audio sample.
-    -   Store the mapping between our internal user/speaker ID and the Azure-generated `profileId` in our database.
--   **[ ] Step 3: Integrate into Transcription Pipeline**:
-    -   Modify the transcription process to call the Azure batch transcription API with the list of enrolled `profileId`s.
-    -   The API will return a transcript with identified speakers.
-    -   Save this enriched transcript to the database.
+class TaskStatus(BaseModel):
+    status: str
+    progress: int
+    message: str
+    result: Optional[Dict[str, Any]] = None
+
+@router.get("/tasks/{task_id}", response_model=TaskStatus, tags=["Transcription"])
+async def get_task_status(task_id: str):
+    """Retrieves the status of a specific transcription task."""
+    status = task_manager.get_task_status(task_id)
+    if status is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return status
+```
+
+### 4. JSON Response Structure
+
+The endpoint will return a JSON object with the following structure:
+
+- **On success:**
+  ```json
+  {
+    "status": "SUCCESS",
+    "progress": 100,
+    "message": "Transcription completed successfully.",
+    "result": {
+      "transcription_id": 123,
+      "raw_segments": [...],
+      "processed_segments": [...]
+    }
+  }
+  ```
+
+- **While processing:**
+  ```json
+  {
+    "status": "PROCESSING",
+    "progress": 50,
+    "message": "Transcription is in progress...",
+    "result": null
+  }
+  ```
+
+- **On error:**
+  ```json
+  {
+    "status": "ERROR",
+    "progress": 0,
+    "message": "An error occurred during transcription.",
+    "result": null
+  }
+  ```
+
+## Frontend Modifications
+
+The frontend API client needs to be updated to use the correct URLs for creating and polling transcription tasks.
+
+### 1. File to Modify
+
+- **File:** `chatbot_app/frontend/src/lib/hooks/useTranscribeApi.ts`
+
+### 2. API Client Corrections
+
+The following changes are required in the `useTranscribeApi.ts` file:
+
+- **`handleSubmit` function:**
+  - The `fetch` request URL on line 92 should be changed from `${backendUrl}/api/transcriptions/transcribe` to `${backendUrl}/transcribe`.
+
+- **`pollTaskStatus` function:**
+  - The `fetch` request URL on line 30 should be changed from `${backendUrl}/api/tasks/${taskId}` to `${backendUrl}/transcribe/tasks/${taskId}`.
+
+### 3. Implementation Details
+
+The following code snippets show the required changes:
+
+**`handleSubmit` function:**
+
+```typescript
+// ...
+const response = await fetch(`${backendUrl}/transcribe`, {
+  method: "POST",
+  body: formData,
+});
+// ...
+```
+
+**`pollTaskStatus` function:**
+
+```typescript
+// ...
+const response = await fetch(`${backendUrl}/transcribe/tasks/${taskId}`);
+// ...

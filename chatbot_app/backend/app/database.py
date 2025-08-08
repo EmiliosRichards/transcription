@@ -1,5 +1,6 @@
 import os
 from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
@@ -39,6 +40,8 @@ class Transcription(Base):
     raw_transcription = Column(Text)
     processed_transcription = Column(Text)
     corrected_transcription = Column(Text, nullable=True)
+    processed_segments = Column(JSON, nullable=True)
+    raw_segments = Column(JSON, nullable=True)
     audio_file_path = Column(String, nullable=False, server_default="")
 
 class ChatLog(Base):

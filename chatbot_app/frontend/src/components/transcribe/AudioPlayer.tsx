@@ -1,43 +1,70 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Rewind, FastForward, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, Rewind, FastForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+import { Slider } from '@/components/ui/slider';
 
 interface AudioPlayerProps {
   src: string;
 }
 
+import { useTranscribeStore } from '@/lib/stores/useTranscribeStore';
+
 export function AudioPlayer({ src }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const { seekToTime, setSeekToTime, currentTime, setCurrentTime } = useTranscribeStore();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isSeeking, setIsSeeking] = useState(false);
   const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [volume, setVolume] = useState(1);
   const [playbackRate, setPlaybackRate] = useState(1);
 
   useEffect(() => {
-    console.log("AudioPlayer mounted or src changed:", src);
     const audio = audioRef.current;
     if (audio) {
       const setAudioData = () => {
-        console.log("Audio data loaded");
         setDuration(audio.duration);
         setCurrentTime(audio.currentTime);
       };
 
-      const setAudioTime = () => setCurrentTime(audio.currentTime);
+      const setAudioTime = () => {
+        if (!isSeeking) {
+          setCurrentTime(audio.currentTime);
+        }
+      };
+
+      const handleAudioEnd = () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+      };
 
       audio.addEventListener('loadeddata', setAudioData);
       audio.addEventListener('timeupdate', setAudioTime);
+      audio.addEventListener('ended', handleAudioEnd);
+
+      // Set initial state in case data is already loaded
+      if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
+        setAudioData();
+      }
 
       return () => {
         audio.removeEventListener('loadeddata', setAudioData);
         audio.removeEventListener('timeupdate', setAudioTime);
+        audio.removeEventListener('ended', handleAudioEnd);
       };
     }
-  }, [src]);
+  }, [src, setCurrentTime]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (seekToTime !== null && audio) {
+      audio.currentTime = seekToTime;
+      if (audio.paused) {
+        audio.play().then(() => setIsPlaying(true));
+      }
+      setSeekToTime(null); // Reset after seeking
+    }
+  }, [seekToTime, setSeekToTime]);
 
   const togglePlayPause = () => {
     const audio = audioRef.current;
@@ -51,13 +78,17 @@ export function AudioPlayer({ src }: AudioPlayerProps) {
     }
   };
 
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleSeek = (value: number[]) => {
+    // Update the UI immediately while dragging
+    setCurrentTime(value[0]);
+  };
+
+  const handleSeekCommit = (value: number[]) => {
     const audio = audioRef.current;
     if (audio) {
-      const seekTime = (e.nativeEvent.offsetX / e.currentTarget.offsetWidth) * duration;
-      audio.currentTime = seekTime;
-      setCurrentTime(seekTime);
+      audio.currentTime = value[0];
     }
+    setIsSeeking(false);
   };
 
   const handlePlaybackRateChange = (rate: number) => {
@@ -68,10 +99,11 @@ export function AudioPlayer({ src }: AudioPlayerProps) {
     }
   };
 
-  const formatTime = (time: number) => {
+  const formatTime = (timeInSeconds: number) => {
+    const time = Math.round(timeInSeconds);
     const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-    return `${minutes}:${seconds}`;
+    const seconds = time % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
   return (
@@ -94,9 +126,16 @@ export function AudioPlayer({ src }: AudioPlayerProps) {
       </div>
       <div className="flex items-center gap-4 mt-2">
         <span>{formatTime(currentTime)}</span>
-        <div className="w-full bg-gray-600 h-2 rounded-full cursor-pointer" onClick={handleSeek}>
-          <Progress value={(currentTime / duration) * 100} className="h-2" />
-        </div>
+        <Slider
+          value={[currentTime]}
+          max={duration || 100}
+          step={1}
+          onValueChange={handleSeek}
+          onValueCommit={handleSeekCommit}
+          onPointerDown={() => setIsSeeking(true)}
+          className="w-full"
+          disabled={!duration}
+        />
         <span>{formatTime(duration)}</span>
       </div>
     </div>

@@ -1,67 +1,80 @@
 "use client";
 
-import { useEffect } from 'react';
-import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { useTranscriptionStore } from '@/lib/stores/useTranscriptionStore';
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useTranscribeStore } from "@/lib/stores/useTranscribeStore";
+import { useTranscribeApi } from "@/lib/hooks/useTranscribeApi";
+import { AudioPlayer } from "@/components/transcribe/AudioPlayer";
+import Link from "next/link";
+import { PlayCircle } from "lucide-react";
+import { TranscriptionItem } from "@/lib/stores/useTranscribeStore";
 
 export default function HistoryPage() {
-  const { transcriptions, setTranscriptions } = useTranscriptionStore();
+  const { history, audioUrl, setAudioUrl } = useTranscribeStore();
+  const { getHistory } = useTranscribeApi();
 
   useEffect(() => {
-    async function fetchTranscriptions() {
-      try {
-        const response = await fetch('/api/transcriptions');
-        if (!response.ok) {
-          throw new Error('Failed to fetch transcriptions');
-        }
-        const data = await response.json();
-        setTranscriptions(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchTranscriptions();
-  }, [setTranscriptions]);
+    getHistory();
+  }, [getHistory]);
+
+  const handlePlayAudio = (transcriptionId: number) => {
+    const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+    setAudioUrl(`${backendUrl}/api/audio/${transcriptionId}`);
+  };
 
   return (
-    <div className="container mx-auto p-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Transcription History</CardTitle>
+    <div className="p-6 min-h-screen flex flex-col items-center">
+      <div className="w-full max-w-6xl">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl text-gray-800 dark:text-white">Transcription History</h1>
           <Link href="/transcribe">
-            <Button variant="outline">Back to Transcribe</Button>
+            <Button>New Transcription</Button>
           </Link>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Transcription ID</TableHead>
-                <TableHead>Audio Source</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {transcriptions.map((transcription) => (
-                <TableRow key={transcription.id}>
-                  <TableCell>{transcription.id}</TableCell>
-                  <TableCell className="max-w-xs truncate">{transcription.audio_source || 'N/A'}</TableCell>
-                  <TableCell>{new Date(transcription.created_at).toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Link href={`/history/${transcription.id}`}>
-                      <Button variant="link">View Details</Button>
-                    </Link>
-                  </TableCell>
+        </div>
+        {audioUrl && (
+          <div className="mb-6">
+            <AudioPlayer src={audioUrl} />
+          </div>
+        )}
+        <Card>
+          <CardHeader>
+            <CardTitle>Past Transcriptions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Source</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {history.map((item: TranscriptionItem) => (
+                  <TableRow key={item.id}>
+                    <TableCell>{item.id}</TableCell>
+                    <TableCell className="max-w-xs truncate">{item.audio_source}</TableCell>
+                    <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
+                    <TableCell className="text-right">
+                      {item.audio_file_path && (
+                        <Button variant="ghost" size="icon" onClick={() => handlePlayAudio(item.id)}>
+                          <PlayCircle className="h-5 w-5" />
+                        </Button>
+                      )}
+                      <Link href={`/transcribe/${item.id}`}>
+                        <Button variant="outline" size="sm">View Details</Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

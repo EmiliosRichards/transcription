@@ -27,15 +27,31 @@ def get_task_status(task_id: str) -> Dict[str, Any] | None:
     """Retrieves the status of a specific task."""
     return _tasks.get(task_id)
 
-def update_task_status(task_id: str, status: Status, progress: int, message: str, estimated_time: Optional[int] = None):
-    """Updates the status, progress, and message of a task."""
+def update_task_status(
+    task_id: str,
+    status: Status,
+    message: str,
+    result: Optional[Any] = None,
+    estimated_time: Optional[int] = None,
+    progress: Optional[int] = None,
+):
+    """Updates the status, message, and optionally result/progress of a task.
+
+    If ``result`` is None, preserves the existing result to avoid erasing
+    previously emitted data (e.g., RAW_TRANSCRIPT_READY payload).
+    """
     if task_id in _tasks:
         _tasks[task_id]["status"] = status
-        _tasks[task_id]["progress"] = progress
         _tasks[task_id]["message"] = message
+        if result is not None:
+            _tasks[task_id]["result"] = result
+        if progress is not None:
+            _tasks[task_id]["progress"] = progress
         if estimated_time is not None:
             _tasks[task_id]["estimated_time"] = estimated_time
-        logger.debug(f"Task {task_id} updated: Status={status}, Progress={progress}%, Message='{message}'")
+        logger.debug(
+            f"Task {task_id} updated: Status={status}, Message='{message}', Progress={_tasks[task_id].get('progress')}"
+        )
     else:
         logger.warning(f"Attempted to update non-existent task with ID: {task_id}")
 

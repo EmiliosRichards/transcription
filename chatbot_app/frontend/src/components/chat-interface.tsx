@@ -35,6 +35,7 @@ export function ChatInterface({ onNewChat }: ChatInterfaceProps) {
   const [selectedTranscript, setSelectedTranscript] = useState<SourceDocument | null>(null);
   const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const isEmpty = messages.length === 0;
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -61,6 +62,38 @@ export function ChatInterface({ onNewChat }: ChatInterfaceProps) {
   const handleWelcomePrompt = useCallback((prompt: string) => {
     handleSendMessage(prompt, sessionId);
   }, [handleSendMessage, sessionId]);
+
+  if (isEmpty) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center">
+        <div className="w-full max-w-4xl">
+          <MessageList
+            onDeleteMessage={setMessageToDelete}
+            onSourceClick={setSelectedTranscript}
+            onWelcomePrompt={handleWelcomePrompt}
+          />
+        </div>
+        <div className="w-full max-w-3xl mt-8">
+          <ChatInput
+            inputValue={inputValue}
+            onInputChange={setInputValue}
+            onSendMessage={onSendMessage}
+            isLoading={isLoading}
+          />
+        </div>
+        <TranscriptDialog
+          isOpen={!!selectedTranscript}
+          onOpenChange={(isOpen) => !isOpen && setSelectedTranscript(null)}
+          transcript={selectedTranscript}
+        />
+        <DeleteConfirmationDialog
+          isOpen={!!messageToDelete}
+          onOpenChange={(isOpen) => !isOpen && setMessageToDelete(null)}
+          onConfirm={onDeleteConfirm}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full">

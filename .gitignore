@@ -38,3 +38,9 @@ yarn-error.log*
 
 chatbot_app/backend/app/audio_files/
 chatbot_app/backend/audio_files/PR_07bcc6fc-978e-12e0-b180-208ed81c542c.mp3
+
+# Ignore LLM logs
+chatbot_app/backend/app/llm_logs/
+
+# Keys
+*.pem

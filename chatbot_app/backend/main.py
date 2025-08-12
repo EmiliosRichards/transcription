@@ -4,9 +4,14 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 from app.api import router as api_router
 from app.services import vector_db
 from app.database import create_db_and_tables
+
+# --- Load Environment Variables ---
+# This must be done before any other modules are imported that need them.
+load_dotenv()
 
 # --- Logging Configuration ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -40,10 +45,24 @@ app = FastAPI(
 # For production, you should restrict this to your frontend's domain.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "Range",
+        "Accept",
+        "Origin",
+      ],
+    expose_headers=[
+        "Accept-Ranges",
+        "Content-Range",
+        "Content-Length",
+      ],
 )
 
 # --- Include API Router ---

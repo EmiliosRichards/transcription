@@ -25,7 +25,7 @@ export default function TranscriptionViewerPage() {
   const router = useRouter();
   const id = params.id as string;
 
-  const { loadTranscription, isLoading, error, setError, audioUrl } = useTranscribeStore();
+  const { loadTranscription, isLoading, error, setError, audioUrl, reset } = useTranscribeStore();
 
   useEffect(() => {
     async function fetchAndLoadTranscription() {
@@ -41,8 +41,14 @@ export default function TranscriptionViewerPage() {
         setError(err.message);
       }
     }
+    
     fetchAndLoadTranscription();
-  }, [id, loadTranscription, setError]);
+
+    // Cleanup function to reset the store when the component unmounts
+    return () => {
+      reset();
+    };
+  }, [id, loadTranscription, setError, reset]);
 
   async function handleDelete() {
     if (!id) return;

@@ -124,12 +124,31 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    background-image: linear-gradient(to bottom, var(--background), var(--muted));
+    background-image: linear-gradient(to bottom, var(--background), color-mix(in oklch, var(--background), var(--muted) 65%));
     min-height: 100vh;
   }
 }
 
 @layer components {
+  .mask-fade-right {
+    /* Fades the last ~24px to transparent for a soft edge */
+    -webkit-mask-image: linear-gradient(to right, black 0%, black calc(100% - 24px), transparent 100%);
+            mask-image: linear-gradient(to right, black 0%, black calc(100% - 24px), transparent 100%);
+  }
+  /* Fallback for browsers or contexts where mask-image is not visible */
+  .fade-right-overlay {
+    position: relative;
+  }
+  .fade-right-overlay::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 24px;
+    pointer-events: none;
+    background-image: linear-gradient(to right, transparent, var(--sidebar));
+  }
   .prose h2 {
     font-size: 1.5rem; /* 24px */
     font-weight: 700;

@@ -15,7 +15,11 @@ interface MessageListProps {
 export function MessageList({ onDeleteMessage, onSourceClick, onWelcomePrompt }: MessageListProps) {
   const { messages, isLoading, isStreaming, currentStatus, statusVersion } = useChatStore();
   if (messages.length === 0) {
-    return <WelcomeScreen onPromptClick={onWelcomePrompt} />;
+    return (
+      <div className="flex-1 flex items-center justify-center p-6">
+        <WelcomeScreen onPromptClick={onWelcomePrompt} />
+      </div>
+    );
   }
 
   return (

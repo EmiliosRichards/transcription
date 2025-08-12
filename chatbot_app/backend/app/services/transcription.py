@@ -1,4 +1,5 @@
 import os
+import asyncio
 import requests
 import logging
 import json
@@ -9,6 +10,7 @@ import shutil
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import database
 from app.services import task_manager
+from app.services.storage import get_storage_service
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 logger = logging.getLogger(__name__)
@@ -33,18 +35,105 @@ class TranscriptionPipeline:
         """Executes the full transcription and post-processing pipeline."""
         try:
             logger.info(f"[Pipeline Task {self.task_id}] Starting...")
-            task_manager.update_task_status(self.task_id, "PROCESSING", 5, "Preparing audio file...")
+            storage_service = get_storage_service()
+            audio_file_path = ""
 
-            permanent_path = self._move_audio_file()
+            if storage_service.check_connection():
+                logger.info(f"[Pipeline Task {self.task_id}] B2 connection is active. Uploading to cloud.")
+                object_key = os.path.basename(self.temp_path)
+                if storage_service.upload_file(self.temp_path, object_key):
+                    audio_file_path = object_key
+                else:
+                    logger.warning(f"[Pipeline Task {self.task_id}] B2 upload failed. Falling back to local storage.")
             
-            raw_segments = transcribe_audio(permanent_path, self.task_id)
+            if not audio_file_path:
+                local_audio_dir = os.path.join(os.path.dirname(__file__), '..', 'audio_files')
+                os.makedirs(local_audio_dir, exist_ok=True)
+                local_path = os.path.join(local_audio_dir, os.path.basename(self.temp_path))
+                shutil.copy(self.temp_path, local_path)
+                audio_file_path = local_path
+                logger.info(f"[Pipeline Task {self.task_id}] Saved file locally to {audio_file_path}")
+
+            task_manager.update_task_status(
+                self.task_id,
+                "PROCESSING",
+                "Uploading and preparing audio...",
+                result=None,
+                progress=5,
+            )
+            # Yield to event loop so clients can read the update
+            await asyncio.sleep(0)
+
+            # Indicate Whisper is running to provide an intermediate message
+            task_manager.update_task_status(
+                self.task_id,
+                "PROCESSING",
+                "Transcribing with Whisper API...",
+                result=None,
+                progress=20,
+            )
+            await asyncio.sleep(0)
+
+            # Run Whisper transcription in a background thread to avoid blocking the event loop
+            raw_segments = await asyncio.to_thread(transcribe_audio, self.temp_path, self.task_id)
+
+            # Emit raw transcript to the client immediately after Whisper returns
+            task_manager.update_task_status(
+                self.task_id,
+                "PROCESSING",
+                "Transcription received from Whisper.",
+                result={
+                    "transcription_id": None,
+                    "raw_segments": raw_segments,
+                    "status": "RAW_TRANSCRIPT_READY",
+                },
+                progress=55,
+            )
+            await asyncio.sleep(0)
+
+            # Persist to DB to obtain a transcription ID and audio path
+            await self._save_initial_transcription(raw_segments, audio_file_path)
+
+            # Update with the new transcription ID while preserving the same result structure
+            task_manager.update_task_status(
+                self.task_id,
+                "PROCESSING",
+                "Raw transcript ready.",
+                result={
+                    "transcription_id": self.transcription_record.id,  # type: ignore
+                    "raw_segments": raw_segments,
+                    "status": "RAW_TRANSCRIPT_READY",
+                },
+                progress=60,
+            )
+            await asyncio.sleep(0)
+
+            # Brief intermediate step to remain visible before post-processing starts
+            task_manager.update_task_status(
+                self.task_id,
+                "PROCESSING",
+                "Preparing data for AI analysis...",
+                result=None,
+                progress=65,
+            )
+            await asyncio.sleep(0)
             
-            await self._save_initial_transcription(raw_segments, permanent_path)
-            
-            processed_text, processed_segments = post_process_transcription_with_timestamps(raw_segments, self.task_id)
+            task_manager.update_task_status(
+                self.task_id,
+                "PROCESSING",
+                "Structuring transcript for AI analysis...",
+                result=None,
+                progress=70,
+            )
+
+            # Run LLM post-processing in a background thread as it uses blocking I/O
+            processed_text, processed_segments = await asyncio.to_thread(
+                post_process_transcription_with_timestamps, raw_segments, self.task_id
+            )
             
             await self._update_with_processed_data(processed_text, processed_segments)
 
+            # --- Final Event: Processed Data is Ready ---
             final_result = {
                 "transcription_id": self.transcription_record.id, # type: ignore
                 "raw_segments": raw_segments,
@@ -59,25 +148,18 @@ class TranscriptionPipeline:
         finally:
             self._cleanup_temp_files()
 
-    def _move_audio_file(self) -> str:
-        """Moves the temporary audio file to a permanent location."""
-        audio_storage_path = "audio_files"
-        os.makedirs(audio_storage_path, exist_ok=True)
-        permanent_path = os.path.join(audio_storage_path, os.path.basename(self.temp_path))
-        shutil.move(self.temp_path, permanent_path)
-        logger.info(f"[Pipeline Task {self.task_id}] Moved audio file to {permanent_path}")
-        return permanent_path
-
-    async def _save_initial_transcription(self, raw_segments: list, permanent_path: str):
+    async def _save_initial_transcription(self, raw_segments: list, object_key: str):
         """Saves the initial raw transcription to the database."""
-        task_manager.update_task_status(self.task_id, "PROCESSING", 75, "Saving initial transcript...")
+        # This step is now part of the main flow and doesn't need its own progress update
+        # to avoid the large jump.
+        # task_manager.update_task_status(self.task_id, "PROCESSING", 75, "Saving initial transcript...")
         full_transcription = " ".join(seg['text'] for seg in raw_segments)
         
         self.transcription_record = database.Transcription(
             audio_source=self.audio_source,
             raw_transcription=full_transcription,
             raw_segments=raw_segments,
-            audio_file_path=permanent_path,
+            audio_file_path=object_key, # Store the B2 object key, not a local path
         )
         self.db.add(self.transcription_record)
         await self.db.commit()
@@ -89,7 +171,7 @@ class TranscriptionPipeline:
         if not self.transcription_record:
             raise ValueError("Transcription record not found. Cannot update.")
             
-        task_manager.update_task_status(self.task_id, "PROCESSING", 95, "Finalizing processed data...")
+        pass
         self.transcription_record.processed_transcription = processed_text  # type: ignore
         self.transcription_record.processed_segments = processed_segments  # type: ignore
         await self.db.commit()
@@ -104,7 +186,6 @@ class TranscriptionPipeline:
 
 def download_file(url: str, temp_dir: str, task_id: str) -> str:
     """Downloads a file from a URL and saves it to a temporary directory."""
-    task_manager.update_task_status(task_id, "PROCESSING", 5, f"Downloading file from {url}")
     response = requests.get(url, stream=True)
     response.raise_for_status()
     
@@ -120,22 +201,14 @@ def download_file(url: str, temp_dir: str, task_id: str) -> str:
 def transcribe_audio(audio_path: str, task_id: str) -> list[dict]:
     """
     Transcribes an audio file using the OpenAI Whisper API, returning detailed segments.
-    The API handles large files directly, so no manual chunking is needed.
-    Returns a list of segment dictionaries, each with 'start', 'end', and 'text'.
     """
     logger.info(f"[transcribe_audio] Starting transcription for: {audio_path} (Task ID: {task_id})")
     try:
-        # Estimate time based on file size. A rough estimate is fine.
         file_size_mb = os.path.getsize(audio_path) / (1024 * 1024)
-        estimated_time_seconds = file_size_mb * 60  # Rough estimate: 60 seconds per MB
+        estimated_time_seconds = file_size_mb * 60
         
-        task_manager.update_task_status(
-            task_id,
-            "PROCESSING",
-            10,
-            "Uploading and transcribing audio file...",
-            estimated_time=int(estimated_time_seconds)
-        )
+        # No progress updates needed from here anymore
+        pass
 
         with open(audio_path, "rb") as audio_file:
             logger.info(f"[transcribe_audio] Sending file to OpenAI API for transcription...")
@@ -156,7 +229,8 @@ def transcribe_audio(audio_path: str, task_id: str) -> list[dict]:
                 })
         
         logger.info("[transcribe_audio] Transcription processed successfully.")
-        task_manager.update_task_status(task_id, "PROCESSING", 98, "Finalizing transcription...")
+        # This is now handled by the main pipeline function
+        # task_manager.update_task_status(task_id, "PROCESSING", 98, "Finalizing transcription...")
         return all_segments
         
     except Exception as e:
@@ -175,16 +249,22 @@ def post_process_transcription_with_timestamps(segments: list[dict], task_id: st
     Processes raw transcription segments using an LLM to clean text,
     diarize speakers, and return structured data with timestamps preserved.
     """
-    task_manager.update_task_status(task_id, "PROCESSING", 80, "Post-processing with advanced model...")
+    # Emit intermediate status updates to reflect LLM post-processing phases
+    task_manager.update_task_status(
+        task_id,
+        "PROCESSING",
+        "Diarizing speakers with advanced model...",
+        result=None,
+        progress=75,
+    )
     
-    # Format the segments with timestamps for the prompt
     transcription_text = ""
     for s in segments:
         transcription_text += f"[{s['start']:.2f} -> {s['end']:.2f}] {s['text']}\n"
 
     prompt_template = _load_prompt("post_process_with_timestamps.txt")
     system_prompt = prompt_template.format(transcription_text=transcription_text)
-    llm_output_str = "" # Initialize to ensure it's always bound
+    llm_output_str = ""
 
     try:
         logger.info("[post_process_with_timestamps] Sending data to LLM for advanced processing.")
@@ -201,13 +281,19 @@ def post_process_transcription_with_timestamps(segments: list[dict], task_id: st
         if not llm_output_str:
             raise ValueError("LLM returned an empty response.")
         
-        # The entire response is a JSON string, so we parse it.
+        # Indicate finalization phase after receiving LLM output
+        task_manager.update_task_status(
+            task_id,
+            "PROCESSING",
+            "Finalizing processed transcript...",
+            result=None,
+            progress=90,
+        )
+
         llm_output_json = json.loads(llm_output_str)
         
-        # Extract the list of segment objects
         processed_segments = llm_output_json.get("processed_segments", [])
         
-        # Also, create the cleaned text string for the old column, just in case
         full_transcript_text = "\n".join(
             f"{seg.get('speaker', '')}: {seg.get('text', '')}" for seg in processed_segments
         )

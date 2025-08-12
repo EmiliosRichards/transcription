@@ -12,7 +12,7 @@ import { PlayCircle } from "lucide-react";
 import { TranscriptionItem } from "@/lib/stores/useTranscribeStore";
 
 export default function HistoryPage() {
-  const { history, audioUrl, setAudioUrl } = useTranscribeStore();
+  const { history, audioUrl, fetchAndSetAudioUrl } = useTranscribeStore();
   const { getHistory } = useTranscribeApi();
 
   useEffect(() => {
@@ -20,8 +20,7 @@ export default function HistoryPage() {
   }, [getHistory]);
 
   const handlePlayAudio = (transcriptionId: number) => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
-    setAudioUrl(`${backendUrl}/api/audio/${transcriptionId}`);
+    fetchAndSetAudioUrl(transcriptionId);
   };
 
   return (
@@ -30,7 +29,13 @@ export default function HistoryPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl text-gray-800 dark:text-white">Transcription History</h1>
           <Link href="/transcribe">
-            <Button>New Transcription</Button>
+                         <Button
+               variant="ghost"
+               className="rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300 dark:from-gray-800 dark:to-gray-700 dark:text-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-sm"
+               size="sm"
+             >
+               Back
+             </Button>
           </Link>
         </div>
         {audioUrl && (

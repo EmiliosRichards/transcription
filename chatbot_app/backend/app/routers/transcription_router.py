@@ -4,8 +4,9 @@ import tempfile
 import datetime
 import shutil
 import json
-from fastapi import APIRouter, HTTPException, File, UploadFile, Form, Depends, BackgroundTasks
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, HTTPException, File, UploadFile, Form, Depends, BackgroundTasks, Request
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+import mimetypes
 from pydantic import BaseModel, Field
 from typing import Optional, List, AsyncGenerator, Dict, Any
 
@@ -14,6 +15,7 @@ from sqlalchemy import select
 
 from app import database
 from app.services import llm_handler, transcription, prompt_engine, task_manager
+from app.services.storage import get_storage_service
 
 # --- Logging Setup ---
 logger = logging.getLogger(__name__)
@@ -49,7 +51,6 @@ class TranscriptionInfo(BaseModel):
 async def run_pipeline_task(temp_path: str, audio_source: str, task_id: str):
     """
     Wrapper function to run the TranscriptionPipeline in the background.
-    It handles session creation and ensures the pipeline is executed.
     """
     async with database.AsyncSessionLocal() as db:
         pipeline = transcription.TranscriptionPipeline(
@@ -97,8 +98,6 @@ async def transcribe(
         elif url:
             temp_path = transcription.download_file(url, temp_dir, task_id)
         else:
-            # This case should not be reached due to the initial check, but it's good practice
-            # to handle it and clean up the temporary directory.
             shutil.rmtree(temp_dir)
             raise HTTPException(status_code=400, detail="No valid audio source provided.")
 
@@ -159,7 +158,6 @@ async def get_transcription(transcription_id: int, db: AsyncSession = Depends(ge
     if not db_transcription:
         raise HTTPException(status_code=404, detail="Transcription not found")
     
-    # Prepare the response data
     response_data = {
         "id": db_transcription.id,
         "audio_source": db_transcription.audio_source,
@@ -172,24 +170,18 @@ async def get_transcription(transcription_id: int, db: AsyncSession = Depends(ge
         "audio_file_path": db_transcription.audio_file_path
     }
 
-    # --- Backward Compatibility: Handle old records ---
-    # If raw_segments is missing, try to parse it from raw_transcription
     if not response_data.get("raw_segments") and db_transcription.raw_transcription is not None:
         try:
-            # For older records, segments might be stored as a JSON string in raw_transcription
             raw_text = str(db_transcription.raw_transcription)
             parsed_segments = json.loads(raw_text)
             if isinstance(parsed_segments, list):
                 response_data["raw_segments"] = parsed_segments
                 logger.info(f"Successfully parsed raw_segments from raw_transcription for ID: {transcription_id}")
         except json.JSONDecodeError:
-            # This is expected for newer records where raw_transcription is plain text
-            logger.warning(f"Could not parse raw_transcription as JSON for ID: {transcription_id}. "
-                           "This is normal if it's not an old record.")
+            logger.warning(f"Could not parse raw_transcription as JSON for ID: {transcription_id}. ")
         except Exception as e:
             logger.error(f"An unexpected error occurred while parsing raw_transcription for ID: {transcription_id}: {e}", exc_info=True)
 
-    logger.info(f"Returning data for transcription {transcription_id}: {json.dumps(response_data, indent=2, default=str)}")
     return response_data
 
 @router.delete("/transcriptions/{transcription_id}", tags=["Transcription"], status_code=204)
@@ -206,19 +198,91 @@ async def delete_transcription(transcription_id: int, db: AsyncSession = Depends
     await db.commit()
     return
 
+def _iter_file_segment(path: str, start: int, end: int, chunk_size: int = 1024 * 1024):
+    with open(path, "rb") as f:
+        f.seek(start)
+        bytes_remaining = end - start + 1
+        while bytes_remaining > 0:
+            read_size = min(chunk_size, bytes_remaining)
+            data = f.read(read_size)
+            if not data:
+                break
+            yield data
+            bytes_remaining -= len(data)
+
+
 @router.get("/audio/{transcription_id}", tags=["Transcription"])
-async def get_audio_file(transcription_id: int, db: AsyncSession = Depends(get_db)):
-    """Retrieves the audio file for a given transcription ID."""
-    logger.info(f"Received request for audio file for transcription ID: {transcription_id}")
+async def get_audio_file(transcription_id: int, request: Request, db: AsyncSession = Depends(get_db)):
+    """
+    Retrieves the audio file for a given transcription ID.
+    - If the file is stored locally, it serves the file directly.
+    - If the file is in B2, it returns a secure, temporary pre-signed URL.
+    """
+    logger.info(f"Received request for audio for transcription ID: {transcription_id}")
     
     stmt = select(database.Transcription.audio_file_path).filter(database.Transcription.id == transcription_id)
-    file_path = (await db.execute(stmt)).scalar_one_or_none()
+    audio_path = (await db.execute(stmt)).scalar_one_or_none()
 
-    if not file_path:
-        raise HTTPException(status_code=404, detail="Audio file path not found in database record")
+    if not audio_path:
+        raise HTTPException(status_code=404, detail="Audio file reference not found in database record.")
 
-    if not os.path.exists(file_path):
-        logger.error(f"Audio file not found on disk at path: {file_path}")
-        raise HTTPException(status_code=404, detail="Audio file not found on disk")
+    # Check if the path points to a local file
+    if os.path.exists(audio_path):
+        logger.info(f"Serving local audio file: {audio_path}")
+        file_size = os.path.getsize(audio_path)
+        range_header = request.headers.get("range") or request.headers.get("Range")
+        media_type, _ = mimetypes.guess_type(audio_path)
+        if media_type is None:
+            media_type = "audio/mpeg"
+        if range_header:
+            # Example: "bytes=0-1023"
+            try:
+                units, ranges = range_header.split("=", 1)
+                if units != "bytes":
+                    raise ValueError("Only bytes unit is supported")
+                start_str, end_str = ranges.split("-", 1)
+                start = int(start_str) if start_str else 0
+                end = int(end_str) if end_str else file_size - 1
+                start = max(0, start)
+                end = min(end, file_size - 1)
+                if start > end:
+                    start = 0
+                    end = file_size - 1
+            except Exception:
+                # Fallback to full content on parse error
+                start, end = 0, file_size - 1
 
-    return FileResponse(path=file_path)
+            content_length = end - start + 1
+            headers = {
+                "Content-Range": f"bytes {start}-{end}/{file_size}",
+                "Accept-Ranges": "bytes",
+                "Content-Length": str(content_length),
+                # Let the browser sniff or set a generic audio type; specific type detection could be added
+                "Cache-Control": "no-cache",
+            }
+            return StreamingResponse(
+                _iter_file_segment(audio_path, start, end),
+                status_code=206,
+                media_type=media_type,
+                headers=headers,
+            )
+        # No Range header; send entire file but advertise range support
+        response = FileResponse(audio_path, media_type=media_type)
+        response.headers["Accept-Ranges"] = "bytes"
+        return response
+
+    # If not a local file, assume it's a B2 object key and generate a pre-signed URL
+    logger.info(f"Generating pre-signed URL for B2 object key: {audio_path}")
+    storage_service = get_storage_service()
+    
+    if not storage_service.check_connection():
+        logger.error(f"B2 connection is down. Cannot generate pre-signed URL for key: {audio_path}")
+        raise HTTPException(status_code=503, detail="Cloud storage service is currently unavailable.")
+
+    presigned_url = storage_service.create_presigned_url(audio_path)
+
+    if not presigned_url:
+        logger.error(f"Could not generate pre-signed URL for object key: {audio_path}")
+        raise HTTPException(status_code=500, detail="Could not generate audio file URL.")
+
+    return JSONResponse(content={"url": presigned_url})

@@ -2,13 +2,13 @@
 
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
-import { useTranscribeStore } from "@/lib/stores/useTranscribeStore";
+import { useTranscribeStore, CinematicStage } from "@/lib/stores/useTranscribeStore";
 import { useTranscribeApi } from "@/lib/hooks/useTranscribeApi";
 import { FileUpload } from "@/components/transcribe/FileUpload";
 import { UrlInput } from "@/components/transcribe/UrlInput";
@@ -23,34 +23,47 @@ export default function TranscribePage() {
     processedTranscription,
     audioUrl,
     isLoading,
-    isProcessing,
     error,
     progress,
     progressMessage,
-    estimatedTime,
+    cinematicStage,
+    cinematicMessages,
     setFile,
     setUrl,
   } = useTranscribeStore();
   const { handleSubmit } = useTranscribeApi();
+  const [showResults, setShowResults] = useState(false);
   const resultCardRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    if ((transcription || error) && resultCardRef.current) {
+    // Only scroll when the final processed transcription is loaded and the cinematic is done
+    if (processedTranscription && cinematicStage === 'DONE' && resultCardRef.current) {
       resultCardRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [transcription, error]);
+  }, [processedTranscription, cinematicStage]);
 
   return (
     <div className="p-6 min-h-screen flex flex-col items-center">
-      <div className="w-full max-w-4xl">
+      <div className={`w-full max-w-4xl ${audioUrl ? "pb-40" : ""}`}>
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl text-gray-800 dark:text-white">Transcribe Audio</h1>
           <div className="flex gap-2">
             <Link href="/history">
-              <Button variant="outline">View History</Button>
+              <Button
+                variant="ghost"
+                className="rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300 dark:from-gray-800 dark:to-gray-700 dark:text-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-sm"
+                size="sm"
+              >
+                View History
+              </Button>
             </Link>
             <Link href="/">
-              <Button>Back to Chatbot</Button>
+              <Button
+                variant="ghost"
+                className="rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300 dark:from-gray-800 dark:to-gray-700 dark:text-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-sm"
+                size="sm"
+              >
+                Dashboard
+              </Button>
             </Link>
           </div>
         </div>
@@ -63,19 +76,36 @@ export default function TranscribePage() {
             <UrlInput url={url} onUrlChange={setUrl} />
             {isLoading ? (
               <div className="flex flex-col items-center gap-2">
-                 <Progress value={progress} className="w-full" />
-                 <p className="text-sm text-muted-foreground">{progressMessage}</p>
-                 {estimatedTime && (
-                   <p className="text-xs text-muted-foreground">
-                     (Estimated time: ~{Math.ceil(estimatedTime / 60)} minutes)
-                   </p>
-                 )}
+                 <Progress value={progress} className="w-full [&>div]:bg-blue-500" />
+                 <div className="relative h-6 w-full overflow-hidden">
+                    <AnimatePresence>
+                      <motion.p
+                        key={progressMessage}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -20, opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="absolute inset-0 text-sm text-muted-foreground"
+                      >
+                        {progressMessage}
+                      </motion.p>
+                    </AnimatePresence>
+                  </div>
                </div>
             ) : (
               <div className="mt-6 flex justify-center">
-                <Button onClick={handleSubmit} disabled={!file && !url}>
-                  Transcribe
-                </Button>
+                                 <Button
+                   onClick={() => {
+                     if (!file && !url) return;
+                     setShowResults(true);
+                     handleSubmit();
+                   }}
+                   disabled={!file && !url}
+                   variant="ghost"
+                   className="rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300 dark:from-gray-800 dark:to-gray-700 dark:text-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-sm"
+                 >
+                   Transcribe
+                 </Button>
               </div>
             )}
           </CardContent>
@@ -90,10 +120,22 @@ export default function TranscribePage() {
             <AudioPlayer src={audioUrl} />
           </div>
         )}
-        <div ref={resultCardRef}>
-          <TranscriptionResult />
-        </div>
-        <div className="h-96" />
+        <AnimatePresence>
+          {showResults && (
+            <motion.div
+              key="results-card"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              ref={resultCardRef}
+              className="mt-4"
+            >
+              <TranscriptionResult />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
       </div>
     </div>
   );

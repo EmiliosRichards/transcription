@@ -16,6 +16,7 @@ export function TranscriptionResult() {
     setSeekToTime,
     currentTime,
     viewMode,
+    hasPlaybackStarted,
     setViewMode,
     isProcessing,
     isLoading,
@@ -24,12 +25,28 @@ export function TranscriptionResult() {
   
   const handleSegmentClick = (startTime: number) => {
     setSeekToTime(startTime);
+    // If playback hasn't started yet, starting from a segment should begin playback
+    if (!hasPlaybackStarted) {
+      // flag will be set in AudioPlayer when play event fires
+      // nothing else needed here; AudioPlayer reads seekToTime and will call play if paused
+    }
   };
 
   const handleViewChange = (value: string) => {
     if (value === 'raw' || value === 'processed') {
       setViewMode(value as ViewMode);
     }
+  };
+
+  const getSpeakerColorClass = (speaker: string) => {
+    const speakerUpper = speaker.toUpperCase();
+    if (speakerUpper.includes('AGENT')) {
+      return "text-white/90";
+    }
+    if (speakerUpper.includes('DECISION_MAKER')) {
+      return "text-green-600 dark:text-green-400";
+    }
+    return "text-gray-800 dark:text-gray-300"; // Default for 'OTHER' or unknown
   };
 
   return (
@@ -55,7 +72,7 @@ export function TranscriptionResult() {
                     className={cn(
                       "cursor-pointer transition-colors duration-200 rounded px-1",
                       currentTime >= segment.start && currentTime < segment.end
-                        ? "bg-blue-200 dark:bg-blue-700"
+                        ? "bg-red-200 dark:bg-red-700"
                         : "hover:bg-gray-200 dark:hover:bg-gray-700"
                     )}
                   >
@@ -69,27 +86,40 @@ export function TranscriptionResult() {
             </div>
           </TabsContent>
           <TabsContent value="processed">
-            <div className="whitespace-pre-wrap mt-4 p-4 border rounded-md bg-gray-50 dark:bg-gray-800 min-h-[200px]">
+            <div className="mt-4 p-4 border rounded-md bg-white dark:bg-gray-900 min-h-[200px] flex flex-col gap-4">
               {processedTranscriptionSegments && processedTranscriptionSegments.length > 0 ? (
-                processedTranscriptionSegments.map((segment, index) => (
-                  <div key={`processed-${index}`} className="mb-2">
-                    <span
-                      onClick={() => handleSegmentClick(segment.start)}
+                processedTranscriptionSegments.map((segment, index) => {
+                  const isAgent = segment.speaker.toUpperCase().includes('AGENT');
+                  return (
+                    <div
+                      key={`processed-${index}`}
                       className={cn(
-                        "cursor-pointer transition-colors duration-200 px-2 py-1 rounded",
-                        currentTime >= segment.start && currentTime < segment.end
-                          ? "bg-blue-200 dark:bg-blue-700"
-                          : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                        "flex items-end gap-2",
+                        isAgent ? "justify-end" : "justify-start"
                       )}
                     >
-                      <span className="font-bold text-indigo-600 dark:text-indigo-400 mr-2">{segment.speaker}:</span>
-                      <span>{segment.text}</span>
-                    </span>
-                  </div>
-                ))
+                      <div
+                       className={cn(
+                          "max-w-[80%] p-3 rounded-lg cursor-pointer",
+                          isAgent
+                            ? "bg-blue-500 text-white rounded-br-none"
+                            : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-none",
+                          hasPlaybackStarted && currentTime >= segment.start && currentTime < segment.end
+                            ? "ring-2 ring-offset-2 ring-red-500"
+                            : ""
+                        )}
+                        onClick={() => handleSegmentClick(segment.start)}
+                      >
+                        <div className={cn("font-bold text-sm mb-1", getSpeakerColorClass(segment.speaker))}>
+                          {segment.speaker.replace(/\[|\]/g, '')}
+                        </div>
+                        <p className="text-sm">{segment.text}</p>
+                      </div>
+                    </div>
+                  );
+                })
               ) : (
-                // Fallback for non-segmented processed text
-                <p>{processedTranscription}</p>
+                <p className="text-gray-500 dark:text-gray-400">{processedTranscription || "No processed transcription available."}</p>
               )}
             </div>
           </TabsContent>

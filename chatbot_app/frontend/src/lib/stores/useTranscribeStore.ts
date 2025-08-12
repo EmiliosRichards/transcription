@@ -19,6 +19,8 @@ export interface TranscriptionItem {
 
 export type ViewMode = 'raw' | 'processed';
 
+export type CinematicStage = 'TRANSCRIBING' | 'PROCESSING' | 'DONE';
+
 interface TranscribeState {
   file: File | null;
   url: string;
@@ -36,12 +38,14 @@ interface TranscribeState {
   error: string;
   progress: number;
   progressMessage: string;
-  estimatedTime: number | null;
+  cinematicStage: CinematicStage;
+  cinematicMessages: string[];
   history: TranscriptionItem[];
   seekToTime: number | null;
   currentTime: number;
+  hasPlaybackStarted: boolean;
   viewMode: ViewMode;
-  loadTranscription: (data: any) => void; // New action
+  loadTranscription: (data: any) => void;
   setFile: (file: File | null) => void;
   setUrl: (url: string) => void;
   setTranscription: (transcription: string, segments?: TranscriptionSegment[]) => void;
@@ -49,16 +53,18 @@ interface TranscribeState {
   setProcessedTranscription: (transcription: string, segments?: ProcessedTranscriptionSegment[]) => void;
   setCorrectedTranscription: (transcription: string) => void;
   setAudioUrl: (url: string) => void;
+  fetchAndSetAudioUrl: (id: number) => Promise<void>;
   setIsLoading: (isLoading: boolean) => void;
   setIsProcessing: (isProcessing: boolean) => void;
   setIsCorrecting: (isCorrecting: boolean) => void;
   setCorrectCompanyName: (name: string) => void;
   setError: (error: string) => void;
-  setProgress: (progress: number, message: string, estimatedTime?: number) => void;
-  setProcessingProgress: (progress: number, message: string) => void;
+  startCinematicExperience: () => void;
+  advanceCinematicStage: () => void;
   setHistory: (history: TranscriptionItem[]) => void;
   setSeekToTime: (time: number | null) => void;
   setCurrentTime: (time: number) => void;
+  setHasPlaybackStarted: (started: boolean) => void;
   setViewMode: (mode: ViewMode) => void;
   reset: () => void;
 }
@@ -80,10 +86,12 @@ const initialState = {
   error: "",
   progress: 0,
   progressMessage: "",
-  estimatedTime: null,
+  cinematicStage: 'DONE' as CinematicStage,
+  cinematicMessages: [],
   history: [],
   seekToTime: null,
   currentTime: 0,
+  hasPlaybackStarted: false,
   viewMode: 'raw' as ViewMode,
 };
 
@@ -119,23 +127,77 @@ export const useTranscribeStore = create<TranscribeState>()((set) => ({
   })),
   setCorrectedTranscription: (transcription) => set({ correctedTranscription: transcription }),
   setAudioUrl: (url) => set({ audioUrl: url }),
+  fetchAndSetAudioUrl: async (id: number) => {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+      const response = await fetch(`${backendUrl}/api/audio/${id}`, { method: 'GET' });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch audio file: ${response.statusText}`);
+      }
+
+      const contentType = response.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        // Backend indicates cloud storage: use pre-signed URL directly
+        const data = await response.json();
+        if (data.url) {
+          set({ audioUrl: data.url });
+        } else {
+          throw new Error("Pre-signed URL not found in JSON response.");
+        }
+      } else {
+        // Serve directly from backend endpoint to preserve HTTP Range support
+        set({ audioUrl: `${backendUrl}/api/audio/${id}` });
+      }
+    } catch (error) {
+      console.error("Error fetching audio:", error);
+      set({ error: "Could not load audio." });
+    }
+  },
   setIsLoading: (isLoading) => set({ isLoading }),
   setIsProcessing: (isProcessing) => set({ isProcessing }),
   setIsCorrecting: (isCorrecting) => set({ isCorrecting }),
   setCorrectCompanyName: (name) => set({ correctCompanyName: name }),
   setError: (error) => set({ error }),
-  setProgress: (progress, message, estimatedTime) => set(state => ({
-    progress,
-    progressMessage: message,
-    estimatedTime: estimatedTime ?? state.estimatedTime
-  })),
-  setProcessingProgress: (progress, message) => set({ progress, progressMessage: message }),
+  startCinematicExperience: () => set({
+    isLoading: true,
+    error: "",
+    transcription: "",
+    transcriptionId: null,
+    processedTranscription: "",
+    audioUrl: "",
+    cinematicStage: 'TRANSCRIBING',
+    cinematicMessages: [
+      "Transcribing with Whisper API...",
+      "Timestamping each word...",
+    ],
+    progress: 5,
+    progressMessage: "Uploading and preparing audio...",
+  }),
+  advanceCinematicStage: () => set(state => {
+    if (state.cinematicStage === 'TRANSCRIBING') {
+      return {
+        cinematicStage: 'PROCESSING',
+        cinematicMessages: [
+          "Structuring transcript for AI analysis...",
+          "Diarizing speakers with advanced model...",
+          "Finalizing processed transcript...",
+        ],
+        // Align with backend's 60% when raw transcript is ready
+        progress: 60,
+        progressMessage: "Structuring transcript for AI analysis...",
+      };
+    }
+    return {};
+  }),
   setHistory: (history) => set({ history }),
   setSeekToTime: (time) => set({ seekToTime: time }),
   setCurrentTime: (time) => set({ currentTime: time }),
+  setHasPlaybackStarted: (started) => set({ hasPlaybackStarted: started }),
   setViewMode: (mode) => set({ viewMode: mode }),
   reset: () => set(state => ({
     ...initialState,
+    cinematicStage: 'DONE' as CinematicStage,
     // Preserve history across resets
     history: state.history
   })),

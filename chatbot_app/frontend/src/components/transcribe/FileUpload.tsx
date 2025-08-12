@@ -44,7 +44,7 @@ export function FileUpload({ file, onFileChange }: FileUploadProps) {
         onChange={handleFileChange}
         accept="audio/*"
       />
-      <Button asChild variant="outline" className="mt-4">
+      <Button asChild variant="ghost" className="mt-4 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300 dark:from-gray-800 dark:to-gray-700 dark:text-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-sm">
         <label htmlFor="file-upload">Select File</label>
       </Button>
     </div>

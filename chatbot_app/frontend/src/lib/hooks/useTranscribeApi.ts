@@ -5,7 +5,6 @@ export function useTranscribeApi() {
   const {
     file,
     url,
-    transcription,
     transcriptionId,
     processedTranscription,
     correctCompanyName,
@@ -14,18 +13,26 @@ export function useTranscribeApi() {
     setTranscriptionId,
     setProcessedTranscription,
     setAudioUrl,
-    setIsProcessing,
+    fetchAndSetAudioUrl,
     setIsCorrecting,
     setError,
-    setProgress,
-    setProcessingProgress,
+    startCinematicExperience,
+    advanceCinematicStage,
     setHistory,
   } = useTranscribeStore();
 
   const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
   const pollTaskStatus = async (taskId: string) => {
+    let isRequestInFlight = false;
     const interval = setInterval(async () => {
+      if (isRequestInFlight) {
+        return; // Avoid overlapping polls
+      }
+      isRequestInFlight = true;
+      const { cinematicStage } = useTranscribeStore.getState();
+      let rawTranscriptReceived = false;
+
       try {
         const response = await fetch(`${backendUrl}/api/tasks/${taskId}`);
         if (!response.ok) {
@@ -34,52 +41,87 @@ export function useTranscribeApi() {
         }
 
         const data = await response.json();
-        // The new unified pipeline provides progress updates for both stages
-        setProgress(data.progress, data.message, data.estimated_time);
 
-        if (data.status === "SUCCESS") {
-          clearInterval(interval);
-          const result = data.result;
-          
-          // Set raw transcription data
+        // Reflect backend progress/message when available
+        if (typeof data.progress === 'number') {
+          useTranscribeStore.setState({ progress: data.progress });
+        }
+        if (typeof data.message === 'string' && data.message.length > 0) {
+          useTranscribeStore.setState({ progressMessage: data.message });
+        }
+
+        const result = data.result;
+        // Consider RAW ready if raw_segments exist and we are still in TRANSCRIBING stage
+        const shouldIngestRaw = (
+          cinematicStage === 'TRANSCRIBING' &&
+          result && Array.isArray(result.raw_segments) &&
+          useTranscribeStore.getState().transcriptionSegments.length === 0
+        );
+        if (shouldIngestRaw) {
+          rawTranscriptReceived = true;
           const transcriptionSegments = result.raw_segments || [];
           const rawFormatted = transcriptionSegments.map(
             (seg: { text: string }) => seg.text.trim()
           ).join(' ');
           setTranscription(rawFormatted, transcriptionSegments);
+          setTranscriptionId(result.transcription_id);
+          if (result.transcription_id) {
+            fetchAndSetAudioUrl(result.transcription_id);
+          }
+      advanceCinematicStage();
+        }
 
-          // Set processed transcription data
+        // If the backend now includes a transcription_id and we don't have one yet, set it and fetch audio
+        if (
+          result && result.transcription_id && !useTranscribeStore.getState().transcriptionId
+        ) {
+          setTranscriptionId(result.transcription_id);
+          fetchAndSetAudioUrl(result.transcription_id);
+        }
+
+        if (data.status === "SUCCESS") {
+          const result = data.result;
+          // Defensive: ensure raw transcript is set even if intermediate event was missed
+          if (result.raw_segments && useTranscribeStore.getState().transcriptionSegments.length === 0) {
+            const rawFormatted = result.raw_segments.map((seg: { text: string }) => seg.text.trim()).join(' ');
+            setTranscription(rawFormatted, result.raw_segments);
+          }
+          // Ensure audio is available once the transcription_id exists
+          if (result.transcription_id && !useTranscribeStore.getState().transcriptionId) {
+            setTranscriptionId(result.transcription_id);
+            fetchAndSetAudioUrl(result.transcription_id);
+          }
           const processedSegments = result.processed_segments || [];
           const processedFormatted = processedSegments.map(
-              (seg: { speaker: string, text: string }) => `[${seg.speaker}] ${seg.text.trim()}`
+              (seg: { speaker: string, text: string }) => `${seg.speaker.replace(/\[|\]/g, '')}: ${seg.text.trim()}`
           ).join('\n');
           setProcessedTranscription(processedFormatted, processedSegments);
-
-          setTranscriptionId(result.transcription_id);
-          setAudioUrl(`${backendUrl}/api/audio/${result.transcription_id}`);
-          setIsLoading(false);
+          // Keep success message visible for a moment before hiding loader
+          useTranscribeStore.setState({ progress: 100, progressMessage: 'Transcription completed successfully.' });
+          setTimeout(() => {
+            setIsLoading(false);
+            useTranscribeStore.setState({ cinematicStage: 'DONE' });
+            clearInterval(interval);
+          }, 1200);
         } else if (data.status === "ERROR") {
           clearInterval(interval);
           setError(data.message);
           setIsLoading(false);
         }
+
       } catch (error) {
         console.error(error);
         setError("An error occurred while checking task status.");
         clearInterval(interval);
         setIsLoading(false);
+      } finally {
+        isRequestInFlight = false;
       }
-    }, 2000);
+    }, 500);
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-    setError("");
-    setTranscription("");
-    setTranscriptionId(null);
-    setProcessedTranscription("");
-    setAudioUrl("");
-    setProgress(0, "Initiating transcription...");
+    startCinematicExperience();
 
     const formData = new FormData();
     if (file) {

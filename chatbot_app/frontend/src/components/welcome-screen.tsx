@@ -1,11 +1,33 @@
 import { BarChart, DollarSign, Lightbulb } from "lucide-react";
 import { PromptCard } from "@/components/prompt-card";
+import { useEffect, useRef, useState } from "react";
 
 interface WelcomeScreenProps {
   onPromptClick: (prompt: string) => void;
 }
 
 export function WelcomeScreen({ onPromptClick }: WelcomeScreenProps) {
+  const [showPrompts, setShowPrompts] = useState(true);
+  const [viewportWidth, setViewportWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const gridWrapperRef = useRef<HTMLDivElement | null>(null);
+
+  // Hide the cards entirely when the available width can't fit 3 cards at standard sizing.
+  // Threshold tuned so cards remain visible until roughly half-window widths on common screens.
+  useEffect(() => {
+    const MIN_VIEWPORT = 900; // show cards when viewport is approx >= half-width on typical screens
+    const onResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    // Initial
+    onResize();
+
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    const MIN_VIEWPORT = 900;
+    // Simple, reliable rule: toggle purely based on viewport width
+    setShowPrompts(viewportWidth >= MIN_VIEWPORT);
+  }, [viewportWidth]);
   const prompts = [
     {
       icon: <BarChart />,
@@ -29,24 +51,28 @@ export function WelcomeScreen({ onPromptClick }: WelcomeScreenProps) {
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8">
-      <div className="text-3xl mb-2 bg-gradient-to-r from-blue-900 to-blue-500 text-transparent bg-clip-text p-2">Good Morning, Lorenz</div>
+      <div className="text-3xl mb-2 bg-gradient-to-r from-blue-800 to-sky-400 dark:from-sky-300 dark:to-blue-200 text-transparent bg-clip-text p-2">Good Morning, Lorenz</div>
       <p className="text-muted-foreground mb-2">
         How can I help with your campaign analysis today?
       </p>
       <p className="text-sm text-muted-foreground mb-12">
         Campaign: <span className="font-semibold">Medlytics</span>
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
-        {prompts.map((prompt, index) => (
-          <PromptCard
-            key={index}
-            icon={prompt.icon}
-            title={prompt.title}
-            description={prompt.description}
-            buttonText={prompt.buttonText}
-            onClick={() => onPromptClick(prompt.title)}
-          />
-        ))}
+      <div ref={gridWrapperRef} className="w-full max-w-4xl">
+        {showPrompts && (
+          <div className="grid grid-cols-3 gap-4">
+            {prompts.map((prompt, index) => (
+              <PromptCard
+                key={index}
+                icon={prompt.icon}
+                title={prompt.title}
+                description={prompt.description}
+                buttonText={prompt.buttonText}
+                onClick={() => onPromptClick(prompt.title)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

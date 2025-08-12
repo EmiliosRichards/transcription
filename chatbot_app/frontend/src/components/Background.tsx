@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
  * Drop optional files `public/bg-light.jpg` and `public/bg-dark.jpg` to customize the look.
  * If those files are missing, the gradient alone provides a pleasing backdrop.
  */
-export function AppBackground(): JSX.Element | null {
+export function AppBackground(): React.JSX.Element | null {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);

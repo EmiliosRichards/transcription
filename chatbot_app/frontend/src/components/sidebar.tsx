@@ -183,8 +183,8 @@ export function Sidebar({ refreshKey, activeSessionId, isOpen, onToggle, isOverl
                     className="w-full justify-start font-normal text-sm h-auto py-2 transition-colors duration-200 text-left"
                     onClick={() => loadChat(session.session_id)}
                   >
-                    <span className="flex-1 min-w-0 overflow-hidden">
-                      <span className="block w-full whitespace-nowrap overflow-hidden mask-fade-right pr-2">{session.initial_message}</span>
+                    <span className="relative flex-1 min-w-0 overflow-hidden fade-right-overlay">
+                      <span className="block w-full whitespace-nowrap overflow-hidden pr-3">{session.initial_message}</span>
                     </span>
                   </Button>
                 </ContextMenuTrigger>

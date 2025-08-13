@@ -113,7 +113,7 @@ export default function TranscriptViewer({ heightClass = "h-[60vh]", extraAction
       container.removeEventListener('scroll', onScroll as EventListener);
       if (snoozeTimeoutRef.current) window.clearTimeout(snoozeTimeoutRef.current);
     };
-  }, [autoScroll, filteredIndices, activeInfo.primary]);
+  }, [autoScroll]);
 
   if (!vttCues || vttCues.length === 0) {
     return <div className="text-sm text-gray-500">Load a VTT file to see transcript.</div>;

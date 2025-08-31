@@ -1,0 +1,53 @@
+[00:00] Speaker A: Hi everyone, appreciate you joining.
+[00:05] Speaker B: Great, let's go over the agenda.
+[00:12] Speaker A: We'll first align on modules and pricing for the product.
+[00:18] Speaker B: After that, rollout details, SLAs, and next actions.
+[00:25] Speaker A: Recording is on; timestamps are visible.
+[00:33] Speaker B: Right, and we also collected another transcript.
+[00:40] Speaker A: Krisp tends to be cleaner; Teams provides actual names.
+[00:48] Speaker B: Charla helps complete fragments when needed.
+[00:55] Speaker A: Exactly.
+[01:02] Speaker A: The product includes onboarding automation, analytics, and compliance logging.
+[01:09] Speaker B: Analytics covers cohort retention and funnel metrics.
+[01:16] Speaker A: Compliance logging captures access and export events.
+[01:22] Speaker B: We'll map generic speakers to real names using Teams.
+[01:29] Speaker A: Collapse repeated words like yeah yeah.
+[01:36] Speaker B: Remove short fillers up to three tokens.
+[01:42] Speaker A: Anything with low confidence under 0.5 goes to QA notes.
+[01:49] Speaker B: DOCX should have five‑minute chapter headings.
+[01:56] Speaker A: Sounds good.
+[02:03] Speaker B: Let's start a pilot rollout next week.
+[02:10] Speaker A: We'll confirm after checking the fusion results.
+
+# PAD_TO_1KB
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad
+# pad

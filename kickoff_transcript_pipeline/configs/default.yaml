@@ -1,0 +1,30 @@
+# Pipeline configuration
+model: "gpt-4.1"
+temperature: 0.2
+seed: 42
+minutes_per_block: 12
+filler_max_tokens: 3
+duplicate_window_sec: 4
+duplicate_window_sec: 5
+low_conf_threshold: 0.5
+similarity_threshold_high: 0.65
+similarity_threshold_low: 0.4
+
+confidence_weights:
+  add_kt_high: 0.25
+  add_kc_high: 0.25
+  penalize_kt_low: -0.10
+  penalize_short: -0.05
+
+inputs:
+  teams: "real_example_files/Kickoff Galvanek.vtt"
+  krisp: "real_example_files/Bastian Galvanek und Lorenz Schrader krisp.txt"
+  charla: "real_example_files/Charla Bastian Galvanek und Lorenz Schrader-20250820_090309-Besprechungsaufzeichnung.mp4 20.08.25.txt"
+
+export:
+  out_dir: "out"
+  docx_chapter_minutes: 5
+
+logging:
+  jsonl_name: "run_{timestamp}.jsonl"
+  include_hashes: true

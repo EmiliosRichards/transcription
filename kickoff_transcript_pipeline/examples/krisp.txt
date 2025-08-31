@@ -1,0 +1,20 @@
+[00:00] Speaker 1: Hello everyone, thanks for joining today.
+[00:05] Speaker 2: Thanks, let's begin with the agenda.
+[00:12] Speaker 1: First we align on product modules and pricing.
+[00:18] Speaker 2: Then we cover rollout, SLAs, and next steps.
+[00:25] Speaker 1: The recording is active and timestamps should be visible.
+[00:33] Speaker 2: Yes, and we also have the Charla transcript.
+[00:40] Speaker 1: The Krisp text is usually cleaner, while Teams has names.
+[00:48] Speaker 2: Charla can help fill gaps if a line is cut.
+[00:55] Speaker 1: Exactly.
+[01:02] Speaker 1: Our product covers onboarding automation, analytics, and compliance logging.
+[01:09] Speaker 2: The analytics module includes cohort retention and funnel analysis.
+[01:16] Speaker 1: Compliance logging tracks access and exports.
+[01:22] Speaker 2: We'll map Speaker 1/2 to real names from Teams.
+[01:29] Speaker 1: Duplicate words like yeah yeah should be collapsed.
+[01:36] Speaker 2: Short fillers of up to three tokens should be removed.
+[01:42] Speaker 1: Lines with confidence below zero point five belong in QA.
+[01:49] Speaker 2: DOCX export should include headings every five minutes.
+[01:56] Speaker 1: Sounds good.
+[02:03] Speaker 2: For rollout, we can start with a pilot next week.
+[02:10] Speaker 1: Agreed. Let's finalize after reviewing the fusion output.

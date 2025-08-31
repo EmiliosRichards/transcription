@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/aligned_pair.schema.json",
+  "title": "AlignedPair",
+  "type": "object",
+  "properties": {
+    "krisp_seg_id": { "type": ["string", "integer", "null"] },
+    "teams_seg_id": { "type": ["string", "integer", "null"] },
+    "charla_seg_id": { "type": ["string", "integer", "null"] },
+    "offset_sec": { "type": "number" }
+  },
+  "required": ["offset_sec"],
+  "additionalProperties": false
+}

@@ -1,0 +1,490 @@
+Transcription
+
+(00:01-00:31)
+ keine erinnerung habe dir deine app software saß wie auch immer gucken ob die jetzt quasi schon verkaufbar ist wie sie verkaufbar ist dass sie sie nach den letzten meter schubst ja wo stehen wir da jetzt mit beta testing gestartet jetzt ist dein empfang gerade weg und wir können jetzt auch so
+
+(00:31-01:01)
+ Ich verstehe dich nicht mehr. Nee, du warst jetzt gerade weg. Der Empfang ist nicht so gut bei dir. Jetzt bist du wieder da. Warte mal, ich gucke mal eben. Wann bist du denn im Büro? Dann hast du die Mobilfunkprobleme nicht. Hinten raus habe ich eine halbe Stunde Luft.
+
+(01:01-01:22)
+ Mal kurz im Kalender schauen. Du hast bis um 10.30 Uhr Zeit. Ich habe im Moment bis 10.30 Uhr Zeit oder ab 11.30 Uhr hätte ich wieder.
+
+(01:22-01:47)
+ Also normalerweise habe ich hier keine Mobilfunkprobleme. Ich bin selber kein Freund von Automeetings. Nein, nein, du warst gerade nur weg zweimal. Alles gut, wenn es klappt, klappt es. Das war jetzt nur rein Technik. Lass uns nochmal probieren. Bei mir wäre es am liebsten, wenn ich es jetzt führen könnte. Du hast ja auch gesagt, glaube ich, erst Anfang September oder so, weil du jetzt dann nochmal in Dubai bist oder so.
+
+(01:47-02:15)
+ Ich bin jetzt gerade in Dubai. Ich bin gerade in Dubai, ja. Das Hotel ist immer hinter mir im Prinzip. Ich glaube, man kann so ein bisschen... Kann man aus dem Fenster raus gucken? Nee. Ganz hinten, irgendwo ist der Burj Khalifa auch. Ja, aber das heißt ja nicht, dass die Firma... Wie lange braucht ihr, bis die Software wirklich vermarktbar ist? Was hast du da für ein Release-Datum, sag ich mal?
+
+(02:20-02:49)
+ Ich bin eigentlich in zwei, drei Wochen ready. Das war auch so das, was ich noch im Kopf hatte von dir, dass du es bis Anfang September brauchst. Genau. Also wir brauchen einen Vorlauf von zwei Wochen im Prinzip. Nach Kick-Off. Also wo man dann sagt, okay, wir haben jetzt einen Pitch, klar, wir wissen, was wir versprechen wollen. Wir legen im Prinzip los. Dann sind es zwei Wochen im Prinzip, ja. Okay, super.
+
+(02:49-03:19)
+ Ja gut, also seid ihr im Prinzip, ich sag mal, realistisch fertig damit. Ja, wir sind fertig. Jetzt geht es halt darum, was ich aufsetzen möchte. Deswegen will ich mich auch mit dir abstimmen. Jetzt einmal sauber CRM, weil ich dann auch anfange, überpersonalisiert die ganzen Leute anzuschreiben, die man dann natürlich anrufen kann. Das war so die Idee dahinter. Wer ist die Gruppe?
+
+(03:22-03:51)
+ Die ist halt super broad. Da habe ich mir auch noch Gedanken gemacht, ob ich die noch stärker einschränken soll. Aber prinzipiell ist ja jeder deine Zielgruppe. Ich habe probiert, eine Tranche auf Immomakler zu schmeißen, eine Tranche auf Finanzmakler und dann nochmal was komplett anderes, um herauszufinden, wer hat da wirklich den Need, wer springt da drauf an.
+
+(03:51-04:17)
+ Okay, gehen wir nochmal einen Schritt zurück. Was macht die App genau? Tun wir jetzt mal so, als ob wir noch nicht darüber gesprochen hätten. Angenommen, ich bin jetzt ein Versicherungsmakler. Ja. Und wir quatschen jetzt gerade irgendwo, keine Ahnung, wir sind am Gate am Flughafen und boarden gleich und haben beide Langeweile. Und ich frage dich, na, was machst denn du?
+
+(04:17-04:42)
+ Du weißt, ich bin Immobilienmarker. Was ist der Vorteil, den ich habe? Der Vorteil, den du hast, würde ich reingehen und sagen, hey Lorenz, schönste Geschäfte, wenn wir mal ehrlich sind, gerade auch in deiner Branche, auch in meiner Branche, sind doch irgendwo Arbeit mit Empfehlungen, oder? Jetzt einfach vom Nutzen. Also Empfehlungen, okay. Was leistet die Software?
+
+(04:42-05:11)
+ Die Software macht es dir möglich, Empfehlungen vollautomatisiert zu ziehen. Das Problem hinter Empfehlungen ist meistens, deinem Tippgeber rennst du hinterher und da hast du auch keine Zeit für im Alltagsgeschäft. Aber du musst den Tippgeber ja intrinsisch inzentivieren, selber aktiv zu werden. Du machst aktuell ein intrinsisches Tippgebergeschäft. Mit uns machst du ein intrinsisches Tippgebergeschäft. Du kannst damit rechnen, dass du deine Empfehlungsquote um bis zu 120% steigern kannst. Wie funktioniert das genau?
+
+(05:13-05:25)
+ Du kriegst eine App. In dieser App bist du als Admin eingeloggt. Dann kannst du für dich entscheiden, vielleicht habe ich ja noch ein paar Verkäufer, die kannst du onboarden. Und die Verkäufer können dann wiederum Empfehler einladen.
+
+(05:25-05:55)
+ Und der Empfehler hat dann auch eine App und wird inzentiviert. Da gibt es eine globale Langliste, da wird er heiß gemacht, er sieht seine ganzen Benefits, er sieht seine ganzen Vorteile, also was er verdienen kann, je nachdem, was du ihm gibst pro Tipp. Und umso teurer die Dienstleistung, jetzt zum Beispiel in der Immobilie, umso mehr kannst du ihm ja geben. Und bei uns sind es zum Beispiel, wir geben 1.000 Euro pro Wärmepumpentipp raus, also bei erfolgreichen Tipps. Und dafür steht halt jeder gerne auf.
+
+(05:56-06:21)
+ Du wolltest was sagen? Ja, nee, nee, ich hatte nur... Okay, ja, also schon auch. Wie läuft die Abrechnung? Läuft das auch über die App? Oder kriege ich hinterher irgendeine Liste mit, Hans Meier kriegt noch 1000 Euro von mir? Du hast eine Abrechnungsliste, genau. Das wollen wir noch nicht über die App steuern. Wenn wirklich der Bedarf da ist, und das ist ja das Tolle, du kommst als Beta-Tester, also am Anfang ist es noch einfacher zu verkaufen, weil wir sagen, ja, du bist Beta-Tester,
+
+(06:21-06:36)
+ Das heißt, du kannst noch mitentscheiden. Du darfst mitentscheiden, was in dieser Software angepasst wird. Das weiß ich nicht, ob ich das Wort in den Mund nehmen würde, ehrlich gesagt.
+
+(06:36-06:55)
+ Bei Beta-Tester ist was Schönes für Experten oder für dich und mich oder so. Aber beispielsweise privat mache ich das gerne, dass ich schon mal eine Beta runterlade oder früher irgendwann mal ein Spiel im Early Access oder sowas. Aber wenn ich mit geschäftskritischen Anwendungen unterwegs bin,
+
+(06:55-07:24)
+ Da nehme ich lieber die Stable-Vorversion anstatt irgendeine Beta. Also nicht mal die Stable-Aktuelle. Weil ich will nicht, dass es... Also das muss funktionieren. Ich habe keinen Bock, mich damit zu beschäftigen. Das muss ja einfach klappen. Also da weiß ich nicht, ob du da nicht zu viele Vorurteile einlädst, zu dem Zeitpunkt, wenn du das Wort Beta in den Mund nimmst. Oder einen anderen Begriff. Da geht es ja eigentlich darum, weil die Beta ist eine Stable-Version bei uns. Da geht es darum, Features mit reinzubringen. Also du bist wie... Sagen wir mal, nennen wir es Early Bird.
+
+(07:24-07:52)
+ Ja, müsste ich mir mal noch ein schönes deutsches Wort für ausdenken. Das Problem mit Anglizismen, wir versuchen in der Kaltakquizima oder am Telefon generell die Anglizismen immer so gut zu vermeiden wie eben möglich. Also ich weiß natürlich was ein Early Bird ist und ich weiß auch was intrinsisch oder sowas ist, das werden die auch nicht wissen. Das Problem ist, wenn du mit Anglizismen loslegst, kennst du Douglas? Die Kette?
+
+(07:52-08:21)
+ Die haben, ich weiß gar nicht, ob es immer noch deren Motto ist, die haben doch immer dieses Come in and find out gehabt als Motto, als Branchenmotto oder als Sub-Slogan. Und es gab mal eine Umfrage, also Come in and find out hieß das. Und dann gab es eine Umfrage, wo Verbraucher gefragt wurden, was das heißt, was die Bedeutung von einem Slogan ist. Und da kam die Antwort, finde rein und finde auch wieder raus.
+
+(08:21-08:41)
+ Ja, nicht ganz korrekt. Und der Marketer geht sich erschießen. Genauso mit Burger King, hatte vor ganz langer Zeit, das ist jetzt irgendwie schon 20 Jahre her oder so die Umfrage, hatte mal Have It Your Way. Die hatten den Whopper.
+
+(08:41-09:08)
+ Und McDonald's hatte noch nicht diese Anpassungen, die die auch haben. Mittlerweile kannst du ja bei McDonald's auch den Burger so anpassen, wie du willst. Das konntest du damals noch nicht. Du konntest nur etwas weglassen. Du konntest nichts hinzutun bei McDonald's. Bei Burger King konntest du aber dir das Ding mit 15 Fleischscheiben und zehnmal Zwiebeln und das und das, du konntest das frei kombinieren. Hauptsache, sie haben die Zutat auf einem ihrer Burger drauf und du konntest dir das so kombinieren, wie du wolltest. Have it your way. Was haben die alle verstanden? Auch zum Mitnehmen.
+
+(09:12-09:42)
+ Ja, deswegen. Mit Anglizismen ist immer schwierig. Ja, ich bin bei dir super einfache Sprache, ne? Genau. Genau deswegen. Keep it simple, stupid. Okay, also. Wir haben eine App, um Ihr Empfehlungsmarketing zu revolutionieren. Und sodass Sie in der Regel 120% mehr Empfehlungen erhalten als jetzt. Ja.
+
+(09:42-10:05)
+ Das funktioniert, indem Sie oder Ihre Vertriebler Empfehlungsgeber einladen können und Sie können über die App ein komplettes Empfehlungsprogramm aufsetzen nach Ihren Wünschen. Richtig. Also du kannst frei konfigurieren, welche Ränge, zum Beispiel wir bei unserer Firma haben braun, silber, gold, diamant.
+
+(10:05-10:28)
+ Und irgendwie Champion oder sowas. Und auf jeder Stufe, das ist nämlich das Schöne, weil erst in der letzten Stufe gibt es 1000 Euro. Im Empfehlungsmarketing werbe ich aber von meinem Kunden schon bis zu 1000 Euro. Die hat er dann im Kopf und die will er erreichen. Dort will er hinwachsen. Und das Tolle, und so funktioniert Thermomix, Hyla, Aqua Global, die ganzen Strukturvertriebe. Wir haben einen Mini-Strucki Vertrieb.
+
+(10:28-10:55)
+ bei den Empfehlern. Also ein Unilevel System mit zwei Ebenen. Das heißt, wenn du jetzt einen Empfehlern, einen Tippgeber einlädst, den Andreas, und der Andreas lädt seinen Schwager ein, den, keine Ahnung, Martin, dann, wenn der Martin den Tipp abgibt, verdient der Andreas wieder mit 100 Euro oder so. Kannst du auch selber festlegen, was du an Overhead quasi ausschüttest.
+
+(10:55-11:12)
+ Okay, das heißt, du kannst eine Struktur aufbauen mit zwei Ebenen? Richtig, beziehungsweise drei. Also Andreas, Martin und der Martin kann auch die Sophie einladen. Und der Andreas würde sogar an das Sophie verdienen. Wenn die Sophie aber jemand einlädt, verdient nur noch der Martin dran, weil immer drei Ebenen ausgeschüttet werden.
+
+(11:12-11:33)
+ Okay, interessant. Die Idee ist es aufzubauen wie, keine Ahnung, haben sie die Edeka App oder eine Payback App, dass du jeden auf deiner Arbeit
+
+(11:33-11:57)
+ Weil du weißt, du kannst damit Geld verdienen. Und wenn der Immobilienmakler das richtig pitcht, und dafür soll es natürlich auch Workshops geben, aber viele wissen nicht, wie Empfehlungsmanagement funktioniert. Das ist schon mal Empfehlungsmanagement auf Stützrädern. Und dann bauen wir dir halt noch einen Viertaktmotor an deinem Fahrrad dran. Das ist dann der nächste Schritt. Weil viele können es einfach nicht.
+
+(11:57-12:24)
+ Ja, so können wir natürlich auch, also wir könnten so reingehen, wie ich jetzt gerade gesagt hatte, das ist Pitch Nummer 1 für Skepting. Das, was ich vorhin gesagt hatte, das ist Pitch Nummer 1. Pitch Nummer 2 wäre in der Tat, mal etwas breiter ranzugehen und zu sagen, guten Tag, es geht um das, ihr Empfehlungsmarketing zu, ja nicht revolutionieren vielleicht gleich, sondern weit nach vorne zu bringen vielleicht einfach nur, weil revolutionieren ist sofort wieder so,
+
+(12:24-12:47)
+ so effektheischerisch. Da bringst du dich mit der Sprache auch eventuell in die falsche Ecke sofort. Dass man sagt, guten Tag, es geht um Ihr Empfehlungsmarketing. Darf ich fragen, wie Sie gerade an Empfehlungen kommen und wie Sie daran arbeiten, die zu vermehren? So, da gibt es drei Antworten drauf. Wer erzählt dir das?
+
+(12:47-13:15)
+ und sagt, ja, wir machen hier so die Rennen halt rum. Okay, dann haben wir einen schönen Aufhänger zu sagen, gut, wir haben eine App, die das auf ein neues Level bringt, 120% mehr, bla bla bla, der Pitch von gerade. B sagt da, ja, das geht nicht überhaupt nix an, weil ich hab ja gerade noch, ne, er hat noch keine Beziehung zu mir, er weiß noch gar nicht, wer ich bin. Ja, dritten Reden können wir sagen, okay, wir haben Erfahrung, die Erfahrung gemacht, dass Kunden das so und so machen und dann wieder in den ersten Pitch, okay.
+
+(13:16-13:43)
+ Da ist die Sache, wenn ich dich unterbrechen darf, Lorenz, da kommt der Klassiker, wenn du Kalterquise machst, ist dann immer, ja, nee, da sind wir gut aufgestellt. Wie ich gerne reingehe und wie ich die Leute erstmal öffne ist, schönen guten Tag, Christian Galvanek mein Name, moin, spreche ich dann mit Lorenz, ja, hi, hier ist der Lorenz, oder ich gehe einfach immer rein, ich stelle mich meistens nie mit dem Firmennamen vor, kurzer Disclaimer noch, Lorenz, also jetzt fahre ich tatsächlich durch den Kaff,
+
+(13:43-14:00)
+ Da werde ich gleich, glaube ich, ich mache mal lieber Videokamera aus, dann habe ich mehr Bandbreite. Nur kurz, solange ich durchs Kaff war. Alles gut. Ich gehe einfach super gerne rein und sage, hey Lordens, grüß dich mein Lieber, hier ist der Basti. Hi. Ja, und dann sagt er, hi, ja, wer, Basti, ja, Basti, lass mich...
+
+(14:00-14:22)
+ Lass mich mich kurz mal vorstellen. Es geht um Empfehlungen. Mal kurz eine Frage an dich, Lorenz. Würdest du sagen, dass du mit Empfehlungen, also in deiner Branche, auch tatsächlich das meiste Geld verdienst und das Arbeiten mit Empfehlungen am einfachsten ist, weil die Abschlussquote einfach so hoch ist? Sagt er ja. Und dann bist du erstmal auf dem selben Level. Also ich versuche die erstmal
+
+(14:22-14:43)
+ Ich versuche erstmal, dass in seinem Kopf da ist, ja, Empfehlungen sind mega geil. Weil wenn ich das so anspreche, dann denkt er an sein lästigen Empfehlungsziehapparat, wo er jedes Mal seine Kunden nach Empfehlungen anhatzt. Also, meiner Meinung nach, du bist auch ein guter Verkäufer, deswegen will ich nur meinen Raum geschaffen haben. Man merkt, dass du aus einem roten Ozean kommst.
+
+(14:43-15:12)
+ Nämlich der Solareinkrieg. Das, was du jetzt gerade gesagt hast, die Art zu pitchen oder die Art reinzukommen, erstmal verbrüdern, das Problem nochmal klar machen, Suggestivfragen stellen, dafür kriegst du auch hauptsächlich eher simplere Geister, die dann antworten. Das ist ein Mittel, das würde ich nutzen, wenn alles andere nicht funktioniert. Wir gehen ganz gerne am Anfang erstmal mit offenem Visier rein.
+
+(15:12-15:42)
+ Und du nutzt diese Tricks eben nicht, weil du damit auch eine Zielgruppe kriegst, die, ich sag mal, ein bisschen mehr Grip hat und die das auch honoriert, dass du ja einfach ehrlich sagst, worum es geht. Und wenn der Pitch gut genug ist, wenn das Produkt hinten raus gut genug ist und der Nutzen für den Kunden gut genug ist und es kein richtiger roter Ozean ist, dann ist das auch ein sehr guter Weg. Weil wenn ich dich jetzt anrufe und sage, guten Tag, Herr Müller, wir haben eine Software, mit der Sie Ihr Empfehlungsmarketing
+
+(15:42-16:11)
+ verdoppeln können oder das ergebnis ihres empfehlungs ihrer empfehlungen also dass sie doppelt so viele ergebnisse haben eine software mit der sie doppelt so viele ergebnisse bekommen wie heute haben sie gerade drei minuten für mich ja dann weißt du ganz klar worum es geht so und wenn dich das nicht interessiert dann muss ich mir zu suggestiv sachen anfangen wie du sie gerade gesagt hast so sehr gut gepitzt hast du gemacht ist aber ich würde das stilmittel noch nicht benutzen wollen
+
+(16:11-16:41)
+ Erst im zweiten Schritt. Weil wenn das reicht, also wenn wir hingehen und sagen, guten Tag, Herr Müller, oder wir können uns doch sicherlich einigen, dass Empfehlungen für jedes Unternehmen eine unheimlich wichtige Quelle für Neugeschäft ist. Was würden Sie halten, wenn ich eine Software hätte oder eine App hätte, mit der Sie doppelt so viele Empfehlungen bekommen wie heute? Und dann sagt der, oh,
+
+(16:41-17:10)
+ Hier, dreht mal. Unsere Telefonate sind immer so aufgebaut, dass wir am Anfang eine... Es geht um, das nenne ich auch häufig. Ich texte das auch meistens wirklich mit, es geht um. Weil wenn du anrufst, fragt der Kunde sich erst mal, warum... Und dann sagen, diese Antwort beantworten wir direkt. Dann sagt er sich, okay, angenommen, das, was der Typ da erzählt, stimmt. Angenommen, er hat diese App, angenommen, die leistet das, angenommen, die kann das. Das hat er noch alles nicht getestet.
+
+(17:10-17:24)
+ sondern bestimmt. Bin ich dann interessiert? Erzählungen verdoppelt? Hell yeah! Natürlich bin ich interessiert. So, damit habe ich mir deine Aufmerksamkeit erkauft.
+
+(17:24-17:54)
+ Ich hab noch keinen Termin und ich hab noch keinen Abschluss. Aber ich habe, dass du mir zuhörst. Und jetzt kann ich anfangen, ein Bild zu zeichnen. Jetzt kann ich ausholen. Ich kann am Anfang sagen, guten Tag, wir haben eine... Wir können uns doch... Also nehmen wir doch einen Pitch. Guten Tag. Wir können uns doch darauf einigen, dass Empfehlungen für ein Unternehmen unheimlich wichtig sind. Wir bieten eine App, mit der Sie Ihre Empfehlungen mindestens verdoppeln können. Die Anzahl der Empfehlungen, die Sie kriegen, mindestens verdoppeln können.
+
+(17:54-18:19)
+ Haben Sie drei Minuten für mich, dass ich Ihnen das einmal vorstelle?" Und dann sagst du ja, drei Minuten investiere ich. Also entweder sagst du nein, aber dann wahrscheinlich nur wirklich, weil du sie jetzt gerade auch nicht hast. Und dann wollen wir sie auch nicht, weil dann hast du nicht die Ruhe. Dann bist du zwischen A und B. Und dann rufen wir in der Tat dann wieder an, wenn du diese drei Minuten hast. Und das Zweite sagt, okay, er sagt ja.
+
+(18:19-18:49)
+ Und dann gehen wir und zeichnen ein Bild. Dann machen wir eine kurze Beschreibung, was jetzt gerade scheiße ist. Jetzt fangen wir mit dem Salz an in der Wunde. Jetzt gehen wir hin und sagen, okay, Herr Müller, Sie kennen das doch. Als Dienstleister ist man immer auf Empfehlungen angewiesen. Es ist aber heutzutage immer schwieriger, intrinsisch, nein, das wollten wir vermeiden, dass die Leute nicht nur zufrieden sind, sondern einen dann auch wirklich aktiv weiterempfehlen, aus Eigenmotivation heraus.
+
+(18:49-19:18)
+ Empfehlungen sind aber für das Geschäft unheimlich wichtig, aber häufig unheimlich mühsam zu kriegen und einzusammeln. Und das ist Problembeschreibung. Lösung, wir haben eine App entwickelt, in der Sie Ihr eigenes Empfehlungsprogramm komplett konfigurieren können mit Belohnungen, Stufen, Prozenten, Einladungen, Ihre Mitarbeiter können da rein, eine komplette Verwaltung, mit der Sie aus dem Nichts mal eben Ihr eigenes Empfehlungssystem bauen können. Das hat dazu geführt, bei unseren Kunden,
+
+(19:18-19:38)
+ dass sie mindestens 100 Prozent mehr Empfehlungen kriegen, wenn nicht sogar 200 Prozent. Haben Sie einmal mal eine Viertelstunde, dass ich mir das am PC kurz vorstelle. Finde ich gut, was ich nur machen würde, wenn du das Problem erklärst. Ich mag es immer bildlicher zu sprechen, dass ich dann dem einfach auch ganz klar sage, Herr Müller, Sie kennen es doch, dass man
+
+(19:38-20:05)
+ Dann sagt man zum Kunden Meier, ja empfehle mich doch mal. Und dann macht das nicht. Und dann hakt man wieder nach und wieder nach und nach. Und ein drittes Mal hört man auf. Und man hat so viele Kunden, die man im Monat bedient. Man handt aufs Herz, Herr Müller. Das macht auch keiner. Keiner fasst bei seinen Tippgebern nach. Mit Glück kriegt man mal aus zehn Kunden, der eine, der kommt und sagt, ja hier, hier der Jörg, ruft ihn mal an wegen seiner privaten Krankenversicherung.
+
+(20:05-20:34)
+ Mit Glück. Und jetzt stell dir mal vor, dass es 10 von diesen Jörgs geben würde. Die dir jeden Tag schreiben, hey hier, schau mal PKV, hey hier, schau mal PKV. Weißt du? Und ich spreche dann halt gerne bildlich, weil das kann er sich dann vorstellen. Und dann versteht er erstmal so, ja fuck, das ist echt ein Pain, dieses Nachfassen die ganze Zeit. Und wenn das Leute sind, die ein Team haben, also es gibt ja den einzelnen Finanzmakler oder Immomakler, aber dann gibt es die Leute mit einem Team.
+
+(20:34-20:54)
+ Und da gehe ich eher in den Schmerz rein. Und dein Team macht das ja auch nicht. Und dann noch dein Team nachkontrollieren und sowas, das ist super mühselig. Und so hast du ein System, was es für dich macht. Okay, dann lass mal versuchen, dich das auf eine Business-Ansprache hochzuholen.
+
+(20:54-21:24)
+ Weil das, was du gerade gemacht hast, ist auch wieder B2C, roter Markt. Das war sehr gut. Aber ich hoffe, dass wir ein bisschen B2B-iger unterwegs sein können. Aber das Bildzeichnen gefällt mir sehr gut. Bildzeichnen finde ich sowieso immer toll. Dass man sagt, okay, also haben Sie drei Minuten, ja. Sie kennen das doch. Klassische Empfehlungen sind...
+
+(21:24-21:46)
+ sind sehr aufwendig oder sehr, sehr mühsam zu bekommen. Der Kunde ist super zufrieden, man hat einen super Job gemacht, aber jetzt geht es ans Nachfassen. Man fasst einmal nach, man fasst zweimal nach und das tun schon die meisten nicht. Man sagt natürlich nicht, dass er das nicht tut, sondern das tun die meisten nicht.
+
+(21:46-22:15)
+ Das ist mühselig, passt nicht ins Tagesgeschäft. Gerade bei Mitarbeitern ist es immer schwierig, die zu motivieren, dass sie das immer wieder machen und so weiter. So, und dann gehen wir in die Beschreibung mit. Was halten Sie davon, wenn es eine App gibt? So. Das denke ich so. Seriös eigentlich. Ahoy, dobra zano. Nee. Okay. Jetzt. Ja, geh erstmal an Platz in Ruhe. Alles gut.
+
+(22:15-22:45)
+ Ja, ja, alles gut. Servus, guten Morgen. Dann hole ich mir auch mal eben was zu trinken. Ich bin in einer Sekunde wieder da. Ja, das passt. Aber das finde ich gut, wie du das machst. Also ich muss tatsächlich sagen, wenn ich B2B telefoniere, ich bin halt, ich bin echt ein roter Verkäufer. Ich telefoniere ja auch alle Menduan, ne? Ja, das würden wir jetzt schon mal nicht tun.
+
+(22:45-23:00)
+ Ich habe letztens über Lucia die Nummer vom Geschäftsführer von Swiss Life gezogen. Ich bin ja wirklich Schmerzbefreit. Das kann super funktionieren.
+
+(23:00-23:23)
+ Unterscheidest du dich natürlich von Leuten, ne? Ob der das jetzt gut oder schlecht findet, wird sich zeigen, aber du bist erstmal anders. Anders ist immer gut. Ja. Aber ich sag mal, wir gehen da etwas breiter rein. Also beim Scripting ist, denke ich, dieses... Also wenn der Kunde den Pain hat, und den hat er eigentlich,
+
+(23:23-23:51)
+ Ich sehe nicht, dass das nicht funktionieren sollte, ehrlich gesagt. So offen reinzugehen. Wenn dir jetzt jemand sagen würde, pass mal auf, dein Empfehlungsmarketing... Ich verstehe nicht, warum das nicht funktionieren sollte. Der Room-Service ist gerade da. Kann ich dich mal eine Minute auf... Du bist ja eh jetzt... Ja, klar. Ist in Ordnung, Lorenz. Wo kommt denn das ganze Zeug her?
+
+(23:53-24:14)
+ Die Abwärme? Ja, in der Frühe schaut der wieder aus, ne? Weiß nicht, wir probieren mal, wie das aussieht. Digga, tust du echt Milch vor Muske rein, oder was? Nein, ich möchte das nicht so. Digga.
+
+(26:45-27:12)
+ Jetzt, du bist noch stumm. Doch, jetzt aber. Genau. Ähm, jo. Sorry, aber wir haben hier so ein Fenster, was wir kontrollieren mussten und das muss ich dir neben zeigen. Ähm. Wo waren wir? Wir waren beim Hauptpitch, den haben wir im Prinzip gemacht. Ja. Ähm.
+
+(27:12-27:41)
+ Machen wir mal eine kleine Detour zum Administrativen. Ziel des Gesprächs ist eine Vorführung zu terminieren. Wie lange dauert die und wer macht die? 15 Minuten kann man schaffen, aber du weißt, man verquatscht sich dann so ein bisschen. Aber ich würde immer 15 Minuten Pitch, eine halbe Stunde machen.
+
+(27:41-28:09)
+ Genau. Würde ich dann auch sagen, unser Spruch an der Stelle ist, das Ganze dauert 15 Minuten, wir nehmen uns eine halbe Stunde Zeit für Sie. Ja. Genau. Dann weiß er, wenn es nicht interessant ist, ist er nach 15 Minuten wieder raus. Aber wenn es ihn interessiert, weiß er auch, er kriegt Serious-Informationen. Ja. Okay? Ja. Wer macht die? Der Verkäufer, oder? Weil ich würde da direkt, der Verkäufer von dir, ich würde da direkt schon signen.
+
+(28:09-28:39)
+ Kann ja eh 14 Tage kostenlos testen. Also ich würde am Anfang, also ich würde es auf jeden Fall mit dem, also die Kaltakquise terminiert. Ja. Und setzt in der Tat einen Termin. In dem Termin können wir eine Ceph-Software-Demo machen. Ich fände es nicht schlecht, wenn ihr die ersten ein, zwei Wochen
+
+(28:39-29:07)
+ ihr tief im Thema seid, was die Software eigentlich ist. Sobald wir dann ein paar Aufnahmen haben und ein paar, ich sag mal, Learnings, wie der Kunde reagiert, wie er drauf ist, worauf die Wert legen und so weiter, dann können wir das zu uns switchen. Ja. Ich würde ganz gerne die ersten Termine von euch machen lassen. Kann ich auch machen, ja. Okay. Was mir gerade nur kommt,
+
+(29:07-29:34)
+ Du testest es 14 Tage kostenlos. Und danach musst du ihn eigentlich wieder, du machst einen Wake-up-Call, dass der seine Kreditkarteninformationen hinterlegt. Oder du machst direkt so, bei 14 Tage kostenlos testen hinterlegt er seine, geht er schon direkt in den Vertrag ein. Weil so Demo ist ja eher dafür, dass das Leute selber machen. Und dann kriegst du einen Call und dann wird gesagt, hey, du bist in der Demo, komm, lass uns mal einen Call machen. Ist ja so ein Lead-Magnet.
+
+(29:34-30:02)
+ Aber hier auf dem Weg würde ich direkt mit denen dann, wenn es interessant ist, reinbuchen, 14 Tage testen. Aber er ist quasi direkt eigentlich schon in einem Monatsvertrag und zahlt dann auch einen Monat weiter nach den 14 Tagen. Außer er storniert innerhalb dieser 14 Tage. Würde ich auch so machen. Allerdings würde ich ihn so oder so nach den 14 Tagen oder auch nach 7 Tagen anrufen lassen.
+
+(30:02-30:24)
+ Das ist aber bei uns die sogenannte Jagdhütte. Da kommen wir dann gleich noch zu, oder da kommen wir zu, wenn ihr die ersten Termine habt. Jagdhütte ist bei uns eine separate Geschichte, wo du quasi alte Leads reintun kannst. Das hattest du erzählt, ja. Genau, das was wir auch am Anfang gedacht hatten, von deinen Facebook-Leads oder so, das wäre die Jagdhütte gewesen.
+
+(30:24-30:49)
+ Und wenn jetzt, ich sag mal, ihr oder auch unser Vertriebler hinterher die Präsentation gemacht hat, und dann sagt er, okay, ich hab ihn jetzt eingemeldet, die 14 Tage laufen, und macht dann vielleicht nach 10 Tagen einen Eintrag in die Jagdhütte mit Ruf an und fragt, wie es ist. Da hast du natürlich eine deutlich höhere Retention. Ja.
+
+(30:49-31:18)
+ Das heißt, 15 Minuten, wenigstens eine halbe Stunde Zeit für Sie. Wird das Teams, Google Meet, Zoom? Google Meet. Okay. Kann man machen. Guckt mal, wie es läuft. Wir haben mit Google Meet nicht nur gute Erfahrungen gemacht. Das Problem ist, dass die Audioeinstellungen von Google Meet ein bisschen schwieriger sind für den Kunden als die von Teams und Zoom. Okay.
+
+(31:19-31:48)
+ Teams ist eigentlich akzeptierter, aber Google Meet, also es gehen alle drei. Ja, und du kannst auch alle drei terminieren, insofern, das geht schon. Guckt einfach mal ein bisschen, ob ihr zu häufig mit, oh, ich finde aber das Mikro nicht und ich verstehe sie nicht und so, dann müsste man eventuell switchen auf Teams. Also ich hatte eigentlich, wir nutzen seit zwei Jahren Google Meet, ich hatte eigentlich nie Probleme, muss ich sagen. Okay, gut, dann lassen wir das. Dann Google Meet. Habt ihr ein Buchungssystem? Ja. So Calendly, Bookings? Ja.
+
+(31:48-32:16)
+ Was nehmt ihr da? Alles über GoHighlevel. Noch nie gehört. Okay, aber ist auch nur ein ganz normaler Buchungslink, den wir dann benutzen können, oder? Ja, genau. Ist ein CRM und da hast du dann Kalenderbuchungsoptionen wie Kalendi und Co. Okay, cool. Also wir kriegen einen Link, wo wir einen Kalender buchen können. Ja. Okay, super. Den brauchen wir. Dann, das war eine halbe Stunde.
+
+(32:16-32:42)
+ Wir bräuchten einen E-Mail-Zugang, ein E-Mail-Konto. Irgendwas generisches, was es noch nicht gibt. Am besten mit der Domain von der Software. Weil viele Kunden werden sagen, okay, super, schicken Sie mal was. Da schicken wir natürlich nichts. Ja, weil die wollen nur einfach ein bisschen was in der Hand haben. Wir schicken dann keinen 15-Seiter. Sondern wir schicken einfach den Telefon-Pitch in schriftlicher Form nochmal.
+
+(32:42-33:12)
+ Und daraufhin buchen die dann. Aber die müssen wir in dem Moment verschicken können. Das heißt, wir brauchen einen Zugang zu einem IMAP-Konto. Dann halt dem das schicken können. In dem Moment. Dann bräuchten wir noch eine Telefonnummer, die du umleitest auf uns. Irgendeine Durchwahl von dir. Wenn du die auf uns umleitest, können wir sie bei uns in unserer Infrastruktur als ausgehende Telefonnummer benutzen.
+
+(33:12-33:42)
+ Das hat den Vorteil, dass die Rückrufe werden durch die Umleitung zu uns weitergeleitet. Und wenn wir nicht mehr zusammenarbeiten, nimmst du die Umleitung raus und dann kommen die Anrufe bei dir an. Wir können natürlich auch unsere Rufnummer nehmen, aber dann haben wir das Ortsnetz von uns. Das ist nicht so toll. Bist du überhaupt in Deutschland? Ich bin in Deutschland, ja. Ja, wo? Welche Stadt? Nö, Nürnberg. Nürnberg, ja. Also dann die 09 irgendwas. Und bei uns wäre es halt 023.
+
+(33:42-34:12)
+ Ja. Und da fragt der Kunde sich dann, hey, was soll dat? Ja. Dann wäre es schöner mit ner 0.9 irgendwas. Ja. Also die einmal zu uns umleiten. Ja, damit haben wir so die groben technischen Sachen, denke ich. Kommen wir nochmal ganz kurz zum Pitch-Bereich. Also ich glaube, in den ersten Pitch haben wir gerade eins, zwei definiert. Wir sind bis zum Abschluss. Dann würde ich jetzt sagen, wir gehen mal in die Einwandbehandlung.
+
+(34:12-34:42)
+ Was für Einwände könnte es geben? Ja, wir ziehen schon Empfehlungen. Machen wir schon. Ja. Würde ich sagen, darf ich fragen, wie? Ja. Zum Beispiel... Dann sagt er mir, ja, meine Leute fragen, rufen an eine Woche später und fragen, ob sie Empfehlungen kriegen können. Ja, also... Das ist eigentlich die einzige Möglichkeit, oder?
+
+(34:42-35:04)
+ Ja, oder, ähm, super. Also ich lobe immer gerne den Kunden eigentlich für jeden Scheiß. Super, sind sie offen für einen guten Gedankengang, Herr Strada. Heute geht es ja nicht darum, dass sie Empfehlungen machen, deswegen habe ich sie auch angerufen. Ich weiß, dass sie Empfehlungen machen. Herzlichen Glückwunsch. Es wäre auch fatal, wenn sie es nicht machen würden. Heute geht es darum, wie sie das Ganze besser machen können. Darum soll es ja gehen.
+
+(35:04-35:33)
+ Boah, das ist so hart. Ja, das wäre wie... Du merkst so geil, dass du in dieser Branche bist. Also, machst das extrem geil. Respekt. Solche Kunden habe ich selten, die das auf dem Niveau können. Ja, danke schön. Aber man merkt echt, dass das die Farbe ist. Ja, aber ich bin auch selber Verkäufer. Und ich spiele halt sehr viel mit Metaphern. Schauen Sie mal, das wäre wie, wenn ich wüsste, dass Sie gerade Fortbewegungsmittel haben, Sie fahren aber Kutsche und ich will Ihnen heute einen Ferrari verkaufen. Können Sie ja nicht sagen, ja, ich habe aber schon eine Kutsche.
+
+(35:33-35:46)
+ So, und dann gehst du wieder bildlich rein, dann ist er offen und dann loopst du einfach wieder deinen Pitch, das darum geht, Empfehlungen auf Steroide, aber ich weiß, das ist nicht euer B2B Slang, ne?
+
+(35:46-36:12)
+ Je nachdem, wen du gegenüber hast, musst du halt sehr vorsichtig mit sowas sein. Mich persönlich zum Beispiel, wenn du mich anrufen würdest, würdest du mich erst mal amüsieren, weil ich halt sehe, was für ein Vertriebsmittel jetzt versucht wird, bei mir anzuwenden. Das würde ich so ein bisschen sagen, guck mal kleiner, versuch mal. Also mich persönlich, rein persönlich. Aber ich sag mal jetzt, als Geschäftsführer von einem 80-Mann-Unternehmen würde ich sagen,
+
+(36:12-36:38)
+ ich hab doch keine zeit jetzt warum soll ich dir zuhören und da bin ich halt also man muss immer sehr sehr sorgfältig eine gewisse zielgruppe erreichst du damit prima. Ja also man muss wirklich gucken wen wir da wen wir da gegenüber haben aber bilder ist natürlich cool ok der sagt also ja wir haben machen wir das doch mal gesagt ja wir haben schon wir machen schon empfehlungsmarketing ok darf ich fragen wie ja unsere leute rufen.
+
+(36:38-37:07)
+ Also, wie auch immer, ist völlig egal, was der sagt. Entweder unsere Leute rufen an, oder wir haben irgendwelche Posts, die wir verschicken, wo wir was fragen, oder E-Mails, oder keine Ahnung, wie der das jetzt macht. Dann nehmen wir doch deine Kutsche. Wie könnte man das ein bisschen B2Biger formulieren? Okay, verstehe ich. Wenn ich mal bei einem anderen Bild bleibe,
+
+(37:09-37:39)
+ Sie haben gesagt, Sie haben schon ein Fortbildungsmittel, aber Sie fahren halt noch Kutsche. Ich biete Ihnen gerade, ein Porsche muss es vielleicht nicht sein. Was ist denn nicht so Flashly? Nee, geht mir auch nicht. Ja, ein BMW. Ja, ein BMW an. Ja. Ja, wobei eine Marke würde ich nicht nennen.
+
+(37:39-38:06)
+ Du kannst ja einfach sagen, super, Herr Schrader, gut, dass Sie sich bereits mit dem Thema Empfehlungen auseinandergesetzt haben. Ist ja unstrittig, wer heutzutage nicht auf Empfehlungen geht, der hat auf jeden Fall was verpasst. Was würde es aber für Sie bedeuten, wenn wir Empfehlungsmanagement komplett automatisieren können? Das heißt, der ganze Stress mit der Nachtelefoniererei würde ab heute, ab heute, dann wiederholen?
+
+(38:06-38:28)
+ ein Ende haben. Herr Strada, was sagen Sie dazu? Stellen Sie sich das nochmal vor. Ja, gut, das nehmen wir so, das übernehmen wir so eins zu eins. Fertig. Ja. Und sagt er, ja, okay. Du gehst einfach auf den Pain ein, weil die machen schon Empfehlungen und telefonieren ja nach. Oder man kann halt auch einfach ganz klar fragen, es gibt verschiedene Methoden, ne?
+
+(38:28-38:47)
+ Ich hab erst gestern ein Gespräch geführt und dann hat er eben auch den Einwand gedroppt. Dann hab ich gesagt, alles gleich war mit dem Perdu, aber nehmen wir jetzt mal an, das ist der Herr Schrader. Dann hab ich auch zu ihm gesagt, ja Herr Schrader, genau das Gleiche, super. Alles andere hätte mich jetzt auch gewundert. Wie erfolgreich sind Sie denn damit?
+
+(38:47-39:13)
+ Oder du holst dir vorher die Erlaubnis, weil dann fühlen sich viele auf den Schlips getreten. Du sagst, darf ich offen sprechen? Das mache ich immer sehr gerne. Es ist ja so, das sind voll die Sensibelchen. Du sagst dann, wie viele machen sie denn? Und dann willst du mit erhobener Brust dastehen und sagen, ich mache so und so viel. Die wollen sich ja alle brüsten. Dann sagst du lieber, darf ich offen sprechen? Darf ich das sagen, was ich denke, Herr Schrader?
+
+(39:13-39:20)
+ Wenn wir mal ehrlich sind, Hand aufs Herz, so viele Empfehlungen machen sie nicht, oder? Es ist vielleicht aus 10 Kunden einer.
+
+(39:20-39:47)
+ Übrigens, das ist ein Mittel, dieses darf ich offen sprechen, um die Aggressivität aus der Frage rauszunehmen, weil du gehst ihn ihm ja persönlich jetzt an, was er nicht rafft. Und das Standing dafür haben wir noch nicht. Ich hab da ein anderes Mittel, was auch gut funktioniert, nur als Tipp, also das, was du sagst, funktioniert auch super, ist aber, finde ich, ein bisschen zu häufig benutzt. Das andere ist, dass du einfach über Dritte sprichst. Du sagst, okay, Herr Galmanek,
+
+(39:47-40:16)
+ Meine Erfahrung ist, dass viele unserer Kunden vorher das Problem hatten, dass sie dachten, dass das Empfehlungsmarketing funktioniert. Aber in Wirklichkeit waren es nur zwei, drei Termine. Und nachdem sie mit uns zusammengearbeitet haben, ist das und das und das bei rausgekommen. Du sagst ihm, also der weiß genau, dass du über ihn sprichst. Aber du sagst, ich frage für einen Freund. Und damit nimmst du dem Angriff die Spitze. Und dann kommst du normalerweise besser durch.
+
+(40:16-40:46)
+ Aber ich finde auch, wir sollten das erstmal einfach ausprobieren. Weil ehrlich gesagt, selbst wenn die Empfehlungsmarketing schon machen, sollten wir auf jeden Fall loben, ist immer gut. Sagen, okay, super. Dann haben Sie ja im Gegensatz zu vielen anderen die Wichtigkeit des Themas ja schon direkt auf dem Tisch. Klasse. Was halten Sie davon, wenn wir da jetzt nochmal ordentlich Speed drauf kriegen können? Also wenn wir das, was Sie jetzt mit hohem Aufwand machen, vollständig automatisieren können und so, dass Sie jetzt doppelt so viele Empfehlungen kriegen, vollautomatisiert wie vorher. Das würde ich Ihnen gerne einmal vorstellen. Haben Sie drei Minuten Zeit.
+
+(40:47-41:07)
+ Sehr cool, find ich geil, ja. Und ehrlich gesagt, wer da nicht drauf fliegt, ja? Ja, nee, das ist perfekt, das ist perfekt. Was gibt es noch für Einwände? Also machen wir schon, haben wir gerade behandelt. Ja, die Klassiker, ne? Keine Zeit.
+
+(41:07-41:36)
+ Ganz klare Einwendung, gerade deshalb. Ja, aber Müller, genau deswegen rufe ich an. Ja, Sie müssen jetzt einmal eine Viertelstunde investieren, indem Sie sich die Software angucken und danach haben Sie beim Empfehlungsmarketing vollautomatisiert viel mehr Zeit. Ja, es geht gerade darum, dass Sie mit uns mehr Zeit realisieren. Wann haben Sie kurz Zeit für uns? Donnerstagvormittag oder Nachmittag? Ja, Alternativfrage, zack. Ja, kann man versuchen. Was gibt's noch? Was kostet der Spaß?
+
+(41:36-42:05)
+ Ja, was soll das kosten genau? Was kostet es denn ungefähr? Ist die Frage, gehe ich direkt mit dem Preis rein oder sage ich, Herr Schrader, sehr, sehr gute Frage. Darf ich mit einer Gegenfrage antworten, rhetorische Frage. Was kostet sie, wenn sie es nicht tun? Was kostet sie, wenn sie fünf Empfehlungen... Also das, weil... Aber soll der Setter Preise sagen? Das ist immer das Ding, ne?
+
+(42:05-42:35)
+ Nein, nein, nein, auf keinen Fall. Aber verrat's mir erstmal nochmal kurz, damit ich's phrasen kann. Achso. Ich glaub, der Medium Seed, also die empfohlene Lizenz, liegt bei 149 Euro pro Monat. Okay, und starten tut ihr? Bei Null, da hast du eine kostenlose Testvariante. Gut, aber nach dem Test? Kannst für Null Euro weiterverwenden. Aber damit wirst du nicht glücklich. Okay, und der teuerste? 15.000.
+
+(42:35-42:48)
+ Okay, das ist viel. Also Preisfragen müssen wir immer beantworten, damit der Kunde es einsortieren kann. Aber wir beantworten sie auf keinen Fall im Detail, weil er weiß ja noch, was er dafür kriegt.
+
+(42:48-43:11)
+ Das wollen wir auch noch gar nicht erzählen, weil er meint, er hätte viel zu viel Informationen, könnte schon entscheiden, kann aber nicht entscheiden. Das heißt, an die Frage würde ich dann, was kostet denn der Spaß, sagen. Bei uns gibt es sogar eine kostenlose Version, die natürlich mit einer adäquaten Einschränkung funktioniert. Die meisten kosten das 149-Euro-Paket.
+
+(43:11-43:36)
+ wo dann sehr, sehr viel schon mit drin ist. Was aber für Sie am meisten Sinn macht, welche Software für Sie am meisten Sinn macht, das zeigen wir Ihnen im Call zusammen, wo Sie die Software einmal sehen. Da können Sie sich einen Überblick verschaffen, wann passt es Ihnen besser, Donnerstag, Vormittag, Nachmittag. Also du beantwortest das und leitest dann sofort in die Terminierung ein. Aber wer, ich sag mal, bei 149 komplett hinten rüberfällt und umfällt und sagt, oh, wie viel Zeit willst du dir aufwahren?
+
+(43:36-44:03)
+ Ich würd's vielleicht so machen, weil du hast jetzt 0 Euro am Anfang gesagt und danach 149 Euro und danach dich gerechtfertigt für den Preis. Ich würd's eher so machen, dass wir vielleicht... Ja, das war wie eine Rechtfertigung. Und wer in einer Rechtfertigung ist, der ist schuld und schuld unterbewusst. Warum fühlst du dich jetzt schuldig? Warum musst du dich rechtfertigen? Das passiert natürlich nicht bewusst, aber unterbewusst. Ich würd erst reinstarten mit dem Preis.
+
+(44:03-44:18)
+ Die meisten unserer Kunden entscheiden sich für das 149-Euro-Paket. Acht von zehn unserer Kunden entscheiden sich für das 149-Euro-Paket. Zwei davon nehmen jedoch das Paket für 0 Euro. Ja, Sie haben richtig gehört. Wir haben ein Paket, das kostet Sie gar nichts.
+
+(44:18-44:38)
+ Irgendwie sowas. Ist jetzt noch nicht perfekt am Ende? Ne, also das mit der Verteidigung hast du völlig recht. Und vor allem, wenn ich schon zwei Preise nehme, dann müsste ich auch noch einen dritten Preis framen, damit die 149 wieder kleiner aussehen. Ja, es gibt noch eins, das größer ist. Also 0, 149, 499 und 15.000.
+
+(44:38-45:07)
+ Ich würde es einfach kurz abbügeln. Das am häufigsten genommene Programmpaket bei uns, also wir haben natürlich Pakete in unterschiedlichen Preisregionen, das am häufigsten gebuchte und was für Sie wahrscheinlich auch am ehesten in Frage kommt, wird das 149-Euro-Programm sein. Was da genau drin ist und was das genau kann, zeigen wir Ihnen gerne in der Softwaredingung. Oder vielleicht noch nur. Also dass man sagt, sind nur 149 Euro. Weiß ich auch nicht viel. Ist nicht viel. Die Frage ist, wie setzt du einen anderen Anker?
+
+(45:09-45:32)
+ Also ehrlich gesagt, nochmal, wenn jemand bei 149 Euro komplett hinten rüber fällt, dann spar dir deine Zeit. Wenn er sein Mehrwert vielleicht auch nicht verstanden hat, ich weiß nicht. Ja, das kann ja sein. Und da können wir dann ja auch drauf eingehen. Wenn er sagt, okay, das ist teuer, dann lass uns das Skript ergänzen. Dann können wir sagen, okay, oh.
+
+(45:32-45:54)
+ Die Einschätzung hatten wir jetzt so noch nicht. Ja, genau. Oh, das habe ich noch nie gehört. Genau. Also vor allem bist du bescheuert, Klammer zu. Ja, das ist mir jetzt so. Also das hatten wir noch nicht. Das ist nur, damit wir uns nochmal richtig verstehen. Wir reden von einem vollautomatisierten Empfehlungsmarketing, in dem Sie doppelt so viele Empfehlungen bekommen wie jetzt.
+
+(45:54-46:22)
+ Ich würde nicht Empfehlungsmarketing sagen. Marketing ist immer scheiße. Wir reden von einer, dass Ihre Empfehlungen auf Autopilot zu Ihnen kommen. Du kannst auch einfach Software sagen. Software ist nicht so eklig. Hört sich gut an. Eine Software, um Ihre Empfehlungen zu automatisieren.
+
+(46:22-46:49)
+ Eine vollautomatisierte Empfehlungssoftware. Zu automatisieren hört sich an, ich müsste es tun. Ich muss was automatisieren. Eine vollautomatisierte Empfehlungssoftware. Okay. Eine vollautomatisierte Empfehlungssoftware, mit der Sie doppelt so viele, mindestens doppelt so viele, nein, indem Sie in der Regel mindestens doppelt so viele Empfehlungen erhalten wie jetzt. Ja. Und da reden wir jetzt ernsthaft über 149 Euro?
+
+(46:52-47:22)
+ So. Ja, und dann Pause. Genau. Ihr müsst stille aushalten, auf jeden Fall. Ja. Ja, solange bis eine Antwort kommt. Ja. Was halten Sie davon, wenn wir Ihnen das vielleicht erstmal einmal zeigen, wie das genau aussieht? Ich verstehe, es ist jetzt noch ein bisschen abstrakt. Ich konnte es ja noch gar nicht genau vorstellen. Der Kollege würde es Ihnen aber gerne einmal ganz kurz am Bildschirm vorstellen. Dann sehen Sie ja den Nutzen und sehen wirklich, was die Leistung kann und können das für sich beurteilen, ob das für Sie Sinn macht. Was halten Sie davon, Donnerstag, Vormittag oder Nachmittag?
+
+(47:22-47:46)
+ Sehr gut, ja. Dann gibt es noch kein Bedarf und das ist der letzte Einwand, würde ich sagen. Kein Bedarf kann in der Tat sein, wenn wir eine Branche haben, die genug Kunden hat. Steuerberater zum Beispiel brauchst du damit gar nicht anrufen.
+
+(47:46-48:13)
+ Genau, braucht man nicht anrufen, werden wir auch nicht anrufen. Die Steuerberater machen die Tür auf und die rennen rein, die man dann... Richtig, aber die Leute würde ich auch nicht anrufen. Ich würde immer anrufen, wo ein Bedarf ist. Die Frage ist, da würde ich jetzt nicht direkt so reagieren mit, oh, hab ich noch nie gehört, weil dann fühlt das sich direkt auf den Schlips getreten. Da muss man sehr stark aufpassen. Den jetzt echt mit Samthandschuhen kurz anfassen und dann einmal wach rütteln.
+
+(48:13-48:32)
+ Ich würde einfach ehrlich gesagt das fragen, glaube ich. Wenn er keinen Bedarf hat, kann das ja ein Einwand oder ein Vorwand sein. Vorwand wäre, er hat es nicht verstanden. Oder er hat einfach nicht verstanden, was wir wollen. Und Einwand wäre, er hat eh zu viele Kunden. Dann braucht er das auch in der Tat nicht. Und dann braucht er es auch wirklich nicht.
+
+(48:32-48:59)
+ Ja, also, wenn ich mich vor Kunden nicht retten kann, brauche ich keine Empfehlungen. Und insofern, glaube ich, würde ich in dem Fall das einfach fragen. Okay, dann darf ich fragen, Sie sind also voll ausgelastet. Ich würde sagen... Ja, ich würde eher sagen, Herr Schrader, damit ich Sie richtig verstanden habe,
+
+(48:59-49:29)
+ Denn, entschuldigen Sie jetzt meine Frage, ich hatte den Fall wirklich noch nie. Und da musste ich ein bisschen schmunzeln. Wenn jetzt heute ein Kunde vor Ihrer Tür steht und sagt, hey, ich möchte Kunde werden, sagen Sie nein, weil Sie sagen, ich habe gerade zu viel zu tun, richtig? Habe ich richtig verstanden, Herr Strada? Andere Möglichkeit. Also, guter Gedanke, aber lass mich den auch nochmal aufgreifen, bevor ich ihn verliere. Okay. Das haben wir in der Tat auch schon ein, zwei Mal gehört.
+
+(49:29-49:57)
+ bei anderen Firmen, die wirklich keine Kapazitäten mehr haben. Also, die eher Mitarbeiter brauchen als Kunden. Also, so was in die Richtung. Ich muss das jetzt gerade mal überlegen. Finde ich geil, weil dann bist du wieder bei den anderen, finde ich gut. Da würde ich ergänzen, weil, wie gesagt, ich liebe diese bildliche Sprache. Wenn ich ihm sage, keine Kapazitäten, denkt er an seine Kapazitäten und denkt, boah, ich hab eh so viel zu tun. Dann reflektiert er eher darauf, dass er den Tisch voll hat. Wenn du dann aber sagst,
+
+(49:57-50:10)
+ Jetzt hatten wir tatsächlich schon bei dem einen oder anderen Kunden, da war es wirklich so, die haben gesagt, ey, wenn jetzt ein Kunde bei uns vor der Tür steht, sagen wir, nee, sorry, wir können dich nicht aufnehmen. Ist es bei Ihnen auch so extrem, Herr Strada, dass Sie wirklich, wenn jemand vor der Tür steht, Nein sagen würden?
+
+(50:10-50:29)
+ So könnte man das war jetzt halb akustisch passiv machen ja das ist super das ist gut das nehmen wir so. Okay wir sind wir haben das schon mal wir haben das in der tat ist uns das schon mal untergekommen also wir haben das schon mal auch so gehabt das waren kunden die wirklich so.
+
+(50:29-50:52)
+ ausgelastet waren dass sie aktiv kunden auch wegschicken mussten schon weil sie sie wirklich nicht mehr bedienen konnten ich würde auch auslassen. Du was was sehr schnell passiert lorenz ist das kunden dann auch du siehst sie haben aus deiner brille und wenn ich sowas wenn mir sowas gesagt wird ich denke dann ja mal mich also unterbewusst passiert ist und du denkst dann immer du bist ausgelastet.
+
+(50:52-51:14)
+ Aber ich kann ja Kunden vertragen. Da würde ich viel, viel bildlicher reingehen. Also der Anfang ist sehr gut, aber viel, viel bildlicher und sagen, wir hatten tatsächlich in der Tat bereits solche Kunden, die dann wirklich gesagt haben, wenn jetzt heute ein neuer Kunde bei mir vor der Tür steht, muss ich sagen, sorry, ich kann sie nicht annehmen. Ich kann sie nicht bedienen.
+
+(51:14-51:43)
+ Und dann fand ich, das können wir so machen, und dann ist es bei Ihnen auch so extrem, dass man das aus dem Normalen rausholt. Das fand ich sehr gut. Ist es bei Ihnen auch so extrem? Und wenn er dann sagt, ja, dann sagen wir, okay, dann tut mir leid, brauchen Sie uns nicht. Dann stimme ich Ihnen zu. Und dann machen wir einen Abschlussbutton, der das hat. Dann können wir den im halben Jahr noch mal anrufen, ob immer noch Land unter ist. Aber dann würde ich den in dem Fall jetzt auch wirklich nicht terminieren. Wenn er aber sagt, nee, nee, Kunden würde ich schon nehmen,
+
+(51:43-52:11)
+ Dann sagen wir, ja, aber dann wäre die Automatisierung ja für Sie der wichtige Teil, weil damit kriegen Sie Nachwürfekunden rein. Sie selber sparen aber Zeit, weil das Ganze vollautomatisch in der Software stattfindet. Was halten Sie davon, wenn wir Ihnen das einmal ganz kurz online vorstellen? Das ist ein 15-Minuten-Gespräch. Wir nehmen uns eine halbe Stunde Zeit für Sie. Wann passt das? Am besten Donnerstag, halbmittag oder halbmittag. Ja. Können Deine Leute eigentlich wirklich auch so gut telefonieren, wie Du es gerade vorhast? Nein? Nein. Natürlich nicht.
+
+(52:11-52:39)
+ Aber die skripten ja sehr eng. Ja, aber können die schön frei sprechen? Ja, natürlich. Das hört sich so ähnlich an, wie du es jetzt vorgestellt hast. Freisprechen können sie nicht. Wir skripten das. Mit freisprechen meine ich, dass sich das gescriptet frei anhört? Ja, natürlich. Okay. Sonst ist es doch fürchterlich. Ja. Nein, nein, nein. Also die haben nicht, also ganz jetzt ohne irgendwie anzugeben, aber natürlich haben die nicht meine rhetorischen Fähigkeiten.
+
+(52:39-53:07)
+ Ja. Das können sie auch nicht und das müssen sie auch nicht. Aber die haben, die haben... Die wissen zwar nicht, was sie da tun, aber sie tun das, was da steht. Ja. Und das tun sie gut. Also das ist, ne ne, also da macht ihr keine Sorgen. Die sind schon, also das kommt flüssig, das kommt gut an. Wir kriegen von den Kunden immer die Rückmeldung vor eure Leute. Also die Kunden unserer Kunden melden zurück, wie gut die Kalterquise war. Okay, geil.
+
+(53:07-53:37)
+ Ja, also das ist schon... Wir sind da sehr creme de la creme. Ja. Okay, ein Wende, denke ich, haben wir genug. Haben wir eine Wettbewerbssituation? Kennst du irgendeinen Wettbewerber, den die sagen können, machen wir schon mit dem und dem? Dieter Kiewus. Nochmal, wie? Dieter Kiewus. Kennst du den? Schon mal gehört, den Namen, aber ich kann ihn jetzt gar nicht zu Wort nennen. Der macht... Kannst du mal eingeben, Dieter Kiewus? Der macht Empfehlungsmarketing, aber so allerbaulig.
+
+(53:37-54:01)
+ Dass du dann nochmal schön fett irgendwie so ein Onboarding für 6000 Euro gedrückt bekommst. Also eher kein SaaS, sondern so SaaS-X-Coaching. Und die Empfehlungssoftware ist halt super schwach. Da hast du eine Empfehlungslanding-Page. Quasi du kriegst deine eigene Landing-Page und kannst da Leute umleiten, aber du kannst nirgends... Also die ist wirklich super schwach.
+
+(54:01-54:31)
+ Das ist totaler Käse. Das ist nichts auf Autopilot. Das kann ich mir nachbauen lassen von dem Inder über OnePage. Das ist nothing special. Es wird halt nur sehr gut advertised. Und er macht halt so eine Schulung, so ein Coaching mit dazu. Und da ist halt auch so, er hat das Coaching mitgenommen. Jetzt weiß er, wie es funktioniert. Aber das Problem ist, bei den Empfehlungen, die sehen ihren Progress nicht. Sagen wir mal, Lorenz, du lieferst vier Empfehlungen. Hast du Bock, also du bist jetzt Tippgeber. Hast du Bock, bei dem, wo du die Empfehlungen abgeladen hast,
+
+(54:31-54:57)
+ einmal in der Woche nachzufassen und zu fragen, wie der Fortschritt ist. Du musst dir deinem Gegenüber vertrauen, dass er dir auch wirklich mitteilt, ist jetzt abgeschlossen oder nicht. Und das ist das Schöne, warum wir es schaffen, dass deine Empfehler immer mehr empfehlen, weil sie jeden einzelnen Schritt sehen, wo sich ihr Tipp, den sie abgegeben haben, gerade befindet. Okay. Ist aber, glaube ich, für... Also das ist eine Argumentation für das Verkaufsgespräch. Für das Terminierungsgespräch würde ich mit den ersten paar Sekunden deine Antwort gehen.
+
+(54:57-55:15)
+ indem man einfach sagt, okay, ja, wir sind bei dem Kibus. Okay, Antwort. Super. Auch wieder erstmal loben. Dann sind Sie einer der wenigen, der das Thema schon organisiert angeht. Das ist ja klasse. Was halten Sie davon, wenn Sie jetzt mal eine coole Lösung sehen? Ja, das ist auch geil. Tram.
+
+(55:15-55:42)
+ Ja? Also, so. Und wir haben deutlich mehr Funktionen, wir haben viele Strächen, die Sie bestimmt jetzt auch schon in der täglichen Arbeit sehen, für uns komplett gelöst. Da bin ich wirklich gespannt, wie Sie unsere 15-minütige Vorstellung finden, wenn Sie das Thema schon so organisiert angehen. Und jetzt können Sie sich das Ganze mal gut anschauen. Ja, sehr geil. Find ich gut. Einfach Arroganz drauf. Ja.
+
+(55:42-56:10)
+ Oh, es ist klassische geistige Bandstiftung. Ja, find ich gut. Dann gibt's noch einen Wettbewerber, der dir gerade einfällt? Nee. Die sagen könnten? Okay, dann gucken wir... Es ist echt crazy, weil es gibt nichts, ne? Ich hab... Das ist so verrückt. Also... Ich weiß auch nicht, warum nie jemand vorher drauf gekommen ist. Nee, das ist... Also, ich bin gespannt.
+
+(56:10-56:35)
+ Warte mal, hab ich was vergessen? Leads kommen von euch, ne? Ja. Ja, Leads kommen von denen. Telefonnummer hab ich, E-Mail hab ich. Meeting hab ich, hab ich alles. Ja, hab ich alles. Meine Assistenz sitzt neben mir, deswegen weiß ich gerade, was ich vergessen hab. Ja, dann können wir loslegen.
+
+(56:35-57:02)
+ Sehr geil. Ich kümmere mich darum, die zu scrapen. Wir werden die alle hyperpersonalisiert anschreiben. Und daraufhin könnt ihr dann andeilen und einfach sagen, haben Sie meine E-Mail bekommen? Das ist dann halt immer so Random-Namen. Emma Schäfer hat angeschrieben, dann der, dann der, dann der, dann der. Seht ihr dann aber im Go-High-Level, von wem die E-Mail rausgegangen ist, dann kann man ja auch sagen, wenn man jetzt ein Mann ist, ja, die Flo Schäfer hat Ihnen ja bereits eine E-Mail geschickt.
+
+(57:02-57:32)
+ Wenn man darauf referenziert müsste. So, du hattest ja, ich hatte es mir gezeigt, du nutzt ja auch hier den, wie heißt der, dieser E-Mail hier. Ja, hatte ich hier gesehen bei deiner Demo. Weiß ich nicht, ob du den in Stress machen willst. Echt nur kalt anrufen? Jo, kloppt. Okay, krass. Ey, die Finger funktionieren echt super, ne?
+
+(57:32-57:49)
+ Also ich mach halt kein Codemailing. Wir machen echt hyperpersonalisiert. Das ist so, zu unseren Kunden, das ist echt crazy im Wärmepumpen-Bereich. Zum Beispiel sagen wir jetzt mal, du kommst aus Jena und dein Kunde kommt irgendwie aus Chemnitz, als Beispiel. Dann...
+
+(57:49-58:17)
+ kriegt der halt eine hyperpersonalisierte Nachricht der Kunde, ja Herr Müller, hier geht um das und das Thema, kurz quatschen, dann wer geht da ja nie drauf und dann kommt so ein hyperpersonalisierter Follower ab, dass man sagt, ach ja, ich war gestern erst in Chemnitz, im Restaurant so und so, kennen Sie doch sicherlich, haben Sie vielleicht nochmal eine bessere Restaurantempfehlung, wir sind ja fast Nachbarn, ich komme aus jener, bla bla bla. So extrem personalisiert, das sucht sich auch in Chemnitz so Top-Restaurants raus, schreibt Ihnen an und
+
+(58:17-58:25)
+ Dann so funny Nachrichten wie, keine Ahnung, zum Beispiel hier.
+
+(58:25-58:53)
+ Ich reserviere uns schon mal einen Platz in dem und dem Restaurant in Chemnitz. Ich warte so lange, auch wenn es drei Tage dauert. Und dann ist Follow-up vier, was man sich sparen könnte mit einer Wärmepumpe und wie viel. Dann gibt es so einen in dem Restaurant, von dem man spricht, was er gut findet, wenn er geantwortet hat. Wenn nicht, wird das genommen aus dem Pitch. Dann wird irgendwas von der Speisekarte genommen und dann sagt man so, ja, du hättest dir, könntest dir im Monat so und so viele Schnitzel da kaufen oder so und so viele Glas Bier in Chemnitz in diesem Restaurant. Also die sind sehr überpersonalisiert.
+
+(58:53-59:20)
+ Meistens im Betreff... Wie bitte? Gehen die Leute echt drauf steil? Die gehen voll drauf steil, das ist voll bescheuert, weil es ist echt die Personalisierung, weil der denkt, da hat sich jemand hingesetzt und gibt sich jedes Mal 15 Minuten die Mühe, diese scheiß E-Mail aufzusetzen. Der Betreff ist auch überpersonalisiert. Meistens arbeiten wir mit Straßennamen. Baustelle, obwohl wir keine Baustelle haben, Baustelle, Straßenname, Chemnitz.
+
+(59:20-59:48)
+ Machst du sofort auf, weil du da herkommst. Ja, ich kenn die, äh, Samariterstraße in Chemnitz. Tag auf. Also, ganz anderes Codemailing. Aber, also, probier's. Können wir probieren. A, sind Codemailings im B2B-Bereich nicht Grauzone, sondern abmahnfähig. Ja, genau. Also, du bist ganz klar im Risiko. Und wir haben bisher, machen wir die Ergebnisse auch so,
+
+(59:48-1:00:12)
+ Können wir auch so probieren, dann kann ich mir den Aufwand sparen. Also eigentlich schon. Also nicht mal follow-up, wenn man ihn nicht erreicht hat, gar nichts. Gar nichts. Einfach wirklich nur Lieds reinladen, das war's. Ja. Genau, Lieds reinladen und Bier rumschauen. Oder soll ich euch einfach nur ne Excel geben?
+
+(1:00:12-1:00:41)
+ Ja, auf jeden Fall. Also, ich brauche einen Export. Ich brauche irgendwie... Also, CSV, Excel hast du nicht gesehen. Du spielst die auch nicht mehr zurück, ne? Ich kriege nur meine Demo-Calls zurückgespielt, oder? Du kriegst die, ähm... Doch, doch, kriegst du. Du kriegst A, jeden Folgetag die Termine vom Vortag. Ja. Dass du die schon mal anziehen kannst und weißt, mit wem du sprichst. Und einmal die Woche, mit der Rechnung, kommt ein kompletter Database-Dump von der kompletten Datenbank von uns. Kann man... Wo telefoniert ihr? Telefoniert ihr in Cloudtalk, oder?
+
+(1:00:41-1:00:56)
+ Dallfire. Echt, in Dallfire? Ich hab auch ein anderes Callcenter, die haben auch Dallfire. Dann haben wir gesagt, okay, wir machen eine Anbindung, weil bei Wärmepumpen-Leads im Privatsektor die Leads sind so teuer.
+
+(1:00:56-1:01:26)
+ rüberschieben mit CSV, ultra scheiße bei uns. Und dann habe ich gesagt, okay, passt auf, wir machen das automatisch mit Webhooks, dass ich einen Live-Sync habe. Und dann hat mein Entwickler auf Dialfire geguckt, weil ich habe dann auch gesagt, okay, ich brauche eine Dialing-Software. Dialfire habe ich so oft schon gehört. Mache ich jetzt auch. Und dann hat er gesagt, jo, Basti, willst du dir echt antun? Ultralangsam, voll altes System. Ich schaue drauf. Da dachte ich mir so, ey, nee, gebe ich mir echt nicht. Und dann habe ich nach Alternativen geguckt. Ich muss sagen, Cloudtalk ist echt geil.
+
+(1:01:26-1:01:41)
+ Ich hab jetzt noch mal ein bisschen geguckt. Also Dial Fire hat bei uns A haben wir tausend Integrationen schon für uns selber programmiert. Ja, Statistikabfragen tief ins System. Aber Dial Fire ist auch schlank.
+
+(1:01:41-1:02:00)
+ Und ich sag mal straight forward, das heißt unsere Leute sind schnell angelernt. Das fand ich eben nicht und dann hab ich gesagt Cloudtalk und das ist schlank und straight straight forward und ich hab alle Funktionen, die ich brauche mit zu kampagnen und so, schon geil.
+
+(1:02:00-1:02:16)
+ Also Cloudtalk habe ich jetzt persönlich mir noch nicht angeguckt. Ich kenne den Namen, ich habe die Webseite mal gesehen, aber ich habe jetzt als Alternative, also ich bin gerade auch so ein bisschen am gucken, weil wir einen größeren Inbound-Bereich jetzt auch noch brauchen. Da bin ich auf Diabolo.com gestoßen. Die gucke ich mir gerade ein bisschen genauer an.
+
+(1:02:16-1:02:44)
+ Aber ich sag mal, im Prinzip läuft Dial Fire bei uns sehr gut für die Systeme, die wir brauchen. Und dann ist es bis zu einem gewissen Punkt einfach ein Never-Change-Running-System. 100 Prozent. Wenn du da schon reingeonboardet bist, bin ich bei dir. Schau dir mal Cloudtalk an. 14 Tage kostenlos testen. Fand ich wirklich, ich hab auch viele Systeme durchgeguckt, muss ich sagen, fand ich bisher von allem am besten. Also ich verwende Dial Fire jetzt seit locker ... zehn Jahren. Mhm.
+
+(1:02:44-1:02:57)
+ Ich sag mal, wir kennen jetzt jeden Fehler. Ja, und wenn du ein Software so gut kennst und dann sagen wir, wir kennen die Leute da auch, das heißt, wenn wir was brauchen, haben wir da auch eine gewisse.
+
+(1:02:57-1:03:16)
+ Das ist dann schon gar nicht so schlecht und jetzt sind wir auch nicht die kleinsten, wir sind nicht groß, aber ein bisschen Geld verdienen wir monatlich mit uns schon. Und dann passt das schon. Du hast recht, mit dem Webhooks geht das natürlich theoretisch, wenn man es will.
+
+(1:03:16-1:03:44)
+ Aber brauchst du ja in dem Fall jetzt gar nicht. Du hast Adresslisten, die Exporte kommen raus, die kommen zu dir. Und einmal in der Woche kriegst du einen kompletten Export der kompletten Database-Datei. Das heißt, wenn du bei dir eine ID reintust, sag uns Bescheid, welches Feld das ist, damit wir die auch in den Export wieder reintun. Dann kannst du beispielsweise direkt synchen mit deinem CRM. Find ich cool. Ja, das machen viele zum Beispiel, wo CRM hat eine so hohe ID.
+
+(1:03:44-1:04:12)
+ Jeder Datensatz, den wir übergeben, hat die SOHO-ID, das ist so ein Ding. Und spielen sich's dann hinterher wieder rein, und damit sind die Daten da, wo sie hingehören. Ja, kenn ich. Okay. Sehr cool. Hast du vielleicht für mich noch einen Tipp, wo du sagst, Sebastian, auf die und die Branche solltest du gehen, weil die Software hast du jetzt auch schon verstanden, Lorenz? Also definitiv die beiden, die du gerade gesagt hast, würd ich auch nehmen. Ähm...
+
+(1:04:15-1:04:44)
+ Handwerker ist halt die Frage. Nee, die checken das nicht. Also viele Handwerker hatten bisher zu viel zu tun. Das dreht sich aber gerade. Die Frage ist nur, ob es vielleicht noch zu früh ist, dass der Pen noch nicht in den Punkt ist. Wenn bisher die Kunden immer von selber kamen und jetzt kommen sie auf einmal nicht mehr, dann sorgt das schon für eine gewisse Panik.
+
+(1:04:44-1:05:10)
+ Ich hab ja noch die Bausoftware, die dann später irgendwann dazukommt. Ich würd's im Zuge dessen machen. Und da als Cross-Sell oder Down-Sell mit Inklikäen bei der Zielgruppe tatsächlich. Also Immobilien auf jeden Fall, weil da ist sowohl Geld als auch Not. Bei denen ist das nämlich so, das lief in der Vergangenheit extrem geschmeidig und jetzt läuft's seit einem Jahr nicht mehr. Die haben Panik. Ja.
+
+(1:05:10-1:05:33)
+ Ja, das sind die beiden, also die beiden Branchen, denke ich, erstmal Immobilien und Versicherung würde ich auch angehen. Ähm... Anwälte nicht, das nicht, das nicht. Sind doch erstmal zwei gute. Ansonsten kannst du im Prinzip den stationären Handel auch nehmen mit irgendwas, also Optika oder so ein Gedönsel, aber Optika ist zum Beispiel von der Optika-Zielgruppe.
+
+(1:05:33-1:05:57)
+ Optica ist von der Persona nicht richtig. Die Leute sind sehr speziell. Nee, ich würd erst mal die beiden... Beide haben einen gewissen Vertriebsansatz. Das heißt, die haben auch das Team eventuell dafür. Nee, ich denke, die find ich schon gut. Okay, mega. Dann probieren wir's damit aus. Davon gibt's ja auch ein paar. So ist es nicht.
+
+(1:05:57-1:06:26)
+ Ja, absolut. Super spannend. Enterprise natürlich auch super attraktiv, aber da musst du echt gut telefonieren. Wir holen in jeder Größe Termine rein. Wir haben mit mehreren Projekten schon gehabt, ab 500 Mitarbeiter aufwärts. Ach, krass. Und da direkt mit einem GF oder mit einem Vice President? Je nachdem. Natürlich ist es immer einfacher, wenn du nicht die C-Suite nehmen musst.
+
+(1:06:26-1:06:56)
+ Also nicht CEO, CFO oder so, sondern je niedriger du reinkannst, desto einfacher. Aber wenn es Design muss, kommt das Produkt dann immer. Aber hier zum Beispiel kann man durchaus Enterprise angehen und sagen, da würde ich ins Marketing gehen an der Stelle, denke ich erstmal. Und die Marketingverantwortlichen oder den Vertriebsleiter. Ja, geil. So, die beiden kriegst du gut. Marketing und Vertrieb kriegst du beide.
+
+(1:06:56-1:07:22)
+ Ich würde mich in der Größe nicht nehmen. Der hat da auch keinen Bock drauf. Aber sehr spannend. Finde ich cool. Lass uns die beiden erstmal ausprobieren. Wenn wir da komplett vor die Tür rennen, können wir immer noch gucken, ob wir die Branche wechseln. Ansonsten machen wir das erstmal, holen uns erstmal die ersten Erfolge rein und dann können wir immer noch gucken, auf wohin wir es ausweiten. Hätte ich auch gesagt. Sehr geil. Okay.
+
+(1:07:22-1:07:46)
+ Dann, Bastian, würde ich sagen, wir legen los. Dann habt ihr jetzt zwei Wochen bis zur Fertigstellung der Software. Es kommt gleich oder morgen irgendwann eine E-Mail von uns mit den berühmten Hausaufgaben. Wir haben leider noch kein besseres Wort gefunden. Da ist so drin halt, wir brauchen die E-Mail. Wir brauchen das, das, das. Das kommt dann jetzt.
+
+(1:07:46-1:08:07)
+ Zwei Sachen noch. Das muss ich dir als Vertriebsexperte eigentlich nicht sagen, aber ich sag's trotzdem. Wenn die Termine kommen, und die werden kommen, dann müssen die bitte einen Tag vorher bestätigt werden. Von entweder dir oder jemand anderem, der aber auch im Thema ist. Am besten jemand anderem. Und zwar am Vormittag des Tages davor.
+
+(1:08:07-1:08:26)
+ Du hast immer No-Show-Quoten bei diesen Terminen. Die sind immer da. Die Frage ist, wie hoch sind die? Und um die richtig gut zu reduzieren, musst du am Tag vorher, vormittags, anrufen und sagen, okay, Herr Müller, morgen Mittag, 15 Uhr, den Termin mit dem Herrn Meyer, den wollte ich nur kurz bestätigen.
+
+(1:08:26-1:08:53)
+ Ende. Kein Pitch, kein Discovery, kein gar nichts, sondern einfach nur so wie früher, als man noch mit dem Auto durch die Gegend gefahren ist. Fünf-Folgetag bestätigen. Weil was passiert jetzt psychologisch im Kopf des Kunden? Morgen ist noch weit genug weg, morgen habe ich noch die Zeit, das hat mich auch interessiert, ja, also ich bestätige den. Wenn am nächsten Tag aber das Tagesgeschäft zu groß ist, die Susi ist krank, ich muss noch das Angebot fertig machen, ich habe eigentlich überhaupt keine Zeit für den Termin. Scheiße, ich habe das gestern bestätigt.
+
+(1:08:53-1:09:21)
+ Ja, vor einer Woche gebucht, scheißegal, aber gestern bestätigt, ist doof. Nicht alle unsere Kunden machen das. Alle Kunden, die sich über Noshu beschweren, bestätigen nicht. Könnt ihr das nicht machen? Müssen wir das machen? Das können wir auch, ist ein separates, ist Teil der Jagdhütte bei uns, eine Terminhütte. Ist eine separate Person, können wir auch machen. Wie das halt am Anfang,
+
+(1:09:21-1:09:49)
+ Also das muss ein Vertriebler sein, der einen anruft. Weil wenn der jetzt komische Sachen sagt und einmal abspringen will, dann musst du frei sprechen können und reingehen können, dass du den zurückholst. Weil das kriegst du nicht gescriptet. Ja, das können wir machen. Ich würde es aber auch da vorschlagen, dass ihr die ersten paar Tage das selber macht, damit ihr einen Eindruck dafür kriegt. Und sobald wir wissen, wie die Kunden ticken,
+
+(1:09:49-1:10:18)
+ machen wir bei uns die Terminhütte rein, beziehungsweise dann gehen wir wahrscheinlich sogar darauf, dass wir den kompletten Closing-Bereich machen. Und dann machen wir das sowieso. Ja, genau, das wäre auch mein Plan. Also eigentlich komplett an euch abgeben. Können wir dann auf jeden Fall machen. Bin echt gespannt. Ja, und alles andere gucken wir, wenn die ersten Termine da sind. Sehr geil. Alles klar, mein Lieber. Normalerweise sage ich an der Stelle immer, ich hoffe, wir sehen uns so schnell nicht wieder.
+
+(1:10:18-1:10:44)
+ Weil, wenn wir uns schnell wiedersehen, bedeutet, wir haben Scheiße gebaut. Wir beide haben Scheiße gebaut in der Entwicklung. Wir haben uns irgendwo verhauen, irgendwas passiert nicht, wir kommen nicht durch die Tür. Ansonsten sehen wir uns erst nach ein, zwei Wochen wieder, wenn wir die ersten Erfahrungen haben, wenn wir uns gegenseitig auf die Schulter klopfen können, wie gut es klappt. Aber falls direkt am Anfang was ist, dann gehen wir ganz schnell wieder zusammen und müssen uns hinsetzen, Zielgruppe ändern, Pitch ändern, was für Probleme haben wir, wie reagieren wir drauf, etc.
+
+(1:10:44-1:10:53)
+ Okay. In dem Sinne, ich wünsche dir was, wir sehen uns. Ja, passt ja, bis dann. Ciao, ciao.

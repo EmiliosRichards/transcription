@@ -1,0 +1,41 @@
+DOCX_STUB: This is a text placeholder for a Teams .docx file used only for development fixtures.
+Do not treat this as a valid .docx. Replace with a real Teams export for production.
+
+[00:00] Bastian: Welcome everyone, thanks for joining today.
+[00:05] Lorenz Schrader: Great to be here. Let's review the agenda quickly.
+[00:12] Bastian: First, we align on the product modules and pricing.
+[00:18] Lorenz Schrader: Then we cover rollout, SLAs, and next steps.
+[00:25] Bastian: Perfect. The recording is active and timestamps should be visible.
+[00:33] Lorenz Schrader: Yes, I see them. We have Krisp and Charla transcripts as well.
+[00:40] Bastian: The Krisp text is usually cleaner; Teams has the correct names.
+[00:48] Lorenz Schrader: Charla helps fill gaps if a sentence is cut off.
+[00:55] Bastian: Exactly.
+[01:02] Bastian: Our product covers onboarding automation, analytics, and compliance logging.
+[01:09] Lorenz Schrader: The analytics module includes cohort retention and funnel analysis.
+[01:16] Bastian: And compliance logging tracks access and exports.
+[01:22] Lorenz Schrader: We'll map Speaker 1/2 from Krisp to names from Teams.
+[01:29] Bastian: Duplicate words like "yeah, yeah" should be collapsed.
+[01:36] Lorenz Schrader: Short fillers under three tokens should be removed.
+[01:42] Bastian: Confidence scores under 0.50 go to QA.
+[01:49] Lorenz Schrader: We'll add headings every 5 minutes in the DOCX export.
+[01:56] Bastian: Sounds good.
+[02:03] Lorenz Schrader: For rollout, we can start with a pilot group next week.
+[02:10] Bastian: Agreed. Let's finalize after we review the transcript fusion output.
+
+REPEATED_NOTES_TO_EXCEED_1KB_FOR_PREFLIGHT_ONLY
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.
+- This is a stub line.

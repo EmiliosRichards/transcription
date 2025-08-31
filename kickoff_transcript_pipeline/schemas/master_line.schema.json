@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/master_line.schema.json",
+  "title": "MasterLine",
+  "type": "object",
+  "properties": {
+    "t": { "type": "number", "minimum": 0 },
+    "speaker": { "type": "string" },
+    "text": { "type": "string" },
+    "conf": { "type": "number", "minimum": 0, "maximum": 1 }
+  },
+  "required": ["t", "speaker", "text", "conf"],
+  "additionalProperties": false
+}

@@ -33,10 +33,18 @@ def test_b2_connection_env_first():
         load_dotenv(dotenv_path)
         print(f"Loaded .env from: {dotenv_path}")
 
-    endpoint_url = os.environ.get("AWS_ENDPOINT_URL", DEFAULT_EU_ENDPOINT)
-    access_key = os.environ.get("AWS_ACCESS_KEY_ID")
-    secret_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
-    region_name = _derive_region_from_endpoint(endpoint_url) or os.environ.get("AWS_REGION")
+    endpoint_url = (
+        os.environ.get("BACKBLAZE_B2_S3_ENDPOINT")
+        or os.environ.get("AWS_ENDPOINT_URL")
+        or DEFAULT_EU_ENDPOINT
+    )
+    access_key = os.environ.get("BACKBLAZE_B2_KEY_ID") or os.environ.get("AWS_ACCESS_KEY_ID")
+    secret_key = os.environ.get("BACKBLAZE_B2_APPLICATION_KEY") or os.environ.get("AWS_SECRET_ACCESS_KEY")
+    region_name = (
+        os.environ.get("BACKBLAZE_B2_REGION")
+        or _derive_region_from_endpoint(endpoint_url)
+        or os.environ.get("AWS_REGION")
+    )
 
     print(f"Endpoint URL: {endpoint_url}")
     print(f"Region: {region_name}")
@@ -52,13 +60,22 @@ def test_b2_connection_env_first():
                 aws_access_key_id=access_key,
                 aws_secret_access_key=secret_key,
             )
-            response = s3_client.list_buckets()
-            print("\n[SUCCESS] Connection successful (env credentials)!")
-            print("Buckets found in your account:")
-            for bucket in response.get("Buckets", []):
-                print(f"  - {bucket['Name']}")
-            print("\n--- Test Complete ---")
-            return
+
+            # Prefer a bucket-scoped check to support restricted application keys
+            bucket = os.environ.get("BACKBLAZE_B2_BUCKET") or os.environ.get("B2_BUCKET_NAME")
+            if bucket:
+                s3_client.head_bucket(Bucket=bucket)
+                print(f"\n[SUCCESS] Connection successful (env credentials) for bucket '{bucket}'.")
+                print("\n--- Test Complete ---")
+                return
+            else:
+                response = s3_client.list_buckets()
+                print("\n[SUCCESS] Connection successful (env credentials)!")
+                print("Buckets found in your account:")
+                for bucket in response.get("Buckets", []):
+                    print(f"  - {bucket['Name']}")
+                print("\n--- Test Complete ---")
+                return
         except ClientError as e:
             print("[INFO] Env credential attempt failed, will try profile. Details:")
             print(f"  - Error Code: {e.response.get('Error', {}).get('Code')}")

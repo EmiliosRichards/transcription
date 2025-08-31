@@ -10,35 +10,58 @@ class StorageService:
     def __init__(self, bucket_name: str):
         """
         Initializes the StorageService.
-        Boto3 will automatically use credentials from the environment variables:
-        - AWS_ACCESS_KEY_ID
-        - AWS_SECRET_ACCESS_KEY
-        - AWS_ENDPOINT_URL
+        Credential resolution order (most specific first):
+        - BACKBLAZE_B2_KEY_ID / BACKBLAZE_B2_APPLICATION_KEY / BACKBLAZE_B2_S3_ENDPOINT / BACKBLAZE_B2_REGION
+        - AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_ENDPOINT_URL / AWS_REGION
         """
         if not bucket_name:
             raise ValueError("Storage service bucket name is not provided.")
         
         self.bucket_name = bucket_name
         
-        # The region is needed for some operations like pre-signed URLs.
-        # It's derived from the endpoint URL.
-        endpoint_url = os.environ.get('AWS_ENDPOINT_URL', '')
-        region = endpoint_url.split('.')[1] if 'backblazeb2.com' in endpoint_url else None
+        # Resolve endpoint/region (prefer Backblaze-specific names)
+        endpoint_url = os.environ.get('BACKBLAZE_B2_S3_ENDPOINT') or os.environ.get('AWS_ENDPOINT_URL', '')
+        region = (
+            os.environ.get('BACKBLAZE_B2_REGION')
+            or (endpoint_url.split('.')[1] if 'backblazeb2.com' in endpoint_url else None)
+            or os.environ.get('AWS_REGION')
+        )
 
-        # Explicitly pass the Backblaze endpoint when creating the client
-        # so boto3 talks to B2 rather than AWS S3.
-        self.s3_client = boto3.client('s3', endpoint_url=endpoint_url or None, region_name=region)
+        # Resolve credentials (prefer Backblaze-specific names)
+        key_id = os.environ.get('BACKBLAZE_B2_KEY_ID') or os.environ.get('AWS_ACCESS_KEY_ID')
+        app_key = os.environ.get('BACKBLAZE_B2_APPLICATION_KEY') or os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+        # Create the client. If explicit creds are provided, pass them; otherwise, allow
+        # boto3 to fall back to its default credential chain (env, config files, IAM, etc.).
+        if key_id and app_key:
+            self.s3_client = boto3.client(
+                's3',
+                endpoint_url=endpoint_url or None,
+                region_name=region,
+                aws_access_key_id=key_id,
+                aws_secret_access_key=app_key,
+            )
+        else:
+            self.s3_client = boto3.client('s3', endpoint_url=endpoint_url or None, region_name=region)
 
     def check_connection(self) -> bool:
         """
         Checks if the connection to the B2 bucket is working.
         Returns True if successful, False otherwise.
+        Note: Some application keys may not have permission for HeadBucket/ListBucket.
+        In that case, we treat AccessDenied as a "restricted but valid" connection.
         """
         try:
             self.s3_client.head_bucket(Bucket=self.bucket_name)
             logger.info("Successfully connected to B2 bucket.")
             return True
         except ClientError as e:
+            error_code = e.response.get('Error', {}).get('Code')
+            if error_code in {"403", "AccessDenied"}:
+                logger.warning(
+                    "HeadBucket denied (likely restricted key without ListBucket). Proceeding as connected."
+                )
+                return True
             logger.error(f"Failed to connect to B2 bucket: {e}", exc_info=True)
             return False
 
@@ -81,9 +104,9 @@ def get_storage_service():
     """
     global _storage_service_instance
     if _storage_service_instance is None:
-        bucket_name = os.getenv("B2_BUCKET_NAME")
+        bucket_name = os.getenv("BACKBLAZE_B2_BUCKET") or os.getenv("B2_BUCKET_NAME")
         if not bucket_name:
-            raise ValueError("B2_BUCKET_NAME environment variable not set.")
+            raise ValueError("BACKBLAZE_B2_BUCKET or B2_BUCKET_NAME environment variable not set.")
         # Boto3 will now implicitly use the AWS_* environment variables.
         # We only need to provide the bucket name.
         _storage_service_instance = StorageService(bucket_name=bucket_name)

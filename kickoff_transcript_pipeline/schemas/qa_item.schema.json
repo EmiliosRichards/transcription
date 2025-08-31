@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/qa_item.schema.json",
+  "title": "QAItem",
+  "type": "object",
+  "properties": {
+    "t": { "type": "number", "minimum": 0 },
+    "snippet_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "conf": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reason": { "type": "string" }
+  },
+  "required": ["t", "conf", "reason"],
+  "additionalProperties": false
+}

@@ -44,3 +44,14 @@ chatbot_app/backend/app/llm_logs/
 
 # Keys
 *.pem
+data_pipelines/ 
+output/ 
+kickoff_transcript_pipeline\.pytest_cache
+kickoff_transcript_pipeline\.venv
+
+
+
+tail_test/
+
+
+kickoff_transcript_pipeline/out

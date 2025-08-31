@@ -237,7 +237,7 @@ export default function FusionPage() {
                         className="text-xs text-muted-foreground text-center"
                       >
                         {countdown} minute{countdown !== 1 ? "s" : ""} remaining
-                      </motion.p)
+                      </motion.p>
                     }
                   </AnimatePresence>
                 </div>

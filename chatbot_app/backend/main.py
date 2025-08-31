@@ -41,28 +41,15 @@ app = FastAPI(
 )
 
 # --- CORS Middleware ---
-# Allow all origins for development purposes.
-# For production, you should restrict this to your frontend's domain.
+# You can override allowed origins via env var ALLOWED_ORIGINS (comma-separated).
+raw_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,https://*.railway.app").split(",")
+allow_origins = [o.strip() for o in raw_origins if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=allow_origins if allow_origins != ["*"] else ["*"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
-    allow_headers=[
-        "Authorization",
-        "Content-Type",
-        "Range",
-        "Accept",
-        "Origin",
-      ],
-    expose_headers=[
-        "Accept-Ranges",
-        "Content-Range",
-        "Content-Length",
-      ],
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
 # --- Include API Router ---

@@ -69,6 +69,7 @@ export default function FusionPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState<string>("");
   const [artifacts, setArtifacts] = useState<{ name: string }[]>([]);
   const [startBlock, setStartBlock] = useState<string>("");
   const [endBlock, setEndBlock] = useState<string>("");
@@ -126,6 +127,7 @@ export default function FusionPage() {
     setArtifacts([]);
     setProgress(5);
     setMessage("Uploading files...");
+    setError("");
     // initialize countdown
     if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
     setCountdown(5);
@@ -152,7 +154,7 @@ export default function FusionPage() {
       }
     } catch (e: any) {
       setIsLoading(false);
-      setMessage(e.message || "Failed to start fusion");
+      setError(e.message || "Failed to start fusion");
     }
   }, [backendUrl, teams, charla, krisp, startBlock, endBlock, runDir, skipExisting, startPolling]);
 
@@ -162,6 +164,7 @@ export default function FusionPage() {
     setArtifacts([]);
     setProgress(10);
     setMessage("Running extract-products...");
+    setError("");
     if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
     setCountdown(5);
     try {
@@ -179,7 +182,7 @@ export default function FusionPage() {
       }
     } catch (e: any) {
       setIsLoading(false);
-      setMessage(e.message || "Failed to start extract");
+      setError(e.message || "Failed to start extract");
     }
   }, [backendUrl, runDir, startPolling]);
 
@@ -282,6 +285,16 @@ export default function FusionPage() {
                   </li>
                 ))}
               </ul>
+            </CardContent>
+          </Card>
+        )}
+        {error && (
+          <Card className="w-full mt-4 border-red-300/40">
+            <CardHeader>
+              <CardTitle className="text-red-400">Error</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-red-300 whitespace-pre-wrap">{error}</p>
             </CardContent>
           </Card>
         )}

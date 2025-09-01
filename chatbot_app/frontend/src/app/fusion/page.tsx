@@ -77,7 +77,9 @@ export default function FusionPage() {
   const [runDir, setRunDir] = useState<string>("");
   const [skipExisting, setSkipExisting] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(0);
-  const countdownRef = useRef<number | null>(null);
+  const [smoothProgress, setSmoothProgress] = useState<number>(0);
+  const timerStartRef = useRef<number | null>(null);
+  const tickRef = useRef<number | null>(null);
 
   const backendUrl = useMemo(() => process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000", []);
   const pollRef = useRef<number | null>(null);
@@ -97,8 +99,9 @@ export default function FusionPage() {
         if (data.message) setMessage(data.message);
         if (data.status === "SUCCESS") {
           window.clearInterval(pollRef.current!);
-          if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
+          if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
           setProgress(100);
+          setSmoothProgress(100);
           setMessage("Fusion completed.");
           // Fetch artifacts list
           const ares = await fetch(`${backendUrl}/api/fusion/${id}/artifacts`);
@@ -109,13 +112,13 @@ export default function FusionPage() {
           setIsLoading(false);
         } else if (data.status === "ERROR") {
           window.clearInterval(pollRef.current!);
-          if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
+          if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
           setIsLoading(false);
           setMessage(data.message || "Error");
         }
       } catch (e) {
         window.clearInterval(pollRef.current!);
-        if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
+        if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
         setIsLoading(false);
         setMessage("Error while polling status");
       }
@@ -129,9 +132,11 @@ export default function FusionPage() {
     setProgress(10);
     setMessage("Uploading files...");
     setError("");
-    // initialize countdown
-    if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
+    // initialize countdown and smooth timer
+    if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
     setCountdown(COUNTDOWN_MAX);
+    timerStartRef.current = Date.now();
+    setSmoothProgress(10);
     try {
       const form = new FormData();
       form.append("teams", teams);
@@ -166,8 +171,10 @@ export default function FusionPage() {
     setProgress(10);
     setMessage("Running extract-products...");
     setError("");
-    if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
+    if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
     setCountdown(COUNTDOWN_MAX);
+    timerStartRef.current = Date.now();
+    setSmoothProgress(10);
     try {
       const form = new FormData();
       form.append("run_dir", runDir);
@@ -187,35 +194,32 @@ export default function FusionPage() {
     }
   }, [backendUrl, runDir, startPolling]);
 
-  // Start/stop minute-based countdown while loading
+  // Smooth progress + derived minute countdown synced to a 5-minute timer
   useEffect(() => {
-    if (isLoading) {
-      if (countdownRef.current) { window.clearInterval(countdownRef.current); }
-      countdownRef.current = window.setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
-            return 1;
-          }
-          return prev - 1;
-        });
-      }, 60000);
+    if (isLoading && timerStartRef.current !== null) {
+      if (tickRef.current) { window.clearInterval(tickRef.current); }
+      tickRef.current = window.setInterval(() => {
+        const start = timerStartRef.current as number;
+        const total = COUNTDOWN_MAX * 60000;
+        const elapsed = Date.now() - start;
+        const frac = Math.min(Math.max(elapsed / total, 0), 1);
+        // Update progress 10% → 90% linearly
+        setSmoothProgress(10 + Math.round(frac * 80));
+        // Update minute display
+        const remainingMs = Math.max(0, total - elapsed);
+        const remainingMin = Math.max(1, Math.ceil(remainingMs / 60000));
+        setCountdown(remainingMin);
+      }, 200);
     } else {
-      if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
+      if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
     }
     return () => {
-      if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
+      if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
     };
   }, [isLoading]);
 
-  // Progress derived from countdown to keep bar moving during the 5→1 minutes
-  const timeProgress = useMemo(() => {
-    if (!isLoading || countdown <= 0) return 0;
-    const completed = COUNTDOWN_MAX - Math.min(COUNTDOWN_MAX, countdown);
-    // Reserve 10% at start and 10% at end for upload/finishing
-    return 10 + Math.round((completed / COUNTDOWN_MAX) * 80);
-  }, [isLoading, countdown]);
-  const displayProgress = Math.max(progress, timeProgress);
+  // Display whichever is higher: backend-reported progress or smooth timer
+  const displayProgress = Math.max(progress, smoothProgress);
 
   return (
     <div className="p-6 min-h-screen flex flex-col items-center">

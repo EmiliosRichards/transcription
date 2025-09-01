@@ -62,6 +62,7 @@ function DropBox({
 }
 
 export default function FusionPage() {
+  const COUNTDOWN_MAX = 5;
   const [teams, setTeams] = useState<File | null>(null);
   const [charla, setCharla] = useState<File | null>(null);
   const [krisp, setKrisp] = useState<File | null>(null);
@@ -125,12 +126,12 @@ export default function FusionPage() {
     if (!teams || !charla || !krisp) return;
     setIsLoading(true);
     setArtifacts([]);
-    setProgress(5);
+    setProgress(10);
     setMessage("Uploading files...");
     setError("");
     // initialize countdown
     if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
-    setCountdown(5);
+    setCountdown(COUNTDOWN_MAX);
     try {
       const form = new FormData();
       form.append("teams", teams);
@@ -166,7 +167,7 @@ export default function FusionPage() {
     setMessage("Running extract-products...");
     setError("");
     if (countdownRef.current) { window.clearInterval(countdownRef.current); countdownRef.current = null; }
-    setCountdown(5);
+    setCountdown(COUNTDOWN_MAX);
     try {
       const form = new FormData();
       form.append("run_dir", runDir);
@@ -207,6 +208,15 @@ export default function FusionPage() {
     };
   }, [isLoading]);
 
+  // Progress derived from countdown to keep bar moving during the 5→1 minutes
+  const timeProgress = useMemo(() => {
+    if (!isLoading || countdown <= 0) return 0;
+    const completed = COUNTDOWN_MAX - Math.min(COUNTDOWN_MAX, countdown);
+    // Reserve 10% at start and 10% at end for upload/finishing
+    return 10 + Math.round((completed / COUNTDOWN_MAX) * 80);
+  }, [isLoading, countdown]);
+  const displayProgress = Math.max(progress, timeProgress);
+
   return (
     <div className="p-6 min-h-screen flex flex-col items-center">
       <div className="w-full max-w-4xl">
@@ -226,7 +236,7 @@ export default function FusionPage() {
             </div>
             {isLoading ? (
               <div className="flex flex-col items-center gap-2">
-                <Progress value={progress} className="w-full [&>div]:bg-blue-500" />
+                <Progress value={displayProgress} className="w-full [&>div]:bg-blue-500" />
                 <p className="text-sm text-muted-foreground">{message}</p>
                 <div className="relative h-6 w-full overflow-hidden">
                   <AnimatePresence mode="popLayout" initial={false}>

@@ -91,26 +91,19 @@ async def _run_fusion_background(
             cmd,
             cwd=kickoff_dir,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True,
+            bufsize=1,
         )
-        # Stream output live to logs for easier debugging
+        # Stream combined output live to logs for easier debugging (line-buffered)
         stdout_lines: list[str] = []
-        stderr_lines: list[str] = []
-        assert proc.stdout is not None and proc.stderr is not None
-        while True:
-            line = proc.stdout.readline()
-            if line:
-                stdout_lines.append(line)
-                logger.info(f"[fusion {task_id}] stdout: {line.rstrip()}")
-            err = proc.stderr.readline()
-            if err:
-                stderr_lines.append(err)
-                logger.warning(f"[fusion {task_id}] stderr: {err.rstrip()}")
-            if not line and not err and proc.poll() is not None:
-                break
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            stdout_lines.append(line)
+            logger.info(f"[fusion {task_id}] out: {line.rstrip()}")
+        proc.wait()
         stdout = "".join(stdout_lines)
-        stderr = "".join(stderr_lines)
+        stderr = ""  # merged into stdout
 
         if proc.returncode != 0:
             logger.error("[fusion %s] pipeline failed: %s", task_id, stderr)
@@ -284,24 +277,23 @@ async def _run_extract_background(task_id: str, run_dir_input: str):
             "--extract-products",
         ]
         logger.info(f"[extract {task_id}] cmd={' '.join(cmd)} cwd={kickoff_dir}")
-        proc = subprocess.Popen(cmd, cwd=kickoff_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        # Stream output
+        proc = subprocess.Popen(
+            cmd,
+            cwd=kickoff_dir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+        )
+        # Stream combined output
         out_lines: list[str] = []
-        err_lines: list[str] = []
-        assert proc.stdout is not None and proc.stderr is not None
-        while True:
-            line = proc.stdout.readline()
-            if line:
-                out_lines.append(line)
-                logger.info(f"[extract {task_id}] stdout: {line.rstrip()}")
-            err = proc.stderr.readline()
-            if err:
-                err_lines.append(err)
-                logger.warning(f"[extract {task_id}] stderr: {err.rstrip()}")
-            if not line and not err and proc.poll() is not None:
-                break
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            out_lines.append(line)
+            logger.info(f"[extract {task_id}] out: {line.rstrip()}")
+        proc.wait()
         stdout = "".join(out_lines)
-        stderr = "".join(err_lines)
+        stderr = ""
         if proc.returncode != 0:
             logger.error("[extract %s] failed: %s", task_id, stderr)
             task_manager.set_task_error(task_id, f"Extract failed: {stderr.strip()[:1000]}")

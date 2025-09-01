@@ -17,14 +17,29 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def _project_root_from_here() -> str:
-    # This file is at chatbot_app/backend/app/routers/fusion_router.py
-    here = os.path.dirname(__file__)
-    app_dir = os.path.abspath(os.path.join(here, ".."))
-    backend_dir = os.path.abspath(os.path.join(app_dir, ".."))
-    chatbot_app_dir = os.path.abspath(os.path.join(backend_dir, ".."))
-    project_root = os.path.abspath(os.path.join(chatbot_app_dir, ".."))
-    return project_root
+def _resolve_kickoff_dir() -> str:
+    """Return absolute path to kickoff_transcript_pipeline directory.
+
+    Handles two layouts:
+    - Monorepo root: <repo>/kickoff_transcript_pipeline
+    - Backend-only image: <backend_root>/kickoff_transcript_pipeline
+    Allows override via KICKOFF_DIR env.
+    """
+    # 1) Env override
+    env_dir = os.environ.get("KICKOFF_DIR")
+    if env_dir and os.path.isdir(env_dir):
+        return os.path.abspath(env_dir)
+
+    here = os.path.dirname(__file__)  # .../app/routers
+    candidates = [
+        os.path.abspath(os.path.join(here, "..", "..", "kickoff_transcript_pipeline")),  # backend root
+        os.path.abspath(os.path.join(here, "..", "..", "..", "..", "kickoff_transcript_pipeline")),  # repo root
+    ]
+    for c in candidates:
+        if os.path.isdir(c):
+            return c
+    # Fallback to first candidate (useful for error messages)
+    return candidates[0]
 
 
 async def _run_fusion_background(
@@ -38,10 +53,11 @@ async def _run_fusion_background(
     skip_existing: bool = False,
 ):
     try:
+        logger.info(f"[fusion {task_id}] starting; files: teams={teams_path}, krisp={krisp_path}, charla={charla_path}; blocks=({start_block},{end_block}); run_dir={run_dir_input}; skip_existing={skip_existing}")
         task_manager.update_task_status(task_id, "PROCESSING", "Preparing files...", progress=10)
 
-        project_root = _project_root_from_here()
-        kickoff_dir = os.path.join(project_root, "kickoff_transcript_pipeline")
+        kickoff_dir = _resolve_kickoff_dir()
+        logger.info(f"[fusion {task_id}] kickoff_dir={kickoff_dir}")
         if not os.path.isdir(kickoff_dir):
             raise RuntimeError(f"Kickoff pipeline directory not found at: {kickoff_dir}")
 
@@ -69,6 +85,7 @@ async def _run_fusion_background(
         if skip_existing:
             cmd += ["--skip-existing"]
 
+        logger.info(f"[fusion {task_id}] cmd={' '.join(cmd)}")
         task_manager.update_task_status(task_id, "PROCESSING", "Running fusion pipeline...", progress=30)
         proc = subprocess.Popen(
             cmd,
@@ -77,10 +94,26 @@ async def _run_fusion_background(
             stderr=subprocess.PIPE,
             text=True,
         )
-        stdout, stderr = proc.communicate()
+        # Stream output live to logs for easier debugging
+        stdout_lines: list[str] = []
+        stderr_lines: list[str] = []
+        assert proc.stdout is not None and proc.stderr is not None
+        while True:
+            line = proc.stdout.readline()
+            if line:
+                stdout_lines.append(line)
+                logger.info(f"[fusion {task_id}] stdout: {line.rstrip()}")
+            err = proc.stderr.readline()
+            if err:
+                stderr_lines.append(err)
+                logger.warning(f"[fusion {task_id}] stderr: {err.rstrip()}")
+            if not line and not err and proc.poll() is not None:
+                break
+        stdout = "".join(stdout_lines)
+        stderr = "".join(stderr_lines)
 
         if proc.returncode != 0:
-            logger.error("Fusion pipeline failed: %s", stderr)
+            logger.error("[fusion %s] pipeline failed: %s", task_id, stderr)
             task_manager.set_task_error(task_id, f"Pipeline failed: {stderr.strip()[:1000]}")
             return
 
@@ -93,6 +126,7 @@ async def _run_fusion_background(
             first_brace = stdout.rfind("{", 0, last_brace + 1)
             if first_brace != -1 and last_brace != -1:
                 maybe_json = stdout[first_brace:last_brace + 1]
+                logger.info(f"[fusion {task_id}] parsed run info candidate: {maybe_json[:200]}...")
                 run_info = json.loads(maybe_json)
         except Exception:
             run_info = None
@@ -112,6 +146,7 @@ async def _run_fusion_background(
                 if subdirs:
                     run_dir = max(subdirs, key=os.path.getmtime)
 
+        logger.info(f"[fusion {task_id}] detected run_dir={run_dir}")
         if not run_dir or not os.path.isdir(run_dir):
             task_manager.set_task_error(task_id, "Pipeline completed but run directory not found.")
             return
@@ -128,9 +163,10 @@ async def _run_fusion_background(
             "run_dir": run_dir,
             "artifacts": artifacts,
         }
+        logger.info(f"[fusion {task_id}] artifacts={[a['name'] for a in artifacts]}")
         task_manager.set_task_success(task_id, result_payload)
     except Exception as e:
-        logger.exception("Unexpected error in fusion task")
+        logger.exception("[fusion %s] unexpected error", task_id)
         task_manager.set_task_error(task_id, f"Unexpected error: {e}")
 
 
@@ -146,17 +182,18 @@ async def start_fusion(
     skip_existing: Optional[bool] = Form(False),
 ):
     # Validate file extensions by filename as content types can vary by browser
-    if not teams.filename.lower().endswith(".vtt"):
+    if not teams.filename or not (teams.filename.lower()).endswith(".vtt"):
         raise HTTPException(status_code=400, detail="Teams file must be a .vtt")
-    if not charla.filename.lower().endswith(".txt"):
+    if not charla.filename or not (charla.filename.lower()).endswith(".txt"):
         raise HTTPException(status_code=400, detail="Charla file must be a .txt")
-    if not krisp.filename.lower().endswith(".txt"):
+    if not krisp.filename or not (krisp.filename.lower()).endswith(".txt"):
         raise HTTPException(status_code=400, detail="Krisp file must be a .txt")
 
     task_id = task_manager.create_task()
 
     temp_dir = tempfile.mkdtemp(prefix=f"fusion_{task_id}_")
     try:
+        # Filenames are guaranteed above
         teams_path = os.path.join(temp_dir, os.path.basename(teams.filename))
         charla_path = os.path.join(temp_dir, os.path.basename(charla.filename))
         krisp_path = os.path.join(temp_dir, os.path.basename(krisp.filename))
@@ -180,6 +217,7 @@ async def start_fusion(
             run_dir,
             bool(skip_existing),
         )
+        logger.info(f"[fusion {task_id}] accepted and scheduled")
         return {"task_id": task_id}
     except Exception as e:
         shutil.rmtree(temp_dir, ignore_errors=True)
@@ -230,9 +268,9 @@ async def download_artifact(task_id: str, name: str = Query(..., description="Ar
 
 async def _run_extract_background(task_id: str, run_dir_input: str):
     try:
+        logger.info(f"[extract {task_id}] starting; run_dir={run_dir_input}")
         task_manager.update_task_status(task_id, "PROCESSING", "Running extract-products...", progress=20)
-        project_root = _project_root_from_here()
-        kickoff_dir = os.path.join(project_root, "kickoff_transcript_pipeline")
+        kickoff_dir = _resolve_kickoff_dir()
         if not os.path.isdir(kickoff_dir):
             raise RuntimeError(f"Kickoff pipeline directory not found at: {kickoff_dir}")
 
@@ -245,10 +283,27 @@ async def _run_extract_background(task_id: str, run_dir_input: str):
             run_dir_input,
             "--extract-products",
         ]
+        logger.info(f"[extract {task_id}] cmd={' '.join(cmd)} cwd={kickoff_dir}")
         proc = subprocess.Popen(cmd, cwd=kickoff_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        stdout, stderr = proc.communicate()
+        # Stream output
+        out_lines: list[str] = []
+        err_lines: list[str] = []
+        assert proc.stdout is not None and proc.stderr is not None
+        while True:
+            line = proc.stdout.readline()
+            if line:
+                out_lines.append(line)
+                logger.info(f"[extract {task_id}] stdout: {line.rstrip()}")
+            err = proc.stderr.readline()
+            if err:
+                err_lines.append(err)
+                logger.warning(f"[extract {task_id}] stderr: {err.rstrip()}")
+            if not line and not err and proc.poll() is not None:
+                break
+        stdout = "".join(out_lines)
+        stderr = "".join(err_lines)
         if proc.returncode != 0:
-            logger.error("Extract products failed: %s", stderr)
+            logger.error("[extract %s] failed: %s", task_id, stderr)
             task_manager.set_task_error(task_id, f"Extract failed: {stderr.strip()[:1000]}")
             return
 
@@ -268,9 +323,10 @@ async def _run_extract_background(task_id: str, run_dir_input: str):
                 artifacts.append({"name": name, "path": path})
 
         result_payload = {"run_dir": run_dir_abs, "artifacts": artifacts}
+        logger.info(f"[extract {task_id}] artifacts={[a['name'] for a in artifacts]}")
         task_manager.set_task_success(task_id, result_payload)
     except Exception as e:
-        logger.exception("Unexpected error in extract task")
+        logger.exception("[extract %s] unexpected error", task_id)
         task_manager.set_task_error(task_id, f"Unexpected error: {e}")
 
 

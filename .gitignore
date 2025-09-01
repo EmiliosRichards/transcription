@@ -54,4 +54,4 @@ kickoff_transcript_pipeline\.venv
 tail_test/
 
 
-kickoff_transcript_pipeline/out
+chatbot_app/backend/kickoff_transcript_pipeline/out

@@ -20,16 +20,29 @@ class StorageService:
         self.bucket_name = bucket_name
         
         # Resolve endpoint/region (prefer Backblaze-specific names)
-        endpoint_url = os.environ.get('BACKBLAZE_B2_S3_ENDPOINT') or os.environ.get('AWS_ENDPOINT_URL', '')
+        endpoint_url = (os.environ.get('BACKBLAZE_B2_S3_ENDPOINT') or os.environ.get('AWS_ENDPOINT_URL', '')).strip()
         region = (
-            os.environ.get('BACKBLAZE_B2_REGION')
+            (os.environ.get('BACKBLAZE_B2_REGION') or '').strip()
             or (endpoint_url.split('.')[1] if 'backblazeb2.com' in endpoint_url else None)
-            or os.environ.get('AWS_REGION')
+            or (os.environ.get('AWS_REGION') or '').strip()
         )
 
         # Resolve credentials (prefer Backblaze-specific names)
-        key_id = os.environ.get('BACKBLAZE_B2_KEY_ID') or os.environ.get('AWS_ACCESS_KEY_ID')
-        app_key = os.environ.get('BACKBLAZE_B2_APPLICATION_KEY') or os.environ.get('AWS_SECRET_ACCESS_KEY')
+        key_id = (os.environ.get('BACKBLAZE_B2_KEY_ID') or os.environ.get('AWS_ACCESS_KEY_ID') or '').strip()
+        app_key = (os.environ.get('BACKBLAZE_B2_APPLICATION_KEY') or os.environ.get('AWS_SECRET_ACCESS_KEY') or '').strip()
+
+        # Log minimal, non-sensitive diagnostics to help detect whitespace/typos
+        try:
+            masked_key = (key_id[:4] + '...' + key_id[-4:]) if key_id else '(none)'
+        except Exception:
+            masked_key = '(unavailable)'
+        logger.info(
+            "Initializing StorageService bucket=%s endpoint=%s region=%s key_id=%s",
+            bucket_name,
+            endpoint_url or '(default)',
+            region or '(default)',
+            masked_key,
+        )
 
         # Create the client. If explicit creds are provided, pass them; otherwise, allow
         # boto3 to fall back to its default credential chain (env, config files, IAM, etc.).

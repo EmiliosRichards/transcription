@@ -2,10 +2,10 @@ from pathlib import Path
 from typing import Dict, List
 import re
 
-# Pattern 1: [mm:ss] Speaker: Text (if exists)
-_TIME_LINE_RE = re.compile(r"^\[(\d{2}):(\d{2})\]\s*(.+?):\s*(.*)$")
-# Pattern 2: (mm:ss-mm:ss) chunk header, followed by free text
-_CHUNK_RE = re.compile(r"^\((\d{2}):(\d{2})-(\d{2}):(\d{2})\)\s*$")
+# Pattern 1: [mm:ss] Speaker: Text (if exists) — allow optional leading spaces and 1–2 digit minutes
+_TIME_LINE_RE = re.compile(r"^\s*\[(\d{1,2}):(\d{2})\]\s*(.+?):\s*(.*)$")
+# Pattern 2: (mm:ss-mm:ss) chunk header, followed by free text — allow optional leading spaces and 1–2 digit minutes
+_CHUNK_RE = re.compile(r"^\s*\((\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})\)\s*$")
 
 
 def _mmss_to_seconds(mm: str, ss: str) -> int:

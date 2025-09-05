@@ -234,7 +234,7 @@ export function AudioPlayer({ src }: AudioPlayerProps) {
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-4xl p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-lg shadow-2xl z-50">
-      <audio ref={audioRef} src={src} key={src} preload="auto" crossOrigin="anonymous" />
+      <audio ref={audioRef} src={src} key={src} preload="auto" />
       <div className="flex items-center justify-between gap-6">
         {/* Main Controls: Centered */}
         <div className="flex items-center gap-4 flex-grow justify-center">

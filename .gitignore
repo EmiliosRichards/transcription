@@ -55,3 +55,4 @@ tail_test/
 
 
 chatbot_app/backend/kickoff_transcript_pipeline/out
+chatbot_app/backend/kickoff_transcript_pipeline/files_that_caused_error 

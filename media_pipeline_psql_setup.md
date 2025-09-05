@@ -91,7 +91,8 @@ Exactly one transcription per audio file.
 | `transcript_text`   | `TEXT`                               | Full text (unless huge)                     |
 | `segments`          | `JSONB`                              | Word/segment timings                        |
 | `diarization`       | `JSONB`                              | Speaker info                                |
-| `metadata`          | `JSONB`                              | Extra info                                  |
+| `metadata`          | `JSONB`                              | Extra info (language, timings, B2 keys, etc.) |
+| `raw_response`      | `JSONB`                              | Full provider response (optional column)    |
 | `b2_transcript_key` | `TEXT`                               | If transcript stored in B2                  |
 
 **Unique**
@@ -101,6 +102,39 @@ Exactly one transcription per audio file.
 **Cascade behavior**
 
 * Deleting an `audio_files` row **auto-deletes** its transcription(s).
+
+#### `media_pipeline.transcription_failures`
+
+Tracks last failure per audio file (for cooldowns and permanent skips).
+
+| Column          | Type                                 | Notes                                                        |
+| --------------- | ------------------------------------ | ------------------------------------------------------------ |
+| `audio_file_id` | `BIGINT PRIMARY KEY`                 | FK → `audio_files.id` ON DELETE CASCADE                      |
+| `provider`      | `TEXT`                               | e.g., `OpenAI`                                              |
+| `model`         | `TEXT`                               | e.g., `whisper-1`                                           |
+| `status`        | `TEXT`                               | `transient` or `permanent`                                   |
+| `error_code`    | `INTEGER`                            | Optional HTTP/code                                           |
+| `error`         | `TEXT`                               | Truncated message (~2k)                                      |
+| `attempts`      | `INTEGER NOT NULL DEFAULT 1`         | Auto-incremented on upsert                                   |
+| `last_attempt_at` | `TIMESTAMPTZ NOT NULL DEFAULT now()` | Updated on each upsert                                       |
+| `ignore_until`  | `TIMESTAMPTZ`                        | When set (transient), skip until this time                   |
+
+Indexes:
+- Consider index on `ignore_until` when querying active cooldowns.
+
+#### `media_pipeline.transcription_claims`
+
+Simple claim queue to prevent overlap across workers/terminals.
+
+| Column         | Type                                 | Notes                                        |
+| -------------- | ------------------------------------ | -------------------------------------------- |
+| `audio_file_id`| `BIGINT PRIMARY KEY`                 | FK → `audio_files.id` ON DELETE CASCADE      |
+| `claimed_by`   | `TEXT NOT NULL`                      | Hostname/worker id                           |
+| `claimed_at`   | `TIMESTAMPTZ NOT NULL DEFAULT now()` |                                              |
+| `expires_at`   | `TIMESTAMPTZ`                        | Claim TTL; rows auto-ignored after expiry    |
+
+Indexes:
+- `ix_transcription_claims_expires` on (`expires_at`).
 
 ---
 
@@ -146,6 +180,29 @@ RETURNING id;
 
 ### 3.3 Insert-or-update — transcription (1:1 with audio)
 
+Preferred (with `raw_response` column present):
+```sql
+INSERT INTO media_pipeline.transcriptions (
+  audio_file_id, provider, model, status, created_at, completed_at,
+  transcript_text, segments, diarization, metadata, raw_response, b2_transcript_key
+) VALUES (
+  :audio_file_id, :provider, :model, :status, now(), :completed_at,
+  :transcript_text, :segments::jsonb, :diarization::jsonb, :metadata::jsonb, :raw_response::jsonb, :b2_transcript_key
+)
+ON CONFLICT (audio_file_id) DO UPDATE SET
+  provider         = EXCLUDED.provider,
+  model            = EXCLUDED.model,
+  status           = EXCLUDED.status,
+  completed_at     = EXCLUDED.completed_at,
+  transcript_text  = EXCLUDED.transcript_text,
+  segments         = EXCLUDED.segments,
+  diarization      = EXCLUDED.diarization,
+  metadata         = EXCLUDED.metadata,
+  raw_response     = EXCLUDED.raw_response,
+  b2_transcript_key= EXCLUDED.b2_transcript_key;
+```
+
+Fallback (without `raw_response` column):
 ```sql
 INSERT INTO media_pipeline.transcriptions (
   audio_file_id, provider, model, status, created_at, completed_at,
@@ -155,15 +212,47 @@ INSERT INTO media_pipeline.transcriptions (
   :transcript_text, :segments::jsonb, :diarization::jsonb, :metadata::jsonb, :b2_transcript_key
 )
 ON CONFLICT (audio_file_id) DO UPDATE SET
-  provider        = EXCLUDED.provider,
-  model           = EXCLUDED.model,
+  provider         = EXCLUDED.provider,
+  model            = EXCLUDED.model,
+  status           = EXCLUDED.status,
+  completed_at     = EXCLUDED.completed_at,
+  transcript_text  = EXCLUDED.transcript_text,
+  segments         = EXCLUDED.segments,
+  diarization      = EXCLUDED.diarization,
+  metadata         = EXCLUDED.metadata,
+  b2_transcript_key= EXCLUDED.b2_transcript_key;
+```
+
+### 3.4 Upsert failure (cooldown/permanent)
+
+```sql
+INSERT INTO media_pipeline.transcription_failures (
+  audio_file_id, provider, model, status, error_code, error, ignore_until
+) VALUES (
+  :audio_file_id, :provider, :model, :status, :error_code, :error,
+  CASE WHEN :status = 'transient' THEN (now() + make_interval(mins := :cooldown_minutes)) ELSE NULL END
+)
+ON CONFLICT (audio_file_id) DO UPDATE SET
+  last_attempt_at = now(),
+  attempts        = media_pipeline.transcription_failures.attempts + 1,
   status          = EXCLUDED.status,
-  completed_at    = EXCLUDED.completed_at,
-  transcript_text = EXCLUDED.transcript_text,
-  segments        = EXCLUDED.segments,
-  diarization     = EXCLUDED.diarization,
-  metadata        = EXCLUDED.metadata,
-  b2_transcript_key = EXCLUDED.b2_transcript_key;
+  error_code      = EXCLUDED.error_code,
+  error           = EXCLUDED.error,
+  ignore_until    = EXCLUDED.ignore_until;
+```
+
+### 3.5 Claims: create/release
+
+Create claim (example; in code this is done in bulk with a CTE):
+```sql
+INSERT INTO media_pipeline.transcription_claims (audio_file_id, claimed_by, expires_at)
+VALUES (:audio_file_id, :claimed_by, (now() + make_interval(mins := :ttl)))
+ON CONFLICT (audio_file_id) DO NOTHING;
+```
+
+Release claim:
+```sql
+DELETE FROM media_pipeline.transcription_claims WHERE audio_file_id = :audio_file_id;
 ```
 
 ### 3.4 Deriving fields (agent tips)
@@ -300,6 +389,8 @@ WHERE a.id IS NULL;
 * **Resets**: To clear for re-testing: `TRUNCATE media_pipeline.transcriptions, media_pipeline.audio_files RESTART IDENTITY;`
 * **Performance**: Indexes on `phone` and `started` support typical reads; `url_sha1` unique supports fast dedupe.
 * **Cascade**: Verified `ON DELETE CASCADE` from `transcriptions.audio_file_id` → `audio_files.id`.
+* **Claims**: Clear stuck claims (e.g., after killing workers): `DELETE FROM media_pipeline.transcription_claims;`
+* **Cooldowns**: To re-enable transient failures immediately: `DELETE FROM media_pipeline.transcription_failures WHERE status='transient';`
 
 ---
 
@@ -379,11 +470,40 @@ CREATE TABLE IF NOT EXISTS media_pipeline.transcriptions (
   segments           JSONB,
   diarization        JSONB,
   metadata           JSONB,
+  raw_response       JSONB,
   b2_transcript_key  TEXT
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS uq_transcriptions_audio_file_id
   ON media_pipeline.transcriptions (audio_file_id);
+
+-- Optional column for existing deployments
+ALTER TABLE media_pipeline.transcriptions ADD COLUMN IF NOT EXISTS raw_response jsonb;
+
+-- Failures table (cooldowns/permanent)
+CREATE TABLE IF NOT EXISTS media_pipeline.transcription_failures (
+  audio_file_id    BIGINT PRIMARY KEY
+                   REFERENCES media_pipeline.audio_files(id) ON DELETE CASCADE,
+  provider         TEXT,
+  model            TEXT,
+  status           TEXT,
+  error_code       INTEGER,
+  error            TEXT,
+  attempts         INTEGER NOT NULL DEFAULT 1,
+  last_attempt_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  ignore_until     TIMESTAMPTZ
+);
+
+-- Claims table (overlap prevention)
+CREATE TABLE IF NOT EXISTS media_pipeline.transcription_claims (
+  audio_file_id BIGINT PRIMARY KEY
+                REFERENCES media_pipeline.audio_files(id) ON DELETE CASCADE,
+  claimed_by    TEXT NOT NULL,
+  claimed_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at    TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS ix_transcription_claims_expires
+  ON media_pipeline.transcription_claims (expires_at);
 ```
 
 ---

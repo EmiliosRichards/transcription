@@ -23,7 +23,7 @@ def create_task() -> str:
     logger.info(f"Task created with ID: {task_id}")
     return task_id
 
-def get_task_status(task_id: str) -> Dict[str, Any] | None:
+def get_task_status(task_id: str) -> Optional[Dict[str, Any]]:
     """Retrieves the status of a specific task."""
     return _tasks.get(task_id)
 

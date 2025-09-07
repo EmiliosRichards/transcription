@@ -3,6 +3,7 @@ import boto3
 from botocore.client import Config
 from botocore.exceptions import ClientError
 import logging
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +94,7 @@ class StorageService:
             logger.error(f"The file {file_path} was not found for upload.", exc_info=True)
             return False
 
-    def create_presigned_url(self, object_key: str, expiration: int = 3600) -> str | None:
+    def create_presigned_url(self, object_key: str, expiration: int = 3600) -> Optional[str]:
         """
         Generates a pre-signed URL to download a file.
         """

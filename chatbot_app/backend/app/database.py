@@ -7,20 +7,19 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from app.config import settings
 import datetime
 
-# --- Async Setup ---
-# The asyncpg driver expects SSL settings in connect_args, not the URL query.
-db_url_without_query = settings.DATABASE_URL.split('?')[0]
+# --- Async/Sync DB Setup with conditional SSL ---
+db_url = settings.DATABASE_URL
+need_ssl = not ("sslmode=disable" in db_url or "localhost" in db_url or "127.0.0.1" in db_url)
+
 async_engine = create_async_engine(
-    db_url_without_query,
+    db_url,
     pool_pre_ping=True,
-    connect_args={'ssl': 'require'}
+    connect_args={'ssl': 'require'} if need_ssl else {}
 )
 AsyncSessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=async_engine)
 
-# --- Sync Setup ---
-# The psycopg2 driver expects SSL settings in the URL query.
 sync_engine = create_engine(
-    settings.DATABASE_URL.replace("postgresql+asyncpg", "postgresql+psycopg2"),
+    db_url.replace("postgresql+asyncpg", "postgresql+psycopg2"),
     pool_pre_ping=True
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=sync_engine)

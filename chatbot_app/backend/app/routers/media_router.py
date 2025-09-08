@@ -171,7 +171,11 @@ async def enqueue_transcription(
             :b2_key, :size_bytes,
             :source_table, :source_row_id
         )
-        ON CONFLICT (url_sha1) DO UPDATE SET url = EXCLUDED.url
+        ON CONFLICT (url_sha1) DO UPDATE SET
+            url = EXCLUDED.url,
+            b2_object_key = EXCLUDED.b2_object_key,
+            phone = COALESCE(EXCLUDED.phone, media_pipeline.audio_files.phone),
+            campaign_name = COALESCE(EXCLUDED.campaign_name, media_pipeline.audio_files.campaign_name)
         RETURNING id
         """
     )

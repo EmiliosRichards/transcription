@@ -1,0 +1,9 @@
+# Isolated dependencies for the audio downloader only
+pandas>=2.2.3
+numpy>=2.0.2
+python-dotenv==1.0.1
+tqdm==4.67.1
+SQLAlchemy>=2.0.30
+requests>=2.31.0
+boto3
+psycopg2

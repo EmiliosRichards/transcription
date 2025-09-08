@@ -118,7 +118,8 @@ async def enqueue_transcription(
     if row is None:
         raise HTTPException(status_code=404, detail="Recording not found in DB by id or url")
 
-    rec_id = int(row.rec_id)
+    # recordings.id may be TEXT/UUID in some deployments; keep as text and only cast to int when possible
+    rec_id_text = str(row.rec_id)
     source_url = str(row.url)
     # Normalize phone from DB; fallback to provided phone
     def _norm_phone(v: Optional[str]) -> str:
@@ -174,12 +175,18 @@ async def enqueue_transcription(
         RETURNING id
         """
     )
+    # Attempt to set numeric source_row_id only if the recordings.id is numeric; else leave NULL
+    try:
+        source_row_id_val = int(rec_id_text)
+    except Exception:
+        source_row_id_val = None
+
     res = await db.execute(
         stmt,
         {
             "phone": phone_norm,
             "campaign_name": safe_campaign,
-            "recording_id": recording_id,
+            "recording_id": recording_id or rec_id_text,
             "url": source_url,
             "url_sha1": url_sha1,
             "b2_key": b2_key,
@@ -187,7 +194,7 @@ async def enqueue_transcription(
             "started": row.started if hasattr(row, 'started') else None,
             "stopped": row.stopped if hasattr(row, 'stopped') else None,
             "source_table": "public.recordings",
-            "source_row_id": rec_id,
+            "source_row_id": source_row_id_val,
         },
     )
     row = res.first()

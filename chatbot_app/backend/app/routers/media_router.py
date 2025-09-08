@@ -135,6 +135,34 @@ async def enqueue_transcription(
     base_prefix_default = f"{safe_campaign}/audio"
     base_prefix = f"{b2_prefix.rstrip('/')}/{base_prefix_default}" if b2_prefix else base_prefix_default
 
+    # --- Short-circuit: if this recording (or URL) already has a completed transcription, skip upload and return existing result
+    rid_to_check = recording_id or rec_id_text
+    try:
+        if rid_to_check:
+            q_af = text("SELECT id FROM media_pipeline.audio_files WHERE recording_id = :rid LIMIT 1")
+            r_af = await db.execute(q_af, {"rid": rid_to_check})
+            af = r_af.first()
+            if af and af[0]:
+                q_tx = text("SELECT status, transcript_text, metadata FROM media_pipeline.transcriptions WHERE audio_file_id = :aid ORDER BY id DESC LIMIT 1")
+                r_tx = await db.execute(q_tx, {"aid": int(af[0])})
+                tx = r_tx.first()
+                if tx and str(tx[0]) == "completed":
+                    return {"audio_file_id": int(af[0]), "status": "completed", "transcript": tx[1], "metadata": tx[2]}
+        # Fallback by URL hash
+        url_sha1_pre = hashlib.sha1((source_url or "").encode("utf-8")).hexdigest()
+        q_af2 = text("SELECT id FROM media_pipeline.audio_files WHERE url_sha1 = :h LIMIT 1")
+        r_af2 = await db.execute(q_af2, {"h": url_sha1_pre})
+        af2 = r_af2.first()
+        if af2 and af2[0]:
+            q_tx2 = text("SELECT status, transcript_text, metadata FROM media_pipeline.transcriptions WHERE audio_file_id = :aid ORDER BY id DESC LIMIT 1")
+            r_tx2 = await db.execute(q_tx2, {"aid": int(af2[0])})
+            tx2 = r_tx2.first()
+            if tx2 and str(tx2[0]) == "completed":
+                return {"audio_file_id": int(af2[0]), "status": "completed", "transcript": tx2[1], "metadata": tx2[2]}
+    except Exception:
+        # If any short-circuit lookup fails, continue with upload path
+        pass
+
     # Upload to B2 from the source URL
     storage = get_storage_service()
     ext = _derive_ext(source_url)

@@ -87,7 +87,7 @@ async def enqueue_transcription(
                     FROM public.recordings r
                     JOIN public.contacts c ON r.contact_id = c."$id"
                     LEFT JOIN public.campaign_map cm ON cm.campaign_id = c."$campaign_id"
-                    WHERE r.location LIKE CONCAT('%', :rid, '%')
+                    WHERE r.location LIKE ('%' || :rid || '%')
                     LIMIT 1
                     """
                 )

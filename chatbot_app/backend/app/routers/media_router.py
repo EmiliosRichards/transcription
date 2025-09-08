@@ -54,26 +54,26 @@ async def enqueue_transcription(
     row = None
     try:
         if recording_id:
-            # Match by recording token inside URL (e.g., PR_<uuid>) or by recordings.id if numeric
-            if recording_id.isdigit():
-                stmt = text(
-                    """
-                    SELECT r.id AS rec_id,
-                           r.location AS url,
-                           c."$phone" AS phone_raw,
-                           c."$campaign_id" AS campaign_id,
-                           COALESCE(cm.campaign, c."$campaign_id") AS campaign_name,
-                           r.started::timestamptz AS started,
-                           r.stopped::timestamptz AS stopped
-                    FROM public.recordings r
-                    JOIN public.contacts c ON r.contact_id = c."$id"
-                    LEFT JOIN public.campaign_map cm ON cm.campaign_id = c."$campaign_id"
-                    WHERE r.id = :rid
-                    LIMIT 1
-                    """
-                )
-                res = await db.execute(stmt, {"rid": int(recording_id)})
-                row = res.first()
+            # 1) Try exact match by recordings.id (cast to text to support non-numeric ids)
+            stmt = text(
+                """
+                SELECT r.id AS rec_id,
+                       r.location AS url,
+                       c."$phone" AS phone_raw,
+                       c."$campaign_id" AS campaign_id,
+                       COALESCE(cm.campaign, c."$campaign_id") AS campaign_name,
+                       r.started::timestamptz AS started,
+                       r.stopped::timestamptz AS stopped
+                FROM public.recordings r
+                JOIN public.contacts c ON r.contact_id = c."$id"
+                LEFT JOIN public.campaign_map cm ON cm.campaign_id = c."$campaign_id"
+                WHERE r.id::text = :rid
+                LIMIT 1
+                """
+            )
+            res = await db.execute(stmt, {"rid": recording_id})
+            row = res.first()
+            # 2) Fallback: try to find the token inside the URL
             if row is None:
                 stmt = text(
                     """

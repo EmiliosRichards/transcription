@@ -41,7 +41,8 @@ Why this design:
     2) Normalizes `phone` and resolves `campaign_name` from DB
     3) Downloads `url` → uploads to B2 at:
        - `[<b2_prefix>/]<campaign>/audio/<phone>/<uuid>.<ext>`
-    4) Inserts `media_pipeline.audio_files` (idempotent) with:
+    4) Short‑circuit duplicates: if this `recording_id` (or `url_sha1`) already has a completed transcription, the API immediately returns the existing `{ audio_file_id, status, transcript, metadata }` without re‑uploading or re‑transcribing.
+    5) Otherwise inserts `media_pipeline.audio_files` (idempotent) with:
        - `phone` (normalized), `campaign_name`, `recording_id` (text), `url`, `url_sha1`, `started`, `stopped`, `b2_object_key`, `source_table='public.recordings'`, `source_row_id` (numeric only, else NULL)
 
 - GET `/api/media/status/{audio_file_id}`
@@ -63,9 +64,9 @@ Why this design:
   - `[<b2_prefix>/]<campaign>/audio/<phone>/<uuid>.<ext>`
   - Typical production prefix: `b2_prefix=gateway` adds a top‑level namespace.
 - Transcript upload (by worker):
-  - `<campaign>/transcriptions/json/<rest>.json`
-  - `<campaign>/transcriptions/txt/<rest>.txt`
-  - Note: transcripts mirror the audio’s path under the campaign, not the gateway prefix.
+  - `[<b2_prefix>/]<campaign>/transcriptions/json/<rest>.json`
+  - `[<b2_prefix>/]<campaign>/transcriptions/txt/<rest>.txt`
+  - Implementation detail: the worker derives transcript keys by taking the original audio key and replacing `/audio/` with `/transcriptions/json/` (or `/transcriptions/txt/`) so transcript paths always mirror the exact audio path, including the gateway prefix.
 
 ### 4) DB schema (relevant)
 - `media_pipeline.audio_files` — job catalog (see `media_pipeline_psql_setup.md`)
@@ -181,6 +182,14 @@ DELETE FROM media_pipeline.transcription_claims;
 ```
 DELETE FROM media_pipeline.transcription_failures WHERE status='transient';
 ```
+
+### Resetting “gateway/” (clean slate test)
+1) Delete the `gateway/` folder in B2 (UI or via SDK).
+2) Clear SQL rows for the gateway namespace (cascades to transcriptions/claims/failures):
+```
+DELETE FROM media_pipeline.audio_files WHERE b2_object_key LIKE 'gateway/%';
+```
+3) Submit a new job and verify DB/B2 paths are gateway‑prefixed for both audio and transcripts.
 
 ---
 

@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlparse, parse_qsl, urlencode
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy import create_engine
@@ -8,18 +9,43 @@ from app.config import settings
 import datetime
 
 # --- Async/Sync DB Setup with conditional SSL ---
-db_url = settings.DATABASE_URL
-need_ssl = not ("sslmode=disable" in db_url or "localhost" in db_url or "127.0.0.1" in db_url)
+raw_db_url = settings.DATABASE_URL
+
+def _normalize_async_db_url(url: str) -> str:
+    # Ensure async driver scheme
+    if url.startswith("postgresql+psycopg2://"):
+        url = "postgresql+asyncpg://" + url.split("://", 1)[1]
+    elif url.startswith("postgres://"):
+        url = "postgresql+asyncpg://" + url.split("://", 1)[1]
+    elif url.startswith("postgresql://") and "+" not in url.split("://", 1)[0]:
+        url = "postgresql+asyncpg://" + url.split("://", 1)[1]
+
+    # Strip unsupported sslmode from query for asyncpg
+    parsed = urlparse(url)
+    filtered_query = [(k, v) for k, v in parse_qsl(parsed.query, keep_blank_values=True) if k.lower() != "sslmode"]
+    sanitized = parsed._replace(query=urlencode(filtered_query)).geturl()
+    return sanitized
+
+async_db_url = _normalize_async_db_url(raw_db_url)
+
+# Decide if SSL is needed (remote DBs typically require SSL)
+parsed = urlparse(async_db_url)
+host = (parsed.hostname or "").lower()
+orig_has_sslmode_disable = "sslmode=disable" in raw_db_url.lower()
+need_ssl = not (orig_has_sslmode_disable or host in ("localhost", "127.0.0.1"))
 
 async_engine = create_async_engine(
-    db_url,
+    async_db_url,
     pool_pre_ping=True,
-    connect_args={'ssl': 'require'} if need_ssl else {}
+    # asyncpg expects a boolean or SSLContext for "ssl"; never "sslmode"
+    connect_args={"ssl": True} if need_ssl else {}
 )
 AsyncSessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=async_engine)
 
+# For sync operations/tools, use psycopg2
+sync_db_url = raw_db_url.replace("postgresql+asyncpg", "postgresql+psycopg2")
 sync_engine = create_engine(
-    db_url.replace("postgresql+asyncpg", "postgresql+psycopg2"),
+    sync_db_url,
     pool_pre_ping=True
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=sync_engine)

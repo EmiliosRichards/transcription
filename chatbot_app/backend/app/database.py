@@ -20,10 +20,9 @@ def _normalize_async_db_url(url: str) -> str:
     elif url.startswith("postgresql://") and "+" not in url.split("://", 1)[0]:
         url = "postgresql+asyncpg://" + url.split("://", 1)[1]
 
-    # Strip unsupported sslmode from query for asyncpg
+    # Drop ALL query parameters to avoid passing libpq-only args (e.g., channel_binding) to asyncpg
     parsed = urlparse(url)
-    filtered_query = [(k, v) for k, v in parse_qsl(parsed.query, keep_blank_values=True) if k.lower() != "sslmode"]
-    sanitized = parsed._replace(query=urlencode(filtered_query)).geturl()
+    sanitized = parsed._replace(query="").geturl()
     return sanitized
 
 async_db_url = _normalize_async_db_url(raw_db_url)

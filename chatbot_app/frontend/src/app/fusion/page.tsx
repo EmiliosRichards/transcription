@@ -386,7 +386,9 @@ export default function FusionPage() {
     setMessage("Running extract-products...");
     setError("");
     if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
-    setCountdown(COUNTDOWN_MAX);
+    setIsFusionRun(false);
+    setCountdownTotalMin(5);
+    setCountdown(5);
     timerStartRef.current = Date.now();
     setSmoothProgress(10);
     try {

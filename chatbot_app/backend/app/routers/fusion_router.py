@@ -295,13 +295,13 @@ async def _run_fusion_background(
                         break
                 if tools_dir:
                     try:
-                        cmd_txt = [sys.executable or "python", "postprocess_group_by_speaker.py", "--input", master_txt]
+                        cmd_txt = [sys.executable or "python", "postprocess_group_by_speaker.py", "--input", master_txt, "--merge"]
                         logger.info(f"[fusion {task_id}] postprocess txt cmd={' '.join(cmd_txt)} cwd={tools_dir}")
                         subprocess.run(cmd_txt, cwd=tools_dir, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                     except Exception:
                         logger.exception(f"[fusion {task_id}] TXT postprocess failed")
                     try:
-                        cmd_docx = [sys.executable or "python", "postprocess_group_by_speaker_docx.py", "--input", master_txt]
+                        cmd_docx = [sys.executable or "python", "postprocess_group_by_speaker_docx.py", "--input", master_txt, "--merge"]
                         logger.info(f"[fusion {task_id}] postprocess docx cmd={' '.join(cmd_docx)} cwd={tools_dir}")
                         subprocess.run(cmd_docx, cwd=tools_dir, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                     except Exception:
@@ -653,13 +653,13 @@ async def _run_extract_background(task_id: str, run_dir_input: str):
                         break
                 if tools_dir:
                     try:
-                        cmd_txt = [sys.executable or "python", "postprocess_group_by_speaker.py", "--input", master_txt]
+                        cmd_txt = [sys.executable or "python", "postprocess_group_by_speaker.py", "--input", master_txt, "--merge"]
                         logger.info(f"[extract {task_id}] postprocess txt cmd={' '.join(cmd_txt)} cwd={tools_dir}")
                         subprocess.run(cmd_txt, cwd=tools_dir, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                     except Exception:
                         logger.exception(f"[extract {task_id}] TXT postprocess failed")
                     try:
-                        cmd_docx = [sys.executable or "python", "postprocess_group_by_speaker_docx.py", "--input", master_txt]
+                        cmd_docx = [sys.executable or "python", "postprocess_group_by_speaker_docx.py", "--input", master_txt, "--merge"]
                         logger.info(f"[extract {task_id}] postprocess docx cmd={' '.join(cmd_docx)} cwd={tools_dir}")
                         subprocess.run(cmd_docx, cwd=tools_dir, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                     except Exception:

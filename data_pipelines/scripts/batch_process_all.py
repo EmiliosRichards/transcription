@@ -1,8 +1,8 @@
 import os
 from data_pipelines import config
 import sys
-from .post_process import post_process
-from .review_interface import create_review_interface
+from data_pipelines.scripts.post_process import post_process
+from data_pipelines.scripts.review_interface import create_review_interface
 
 def main():
     """

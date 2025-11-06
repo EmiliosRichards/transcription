@@ -8,3 +8,5 @@ tqdm==4.67.1
 httpx==0.25.2
 SQLAlchemy>=2.0.30
 requests>=2.31.0
+openpyxl
+xlsxwriter

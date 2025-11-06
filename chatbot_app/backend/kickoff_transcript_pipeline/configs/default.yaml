@@ -1,29 +1,22 @@
-# Pipeline configuration
-model: "gpt-4.1"
-temperature: 0.2
-seed: 42
+# Pipeline configuration (minimal, CLI-driven inputs; no default temperature)
+model: "gpt-5-2025-08-07"
+# temperature:   # Omitted means: do not send temperature by default
 minutes_per_block: 12
 filler_max_tokens: 3
-duplicate_window_sec: 4
-duplicate_window_sec: 5
-low_conf_threshold: 0.5
+duplicate_window_sec: 10
+low_conf_threshold: 0.35
 similarity_threshold_high: 0.65
-similarity_threshold_low: 0.4
+similarity_threshold_low: 0.35
 
 confidence_weights:
-  add_kt_high: 0.25
-  add_kc_high: 0.25
-  penalize_kt_low: -0.10
-  penalize_short: -0.05
+  krisp: 0.33
+  teams: 0.33
+  gpt: 0.34
 
-inputs:
-  teams: "real_example_files/Kickoff Galvanek.vtt"
-  krisp: "real_example_files/Bastian Galvanek und Lorenz Schrader krisp.txt"
-  charla: "real_example_files/Charla Bastian Galvanek und Lorenz Schrader-20250820_090309-Besprechungsaufzeichnung.mp4 20.08.25.txt"
+# Inputs are provided via CLI; do not set defaults here to avoid accidental usage
 
 export:
-  out_dir: "out"
-  docx_chapter_minutes: 5
+  out_dir: "tools/fusion-tool/output"
 
 logging:
   jsonl_name: "run_{timestamp}.jsonl"

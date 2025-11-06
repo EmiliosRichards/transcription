@@ -264,7 +264,9 @@ $common = @(
   '--upload-transcripts-txt-to-b2','--b2-out-txt-prefix','dexter/transcriptions/txt',
   '--no-local-save',
   '--require-db','--db-failure-threshold','3',
-  '--select-from-db','--use-claims','--claim-ttl-minutes','60','--no-head'
+  '--select-from-db','--use-claims','--claim-ttl-minutes','60','--no-head',
+  # Circuit breaker guard rails
+  '--cb-db-fail-threshold','3','--cb-b2-fail-threshold','3','--cb-open-action','skip'
 )
 $probeArgs = $common | Where-Object { $_ -ne '--use-claims' }
 while ($true) {
@@ -282,6 +284,9 @@ How it works and tips:
 - Concurrency: start with 2–3 terminals or reduce `--max-workers` if you see 429/timeouts; increase cautiously if stable.
 - Keep `--no-local-save` if you only need uploads; logs and `_summary.json` still write under `--output-dir/run_.../`.
 - If you need preprocessing, add `--preprocess ...` flags; it adds CPU time before the API call.
+- Circuit breaker flags:
+  - `--cb-db-fail-threshold` / `--cb-b2-fail-threshold`: open circuit after N consecutive DB/B2 failures (default 3)
+  - `--cb-open-action`: `skip` to skip further API calls until healthy (default) or `exit` to end the run
 
 Recommended settings (Whisper-1, gentle preprocessing, prompt, resume, nested outputs):
 ```powershell
@@ -559,5 +564,31 @@ Additional tips:
   ```
 - Use DB keepalives in the URL: `?keepalives=1&keepalives_idle=60&keepalives_interval=30&keepalives_count=5`.
 - Scripts already enable `pool_pre_ping` and `pool_recycle` to survive idle drops.
+
+#### Guard-railed runner (preflights + circuit breaker)
+
+Use this helper to enforce DB/B2 preflights and standard flags with a batching loop:
+
+```powershell
+pwsh data_pipelines\scripts\ops\run_transcription_loop.ps1 `
+  -B2Prefix 'dexter/audio' `
+  -Bucket 'campaign-analysis' `
+  -Model 'whisper-1' `
+  -Language 'de' `
+  -PromptFile 'data_pipelines/whisper_dexter_prompt' `
+  -MaxWorkers 4 `
+  -BatchSize 1000 `
+  -CbDbFailThreshold 3 `
+  -CbB2FailThreshold 3 `
+  -CbOpenAction 'skip' `
+  -ReprocessFailed `
+  -NoLocalSave
+```
+
+What it does:
+- Verifies DB connectivity and B2 credentials before running
+- Probes selection in dry-run mode
+- Runs batched loop with claims
+- Enables the circuit breaker by default to stop API calls when infra writes/uploads fail repeatedly
 
 

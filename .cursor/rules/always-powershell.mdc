@@ -1,0 +1,22 @@
+---
+description: Enforce that all CLI commands are provided in PowerShell syntax.
+alwaysApply: true
+---
+
+- Always provide CLI commands and scripts in PowerShell (Windows PowerShell/PowerShell 7) syntax.
+- Prefer native PowerShell cmdlets over Unix utilities:
+  - Invoke-RestMethod instead of curl
+  - Get-Content/Set-Content/Out-File instead of cat/touch/tee/redirection
+  - Select-String instead of grep
+  - Expand-Archive/Compress-Archive instead of tar/zip
+- Use PowerShell quoting and interpolation rules: single quotes for literals, double quotes for interpolation, and $(...) for sub-expressions.
+- For inline Python snippets, wrap the code in a PowerShell here-string and pipe it to Python via stdin (no Bash heredocs). Example:
+
+```powershell
+$pythonScript = @'
+print("Hello from PowerShell here-string via stdin")
+'@
+$pythonScript | python -
+```
+
+- Avoid Bash-only syntax (e.g., heredocs, && with Bash semantics, export). If chaining is needed, use PowerShell pipelines or separate statements.

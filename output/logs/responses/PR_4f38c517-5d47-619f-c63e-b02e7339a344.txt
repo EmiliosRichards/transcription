@@ -1,6 +1,0 @@
-```json
-{
-  "full_transcript": "",
-  "entities": []
-}
-```

@@ -1,0 +1,22 @@
+﻿model: gpt-5-mini-2025-08-07
+truncation:
+  head_chars: 600
+  tail_chars: 1000
+min_chars:
+  select: 180
+  qc: 180
+workers: 4
+prompt_version: v3
+output_dir: data_pipelines_dexter/data/transcription_dexter_analysis/runs/2025-09-29
+unreachable_markers:
+  - voicemail
+  - mailbox
+  - mobilbox
+  - sprachbox
+  - anrufbeantworter
+  - außerhalb der geschäftszeiten
+  - outside hours
+  - besetzt
+  - kein anschluss
+  - keine verbindung
+confidence_min_for_view: 0.5

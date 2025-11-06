@@ -1,9 +1,0 @@
-{
-    "full_transcript": "[SPEAKER_01]: Ja, hi, hören Sie mich?\n[SPEAKER_02]: Hallo?\n[SPEAKER_01]: Herr Panke?\n[SPEAKER_02]: Hallo?",
-    "entities": [
-        {
-            "text": "Herr Panke",
-            "type": "PER"
-        }
-    ]
-}

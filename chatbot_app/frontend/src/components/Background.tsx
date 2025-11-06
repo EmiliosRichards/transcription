@@ -19,8 +19,10 @@ export function AppBackground(): React.JSX.Element | null {
 
   const isDark = resolvedTheme === "dark";
 
-  // Use project image as the background. Remove optional bg-light/dark variants to avoid 404s.
-  const defaultImage = "/pastel-gradient-background-etu0z7lbeebg6mlf.jpg";
+  // Use different background images for light and dark themes
+  const lightImage = "/pastel-gradient-background-etu0z7lbeebg6mlf.jpg";
+  const darkImage = "/ChatGPT Image Oct 14, 2025, 02_33_45 PM.png";
+  const imagePath = isDark ? darkImage : lightImage;
 
   // Layered gradients for atmosphere; tuned for light/dark.
   const gradientTop = isDark
@@ -36,7 +38,8 @@ export function AppBackground(): React.JSX.Element | null {
     : "linear-gradient(to bottom right, rgba(255,255,255,0.85), rgba(255,255,255,0.35))";
 
   // Compose backgrounds: overlay gradients first, then image.
-  const backgroundImage = `${gradientTop}, ${gradientBottom}, ${colorWash}, url(${defaultImage})`;
+  // Quote the URL to safely handle spaces in file names
+  const backgroundImage = `${gradientTop}, ${gradientBottom}, ${colorWash}, url("${imagePath}")`;
 
   return (
     <div

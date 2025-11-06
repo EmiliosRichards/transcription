@@ -1,9 +1,0 @@
-[SPEAKER_00]: Hallo, schönen guten Tag, grüße Sie, Weber hier von Manuaz.
-[SPEAKER_00]: Können Sie mich bitte mit der Vertriebszeitung oder Geschäftsführung verbinden?
-[SPEAKER_02]: Damit sind Sie verbunden.
-[SPEAKER_00]: Achso, gut, dass ich Sie erreicht habe.
-[SPEAKER_00]: Ich fasse mich auch kurz.
-[SPEAKER_00]: Es geht um das Thema Neukundengewinnung und Bestandskundeaktivierung.
-[SPEAKER_01]: Kein Interesse, vielen Dank.
-[SPEAKER_01]: Danke, danke.
-[SPEAKER_01]: Danke, tschau tschau.

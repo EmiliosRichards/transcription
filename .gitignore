@@ -19,9 +19,11 @@ dist/
 
 # Local Database
 chroma_db/
+chatbot_app/backend/var/chroma_db/
 
 # Large Data Files (in data_pipelines)
 data_pipelines/data/
+data_pipelines/output/
 
 # Node / Frontend
 node_modules/
@@ -30,6 +32,12 @@ dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Coverage / test
+.coverage
+.coverage.*
+htmlcov/
+**/.pytest_cache/
 
 # IDE / OS
 .vscode/
@@ -41,6 +49,9 @@ chatbot_app/backend/audio_files/PR_07bcc6fc-978e-12e0-b180-208ed81c542c.mp3
 
 # Ignore LLM logs
 chatbot_app/backend/app/llm_logs/
+
+# Backend build/output
+chatbot_app/backend/output/
 
 # Keys
 *.pem
@@ -55,3 +66,21 @@ tail_test/
 
 chatbot_app/backend/kickoff_transcript_pipeline/out
 chatbot_app/backend/kickoff_transcript_pipeline/files_that_caused_error 
+
+# Tools
+tools/simple_transcriber/output/
+
+# Frontend build outputs
+chatbot_app/frontend/.next/
+chatbot_app/frontend/out/
+
+dexter_analysis_pitch-regeneration/output/  
+dexter_analysis_pitch-regeneration/data/
+docs/
+random_csvs/
+random_logs/
+random_scripts/
+simple_transcriber/output/
+tools/simple_transcriber/
+tools/
+transcribe-transcription-comparison-test/

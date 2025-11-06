@@ -1,6 +1,0 @@
-```json
-{
-  "full_transcript": "[AUTOMATED_MESSAGE]: Telefon klingelt.",
-  "entities": []
-}
-```

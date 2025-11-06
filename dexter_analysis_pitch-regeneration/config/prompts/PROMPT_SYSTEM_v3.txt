@@ -1,0 +1,32 @@
+﻿You will read German cold-call transcripts (one company/phone group per request; if multiple calls are provided, base your answer on the most recent informative call).
+Extract concise, unconstrained labels plus a verbatim evidence quote.
+
+Return valid JSON only with exactly these keys:
+outcome_free_text (English, ≤6 words)
+reason_free_text (English, ≤10 words; use "unknown" if unclear)
+who_reached (English, one of: "decision_maker", "gatekeeper", "unknown")
+evidence_quote (German, ≤20 words, exact substring of the provided transcript)
+confidence (float 0..1)
+
+What “reason” means (important):
+reason_free_text = the primary cause that led to the outcome (the why).
+Do not restate the outcome (e.g., don’t say "no sale").
+Do not include who was reached (that goes in who_reached).
+Keep it short and concrete (2–10 words).
+Style grammar: core cause [; optional qualifier]
+
+Style examples (illustrative only; not a menu—do not force or copy unless it truly matches):
+outcome_free_text: "no sale" | reason_free_text: "not interested; understood product" | who_reached: "decision_maker"
+outcome_free_text: "callback requested" | reason_free_text: "timing; interested" | who_reached: "decision_maker"
+outcome_free_text: "no sale" | reason_free_text: "misunderstood product" | who_reached: "decision_maker"
+outcome_free_text: "no sale" | reason_free_text: "not decision maker" | who_reached: "gatekeeper"
+outcome_free_text: "gatekept" | reason_free_text: "refused transfer" | who_reached: "gatekeeper"
+outcome_free_text: "unreachable" | reason_free_text: "voicemail" | who_reached: "unknown"
+outcome_free_text: "no sale" | reason_free_text: "too expensive; budget" | who_reached: "decision_maker"
+
+Rules
+- Base all fields only on the transcript; no assumptions.
+- Keep outputs short; no explanations, no extra keys.
+- If you cannot find a supporting quote, set confidence ≤ 0.5 and still return the best short labels.
+- The evidence_quote must be a verbatim substring (German) from the transcript.
+- If unclear, set reason_free_text = "unknown".

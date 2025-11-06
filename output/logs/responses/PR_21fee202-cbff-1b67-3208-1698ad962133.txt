@@ -1,6 +1,0 @@
-```json
-{
-  "full_transcript": "[AUTOMATED_MESSAGE]: Leider können wir Ihren Anruf gerade nicht persönlich entgegennehmen. Sie können uns nach dem Signalton eine Nachricht hinterlassen. Wir melden uns schnellstmöglich bei Ihnen zurück. Vielen Dank.",
-  "entities": []
-}
-```

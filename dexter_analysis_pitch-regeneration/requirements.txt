@@ -1,0 +1,8 @@
+﻿hdbscan
+scikit-learn
+numpy
+pandas
+python-dotenv
+pyyaml
+openai>=1.0.0
+sentence-transformers

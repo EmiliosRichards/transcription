@@ -2,6 +2,7 @@ import os
 import boto3
 from botocore.client import Config
 from botocore.exceptions import ClientError
+from boto3.exceptions import S3UploadFailedError
 import logging
 from typing import Optional
 
@@ -87,6 +88,10 @@ class StorageService:
             self.s3_client.upload_file(file_path, self.bucket_name, object_key)
             logger.info(f"Successfully uploaded {file_path} to bucket {self.bucket_name} with key {object_key}")
             return True
+        except S3UploadFailedError as e:
+            # Common for auth issues; fall back to local storage without crashing the pipeline
+            logger.error(f"Failed to upload {file_path}: {e}", exc_info=True)
+            return False
         except ClientError as e:
             logger.error(f"Failed to upload {file_path}: {e}", exc_info=True)
             return False

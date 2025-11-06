@@ -60,10 +60,12 @@ async def _run_transcribe_only(
         os.makedirs(ref_out, exist_ok=True)
 
         # Resolve simple_transcriber directory
+        here = os.path.dirname(__file__)  # .../app/routers
         candidates = [
             os.path.abspath(os.path.join(kickoff_dir, "..", "..", "..", "tools", "simple_transcriber")),
             os.path.abspath(os.path.join(kickoff_dir, "..", "tools", "simple_transcriber")),
             os.path.abspath(os.path.join(kickoff_dir, "tools", "simple_transcriber")),
+            os.path.abspath(os.path.join(here, "..", "..", "tools", "simple_transcriber")),  # backend-root/tools/simple_transcriber
         ]
         transcriber_dir = None
         for c in candidates:
@@ -71,6 +73,7 @@ async def _run_transcribe_only(
                 transcriber_dir = c
                 break
         if not transcriber_dir:
+            logger.error("simple_transcriber directory not found; checked: %s", candidates)
             raise RuntimeError("simple_transcriber directory not found; expected under tools/simple_transcriber")
 
         model = "gpt-4o-transcribe"
@@ -278,10 +281,12 @@ async def _run_fusion_background(
         try:
             master_txt = os.path.join(run_dir, "master.txt")
             if os.path.isfile(master_txt):
+                here = os.path.dirname(__file__)  # .../app/routers
                 tools_candidates = [
                     os.path.abspath(os.path.join(kickoff_dir, "..", "..", "..", "tools", "fusion-tool")),
                     os.path.abspath(os.path.join(kickoff_dir, "..", "tools", "fusion-tool")),
                     os.path.abspath(os.path.join(kickoff_dir, "tools", "fusion-tool")),
+                    os.path.abspath(os.path.join(here, "..", "..", "tools", "fusion-tool")),
                 ]
                 tools_dir = None
                 for c in tools_candidates:
@@ -408,10 +413,12 @@ async def start_fusion(
                 # Build transcriber command
                 # Resolve simple_transcriber directory robustly
                 # Candidates relative to project structure
+                here = os.path.dirname(__file__)  # .../app/routers
                 candidates = [
                     os.path.abspath(os.path.join(kickoff_dir, "..", "..", "..", "tools", "simple_transcriber")),
                     os.path.abspath(os.path.join(kickoff_dir, "..", "tools", "simple_transcriber")),
                     os.path.abspath(os.path.join(kickoff_dir, "tools", "simple_transcriber")),
+                    os.path.abspath(os.path.join(here, "..", "..", "tools", "simple_transcriber")),
                 ]
                 transcriber_dir = None
                 for c in candidates:
@@ -419,6 +426,7 @@ async def start_fusion(
                         transcriber_dir = c
                         break
                 if not transcriber_dir:
+                    logger.error("simple_transcriber directory not found; checked: %s", candidates)
                     raise RuntimeError("simple_transcriber directory not found; expected under tools/simple_transcriber")
                 model = "gpt-4o-transcribe"
                 lang = language or "de"
@@ -631,10 +639,12 @@ async def _run_extract_background(task_id: str, run_dir_input: str):
         try:
             master_txt = os.path.join(run_dir_abs, "master.txt")
             if os.path.isfile(master_txt):
+                here = os.path.dirname(__file__)  # .../app/routers
                 tools_candidates = [
                     os.path.abspath(os.path.join(kickoff_dir, "..", "..", "..", "tools", "fusion-tool")),
                     os.path.abspath(os.path.join(kickoff_dir, "..", "tools", "fusion-tool")),
                     os.path.abspath(os.path.join(kickoff_dir, "tools", "fusion-tool")),
+                    os.path.abspath(os.path.join(here, "..", "..", "tools", "fusion-tool")),
                 ]
                 tools_dir = None
                 for c in tools_candidates:

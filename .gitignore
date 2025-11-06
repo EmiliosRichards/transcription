@@ -82,5 +82,8 @@ random_logs/
 random_scripts/
 simple_transcriber/output/
 tools/simple_transcriber/
+# Tools (root-level only). Keep backend tools in the image.
 tools/
+!chatbot_app/backend/tools/
+!chatbot_app/backend/tools/**
 transcribe-transcription-comparison-test/

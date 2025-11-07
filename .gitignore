@@ -87,3 +87,4 @@ tools/
 !chatbot_app/backend/tools/
 !chatbot_app/backend/tools/**
 transcribe-transcription-comparison-test/
+test-for-fusion/

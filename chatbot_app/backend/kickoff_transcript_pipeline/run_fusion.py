@@ -159,9 +159,17 @@ def main() -> int:
                 try:
                     ref_all = json.loads(Path(args.ref_json).read_text(encoding="utf-8"))
                     if isinstance(ref_all, dict) and isinstance(ref_all.get("segments"), list):
-                        gpt_seq = [{"t_start": int(x.get("start") or x.get("t_start") or 0), "text": str(x.get("text", ""))} for x in ref_all.get("segments", [])]
+                        gpt_seq = [
+                            {"t_start": int(x.get("start") or x.get("t_start") or 0), "text": str(x.get("text", ""))}
+                            for x in ref_all.get("segments", [])
+                            if isinstance(x, dict) and str(x.get("text", "")).strip()
+                        ]
                     elif isinstance(ref_all, list):
-                        gpt_seq = [{"t_start": int(x.get("start") or x.get("t_start") or 0), "text": str(x.get("text", ""))} for x in ref_all if isinstance(x, dict)]
+                        gpt_seq = [
+                            {"t_start": int(x.get("start") or x.get("t_start") or 0), "text": str(x.get("text", ""))}
+                            for x in ref_all
+                            if isinstance(x, dict) and str(x.get("text", "")).strip()
+                        ]
                 except Exception:
                     gpt_seq = []
             teams_seq = [{"t_start": int(x.get("t_start") or 0), "text": str(x.get("text", ""))} for x in t_segments]
@@ -256,7 +264,10 @@ def main() -> int:
                             break
                         except Exception:
                             continue
-                tmp.append({"t_start": ts, "text": str(x.get("text", ""))})
+                txt = str(x.get("text", ""))
+                if not txt.strip():
+                    continue
+                tmp.append({"t_start": ts, "text": txt})
             ref_seq_for_blocks = tmp
         except Exception:
             ref_seq_for_blocks = []

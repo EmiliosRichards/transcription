@@ -41,7 +41,11 @@ app = FastAPI(
 
 # --- CORS Middleware ---
 # You can override allowed origins via env var ALLOWED_ORIGINS (comma-separated).
-raw_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,https://*.railway.app").split(",")
+replit_domain = os.environ.get("REPLIT_DEV_DOMAIN", "")
+default_origins = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5000,http://127.0.0.1:5000"
+if replit_domain:
+    default_origins += f",https://{replit_domain},http://{replit_domain}"
+raw_origins = os.environ.get("ALLOWED_ORIGINS", default_origins).split(",")
 allow_origins = [o.strip() for o in raw_origins if o.strip()]
 app.add_middleware(
     CORSMiddleware,

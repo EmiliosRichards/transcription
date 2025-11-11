@@ -469,8 +469,8 @@ def main() -> int:
         def _build_aligned(w: int) -> list[dict]:
             aligned: list[dict] = []
             team_ts = sorted([int(x.get("t_start") or 0) for x in teams_in_range])
-            for tseg in sorted(teams_in_range, key=lambda x: int(x.get("t_start") or 0)):
-                tref = int(tseg.get("t_start") or 0)
+        for tseg in sorted(teams_in_range, key=lambda x: int(x.get("t_start") or 0)):
+            tref = int(tseg.get("t_start") or 0)
                 # Midpoint boundary to avoid leaking GPT_ref into the next Teams segment
                 next_ts_candidates = [ts for ts in team_ts if ts > tref]
                 next_tref = next_ts_candidates[0] if next_ts_candidates else None
@@ -597,10 +597,10 @@ def main() -> int:
 
         # Include GPT-ref slice for this block if available (always include key when ref sequence exists)
         if ref_seq_for_blocks is not None:
-            try:
+                try:
                 print(f"[fusion] ref slice block={idx+1} total_ref={len(ref_seq_for_blocks)} in_range={len(ref_in_range)}", flush=True)
-            except Exception:
-                pass
+                except Exception:
+                    pass
             block_payload["ref"] = ref_in_range
 
         # Add simple consensus hint scores (token overlap ratios)
@@ -1010,15 +1010,15 @@ def main() -> int:
                         else:
                             k_proc = _prep_list(list(it.get("k_texts", [])))
                             g_proc = _prep_list(list(it.get("g_texts", [])))
-                        segments_payload.append({
-                            "t_start": t_start_v,
-                            "speaker": tinfo.get("speaker", ""),
+                    segments_payload.append({
+                        "t_start": t_start_v,
+                        "speaker": tinfo.get("speaker", ""),
                             "teams_text": t_text_v,
-                            "candidates": {
+                        "candidates": {
                                 "krisp": k_proc,
                                 "gpt_ref": g_proc,
-                            },
-                        })
+                        },
+                    })
                     else:
                         # filler-only: append placeholder with empty candidates (not sent to LLM)
                         pass
@@ -1149,10 +1149,10 @@ def main() -> int:
                         if send:
                             seg = cleaned_list[ci]
                             ci += 1
-                            spk = str(seg.get("speaker", "")).strip()
-                            txt = str(seg.get("text", "")).strip()
+                        spk = str(seg.get("speaker", "")).strip()
+                        txt = str(seg.get("text", "")).strip()
                             out_lines.append(f"[{mm}:{ss}] {spk}: {txt}")
-                            _tail_candidates_clean.append({"t_start": t, "speaker": spk, "text": txt})
+                        _tail_candidates_clean.append({"t_start": t, "speaker": spk, "text": txt})
                         else:
                             # Drop filler-only segments from master output
                             # (we intentionally do not append them to out_lines)
@@ -1165,10 +1165,10 @@ def main() -> int:
                     for it, send in zip(batch, send_mask):
                         t = int(it["teams"]["t_start"]) ; mm = f"{t//60:02d}"; ss = f"{t%60:02d}"
                         if send:
-                            spk = it['teams'].get('speaker','')
-                            txt = it['teams'].get('text','')
+                        spk = it['teams'].get('speaker','')
+                        txt = it['teams'].get('text','')
                             out_lines.append(f"[{mm}:{ss}] {spk}: {txt}")
-                            _tail_candidates_fallback.append({"t_start": t, "speaker": spk, "text": txt})
+                        _tail_candidates_fallback.append({"t_start": t, "speaker": spk, "text": txt})
                         else:
                             # Drop filler-only segments in fallback path as well
                             pass

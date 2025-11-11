@@ -141,7 +141,7 @@ export default function FusionPage() {
         setMessage("Error while polling status");
       }
     }, 600);
-  }, [backendUrl]);
+  }, []);
 
   // Poller for transcribe-only flow
   const startPollingTranscribe = useCallback((id: string) => {
@@ -176,7 +176,7 @@ export default function FusionPage() {
         setError('Error while polling transcription.');
       }
     }, 700);
-  }, [backendUrl]);
+  }, []);
 
   // Start transcribe-only
   const onRunTranscribe = useCallback(async () => {

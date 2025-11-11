@@ -5,6 +5,7 @@ import json
 import subprocess
 import sys
 import logging
+import asyncio
 from typing import Optional
 
 from fastapi import APIRouter, BackgroundTasks, UploadFile, File, HTTPException, Query, Form
@@ -103,12 +104,18 @@ async def _run_transcribe_only(
         ] + hint_args
         logger.info(f"[transcribe {task_id}] cmd={' '.join(cmd_ref)} cwd={transcriber_dir}")
         task_manager.update_task_status(task_id, "PROCESSING", "Transcribing with GPT-4o...", progress=35)
-        proc = subprocess.Popen(cmd_ref, cwd=transcriber_dir, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
-        assert proc.stdout is not None
-        for line in proc.stdout:
-            logger.info(f"[transcribe {task_id}] out: {line.rstrip()}")
-        proc.wait()
-        if proc.returncode != 0:
+        
+        # Run subprocess in a thread to avoid blocking the event loop
+        def run_subprocess():
+            proc = subprocess.Popen(cmd_ref, cwd=transcriber_dir, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+            assert proc.stdout is not None
+            for line in proc.stdout:
+                logger.info(f"[transcribe {task_id}] out: {line.rstrip()}")
+            proc.wait()
+            return proc.returncode
+        
+        returncode = await asyncio.to_thread(run_subprocess)
+        if returncode != 0:
             task_manager.set_task_error(task_id, "Reference transcription failed.")
             return
 
@@ -220,25 +227,30 @@ async def _run_fusion_background(
 
         logger.info(f"[fusion {task_id}] cmd={' '.join(cmd)}")
         task_manager.update_task_status(task_id, "PROCESSING", "Running fusion pipeline...", progress=30)
-        proc = subprocess.Popen(
-            cmd,
-            cwd=kickoff_dir,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1,
-        )
-        # Stream combined output live to logs for easier debugging (line-buffered)
-        stdout_lines: list[str] = []
-        assert proc.stdout is not None
-        for line in proc.stdout:
-            stdout_lines.append(line)
-            logger.info(f"[fusion {task_id}] out: {line.rstrip()}")
-        proc.wait()
-        stdout = "".join(stdout_lines)
+        
+        # Run subprocess in a thread to avoid blocking the event loop
+        def run_fusion_subprocess():
+            proc = subprocess.Popen(
+                cmd,
+                cwd=kickoff_dir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+            )
+            stdout_lines: list[str] = []
+            assert proc.stdout is not None
+            for line in proc.stdout:
+                stdout_lines.append(line)
+                logger.info(f"[fusion {task_id}] out: {line.rstrip()}")
+            proc.wait()
+            stdout = "".join(stdout_lines)
+            return proc.returncode, stdout
+        
+        returncode, stdout = await asyncio.to_thread(run_fusion_subprocess)
         stderr = ""  # merged into stdout
 
-        if proc.returncode != 0:
+        if returncode != 0:
             logger.error("[fusion %s] pipeline failed: %s", task_id, stderr)
             task_manager.set_task_error(task_id, f"Pipeline failed: {stderr.strip()[:1000]}")
             return

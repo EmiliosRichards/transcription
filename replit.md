@@ -16,6 +16,7 @@ This is a full-stack AI-powered chatbot application with transcription capabilit
 - ✅ Both frontend and backend workflows running successfully
 - ✅ Fixed serverActions.allowedOrigins security issue
 - ✅ Fixed fusion page API calls to use Next.js proxy (relative URLs)
+- ✅ Fixed backend blocking issue - subprocess calls now run in threads
 
 ## Project Architecture
 

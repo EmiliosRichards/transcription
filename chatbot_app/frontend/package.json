@@ -10,6 +10,7 @@
   },
   "scripts": {
     "dev": "next dev --turbopack",
+    "prebuild": "node -e \"try{require('fs').rmSync('.next',{recursive:true,force:true})}catch(e){}; require('fs').mkdirSync('.next/cache',{recursive:true})\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

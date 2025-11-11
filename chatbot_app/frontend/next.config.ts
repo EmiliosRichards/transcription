@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     // Prefer private domain for server-to-server traffic if provided
-    let backendUrl = process.env.API_BASE_URL_SERVER || process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+    let backendUrl = (process.env.API_BASE_URL_SERVER || process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000").trim();
     if (process.env.NODE_ENV === "production" && !backendUrl.startsWith("http")) {
       // Use http for Railway private domains; https for public hosts
       const isPrivate = /(^|\\.)railway\\.internal$/.test(backendUrl);

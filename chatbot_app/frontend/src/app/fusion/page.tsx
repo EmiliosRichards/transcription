@@ -98,7 +98,6 @@ export default function FusionPage() {
   const timerStartRef = useRef<number | null>(null);
   const tickRef = useRef<number | null>(null);
 
-  const backendUrl = useMemo(() => process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000", []);
   const pollRef = useRef<number | null>(null);
   const pollRefTranscribe = useRef<number | null>(null);
 
@@ -108,7 +107,7 @@ export default function FusionPage() {
     if (pollRef.current) window.clearInterval(pollRef.current);
     pollRef.current = window.setInterval(async () => {
       try {
-        const res = await fetch(`${backendUrl}/api/tasks/${id}`);
+        const res = await fetch(`/api/tasks/${id}`);
         if (!res.ok) {
           throw new Error("Failed to fetch status");
         }
@@ -123,7 +122,7 @@ export default function FusionPage() {
           setMessage("Fusion completed.");
           setError("");
           // Fetch artifacts list
-          const ares = await fetch(`${backendUrl}/api/fusion/${id}/artifacts`);
+          const ares = await fetch(`/api/fusion/${id}/artifacts`);
           if (ares.ok) {
             const ajson = await ares.json();
             setArtifacts(ajson.artifacts || []);
@@ -143,7 +142,7 @@ export default function FusionPage() {
         setMessage("Error while polling status");
       }
     }, 600);
-  }, [backendUrl]);
+  }, []);
 
   // Poller for transcribe-only flow
   const startPollingTranscribe = useCallback((id: string) => {
@@ -151,14 +150,14 @@ export default function FusionPage() {
     if (pollRefTranscribe.current) window.clearInterval(pollRefTranscribe.current);
     pollRefTranscribe.current = window.setInterval(async () => {
       try {
-        const res = await fetch(`${backendUrl}/api/tasks/${id}`);
+        const res = await fetch(`/api/tasks/${id}`);
         if (!res.ok) throw new Error("Failed to fetch status");
         const data: TaskStatus = await res.json();
         if (data.status === 'SUCCESS') {
           window.clearInterval(pollRefTranscribe.current!);
           if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
           setSmoothProgress(100);
-          const ares = await fetch(`${backendUrl}/api/fusion/${id}/artifacts`);
+          const ares = await fetch(`/api/fusion/${id}/artifacts`);
           if (ares.ok) {
             const ajson = await ares.json();
             setArtifacts(ajson.artifacts || []);
@@ -178,7 +177,7 @@ export default function FusionPage() {
         setError('Error while polling transcription.');
       }
     }, 700);
-  }, [backendUrl]);
+  }, []);
 
   // Start transcribe-only
   const onRunTranscribe = useCallback(async () => {
@@ -201,7 +200,7 @@ export default function FusionPage() {
       form.append('teams', teams);
       if (language) form.append('language', language);
       if (vocabHints) form.append('vocab_hints', vocabHints);
-      const res = await fetch(`${backendUrl}/api/fusion/transcribe-only`, { method: 'POST', body: form });
+      const res = await fetch(`/api/fusion/transcribe-only`, { method: 'POST', body: form });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || 'Failed to start transcription');
@@ -212,7 +211,7 @@ export default function FusionPage() {
       setIsLoading(false);
       setError(e.message || 'Failed to start transcription');
     }
-  }, [audio, teams, language, vocabHints, backendUrl, startPollingTranscribe]);
+  }, [audio, teams, language, vocabHints, startPollingTranscribe]);
 
   // Lightweight client-side file content checks to guide users before submit
   const validateTeams = useCallback(async (file: File) => {
@@ -360,7 +359,7 @@ export default function FusionPage() {
       form.append("offset_expand_tokens", "2");
       form.append("offset_similarity_threshold", "0.66");
       form.append("offset_trim_pad_sec", "2");
-      const res = await fetch(`${backendUrl}/api/fusion/run`, { method: "POST", body: form });
+      const res = await fetch(`/api/fusion/run`, { method: "POST", body: form });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || "Failed to start fusion");
@@ -376,7 +375,7 @@ export default function FusionPage() {
       setIsLoading(false);
       setError(e.message || "Failed to start fusion");
     }
-  }, [backendUrl, teams, krisp, refJson, startBlock, endBlock, runDir, skipExisting, cleanupEnabled, cleanupMaxTokens, cleanupConcurrency, includeContext, diagnostics, glossary, startPolling]);
+  }, [teams, krisp, refJson, startBlock, endBlock, runDir, skipExisting, cleanupEnabled, cleanupMaxTokens, cleanupConcurrency, includeContext, diagnostics, glossary, startPolling]);
 
   const onExtractOnly = useCallback(async () => {
     if (!runDir) return;
@@ -394,7 +393,7 @@ export default function FusionPage() {
     try {
       const form = new FormData();
       form.append("run_dir", runDir);
-      const res = await fetch(`${backendUrl}/api/fusion/extract`, { method: "POST", body: form });
+      const res = await fetch(`/api/fusion/extract`, { method: "POST", body: form });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || "Failed to start extract");
@@ -408,7 +407,7 @@ export default function FusionPage() {
       setIsLoading(false);
       setError(e.message || "Failed to start extract");
     }
-  }, [backendUrl, runDir, startPolling]);
+  }, [runDir, startPolling]);
 
   // Smooth progress + derived minute countdown synced to a 5-minute timer
   useEffect(() => {
@@ -576,7 +575,7 @@ export default function FusionPage() {
                   <li key={a.name}>
                     <a
                       className="text-blue-600 hover:underline"
-                      href={`${backendUrl}/api/fusion/${taskId}/download?name=${encodeURIComponent(a.name)}`}
+                      href={`/api/fusion/${taskId}/download?name=${encodeURIComponent(a.name)}`}
                     >
                       {a.name}
                     </a>

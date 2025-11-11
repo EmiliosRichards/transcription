@@ -615,6 +615,12 @@ async def _run_extract_background(task_id: str, run_dir_input: str):
         if not os.path.isdir(kickoff_dir):
             raise RuntimeError(f"Kickoff pipeline directory not found at: {kickoff_dir}")
 
+        # Resolve run_dir_abs early for use throughout the function
+        run_dir_abs = run_dir_input
+        if not os.path.isabs(run_dir_abs):
+            out_dir = os.path.join(kickoff_dir, "out")
+            run_dir_abs = os.path.join(out_dir, run_dir_input)
+
         cmd = [
             sys.executable or "python",
             "run_fusion.py",
@@ -680,9 +686,7 @@ async def _run_extract_background(task_id: str, run_dir_input: str):
             logger.exception(f"[extract {task_id}] postprocess grouping encountered an error")
 
         # Collect artifacts (prefer grouped)
-        run_dir_abs = run_dir_input
-        if not os.path.isabs(run_dir_abs):
-            run_dir_abs = os.path.join(kickoff_dir, run_dir_input)
+        # run_dir_abs already defined at the start of the function
         if not os.path.isdir(run_dir_abs):
             task_manager.set_task_error(task_id, "Run directory not found after extract.")
             return

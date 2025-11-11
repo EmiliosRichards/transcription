@@ -65,7 +65,6 @@ export default function FusionPage() {
   const COUNTDOWN_DEFAULT = 5;
   const [audio, setAudio] = useState<File | null>(null);
   const [teams, setTeams] = useState<File | null>(null);
-  const [charla, setCharla] = useState<File | null>(null);
   const [krisp, setKrisp] = useState<File | null>(null);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,7 +73,6 @@ export default function FusionPage() {
   const [error, setError] = useState<string>("");
   const [artifacts, setArtifacts] = useState<{ name: string }[]>([]);
   const [teamsHints, setTeamsHints] = useState<string[]>([]);
-  const [charlaHints, setCharlaHints] = useState<string[]>([]);
   const [krispHints, setKrispHints] = useState<string[]>([]);
   const [refJson, setRefJson] = useState<File | null>(null);
   const [refHints, setRefHints] = useState<string[]>([]);
@@ -82,7 +80,6 @@ export default function FusionPage() {
   const [endBlock, setEndBlock] = useState<string>("");
   const [runDir, setRunDir] = useState<string>("");
   const [skipExisting, setSkipExisting] = useState<boolean>(false);
-  const [useCharla, setUseCharla] = useState<boolean>(false);
   const [language, setLanguage] = useState<string>("de");
   const [vocabHints, setVocabHints] = useState<string>("Manuav, Altenhilfe, ambulant, stationär, teilstationär, ERP-System, Dienstplan, Dokumentation, Medifox, Vivendi, Telematik-Infrastruktur, Telematik, PeBeM, PBM, Personalbemessung, Tourenplanung, PDL, Awareness-Set, lead, Dexter, SENSO, Jabra, Plantronics");
   const [cleanupEnabled, setCleanupEnabled] = useState<boolean>(true);
@@ -98,7 +95,8 @@ export default function FusionPage() {
   const timerStartRef = useRef<number | null>(null);
   const tickRef = useRef<number | null>(null);
 
-  const backendUrl = useMemo(() => process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000", []);
+  // Use same-origin relative API paths so Next.js rewrites can proxy to the backend (avoids CORS/egress)
+  const apiBase = "";
   const pollRef = useRef<number | null>(null);
   const pollRefTranscribe = useRef<number | null>(null);
 
@@ -108,7 +106,7 @@ export default function FusionPage() {
     if (pollRef.current) window.clearInterval(pollRef.current);
     pollRef.current = window.setInterval(async () => {
       try {
-        const res = await fetch(`${backendUrl}/api/tasks/${id}`);
+        const res = await fetch(`${apiBase}/api/tasks/${id}`);
         if (!res.ok) {
           throw new Error("Failed to fetch status");
         }
@@ -123,7 +121,7 @@ export default function FusionPage() {
           setMessage("Fusion completed.");
           setError("");
           // Fetch artifacts list
-          const ares = await fetch(`${backendUrl}/api/fusion/${id}/artifacts`);
+          const ares = await fetch(`${apiBase}/api/fusion/${id}/artifacts`);
           if (ares.ok) {
             const ajson = await ares.json();
             setArtifacts(ajson.artifacts || []);
@@ -151,14 +149,14 @@ export default function FusionPage() {
     if (pollRefTranscribe.current) window.clearInterval(pollRefTranscribe.current);
     pollRefTranscribe.current = window.setInterval(async () => {
       try {
-        const res = await fetch(`${backendUrl}/api/tasks/${id}`);
+        const res = await fetch(`${apiBase}/api/tasks/${id}`);
         if (!res.ok) throw new Error("Failed to fetch status");
         const data: TaskStatus = await res.json();
         if (data.status === 'SUCCESS') {
           window.clearInterval(pollRefTranscribe.current!);
           if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
           setSmoothProgress(100);
-          const ares = await fetch(`${backendUrl}/api/fusion/${id}/artifacts`);
+          const ares = await fetch(`${apiBase}/api/fusion/${id}/artifacts`);
           if (ares.ok) {
             const ajson = await ares.json();
             setArtifacts(ajson.artifacts || []);
@@ -201,7 +199,7 @@ export default function FusionPage() {
       form.append('teams', teams);
       if (language) form.append('language', language);
       if (vocabHints) form.append('vocab_hints', vocabHints);
-      const res = await fetch(`${backendUrl}/api/fusion/transcribe-only`, { method: 'POST', body: form });
+      const res = await fetch(`${apiBase}/api/fusion/transcribe-only`, { method: 'POST', body: form });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || 'Failed to start transcription');
@@ -212,7 +210,7 @@ export default function FusionPage() {
       setIsLoading(false);
       setError(e.message || 'Failed to start transcription');
     }
-  }, [audio, teams, language, vocabHints, backendUrl, startPollingTranscribe]);
+  }, [audio, teams, language, vocabHints, startPollingTranscribe]);
 
   // Lightweight client-side file content checks to guide users before submit
   const validateTeams = useCallback(async (file: File) => {
@@ -233,25 +231,6 @@ export default function FusionPage() {
     }
     setTeamsHints(hints);
   }, []);
-
-  const validateCharla = useCallback(async (file: File) => {
-    const hints: string[] = [];
-    try {
-      const text = await file.text();
-      const hasLine = /^\s*\[\d{1,2}:\d{2}\]/m.test(text);
-      const hasChunk = /^\s*\(\d{1,2}:\d{2}-\d{1,2}:\d{2}\)/m.test(text);
-      if (!hasLine && !hasChunk) {
-        hints.push('Charla: No timestamps found. Use "[mm:ss] Speaker: text" or "(mm:ss-mm:ss)" headers.');
-      }
-      if (/^\s+\(\d{1,2}:\d{2}-/m.test(text)) {
-        hints.push('Charla: Leading spaces before (mm:ss-mm:ss) headers detected. Allowed, but consider removing.');
-      }
-    } catch (_) {
-      hints.push('Charla: Could not read file content.');
-    }
-    setCharlaHints(hints);
-  }, []);
-
   const validateKrisp = useCallback(async (file: File) => {
     const hints: string[] = [];
     try {
@@ -360,7 +339,7 @@ export default function FusionPage() {
       form.append("offset_expand_tokens", "2");
       form.append("offset_similarity_threshold", "0.66");
       form.append("offset_trim_pad_sec", "2");
-      const res = await fetch(`${backendUrl}/api/fusion/run`, { method: "POST", body: form });
+      const res = await fetch(`${apiBase}/api/fusion/run`, { method: "POST", body: form });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || "Failed to start fusion");
@@ -376,7 +355,7 @@ export default function FusionPage() {
       setIsLoading(false);
       setError(e.message || "Failed to start fusion");
     }
-  }, [backendUrl, teams, krisp, refJson, startBlock, endBlock, runDir, skipExisting, cleanupEnabled, cleanupMaxTokens, cleanupConcurrency, includeContext, diagnostics, glossary, startPolling]);
+  }, [teams, krisp, refJson, startBlock, endBlock, runDir, skipExisting, cleanupEnabled, cleanupMaxTokens, cleanupConcurrency, includeContext, diagnostics, glossary, startPolling]);
 
   const onExtractOnly = useCallback(async () => {
     if (!runDir) return;
@@ -394,7 +373,7 @@ export default function FusionPage() {
     try {
       const form = new FormData();
       form.append("run_dir", runDir);
-      const res = await fetch(`${backendUrl}/api/fusion/extract`, { method: "POST", body: form });
+      const res = await fetch(`${apiBase}/api/fusion/extract`, { method: "POST", body: form });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || "Failed to start extract");
@@ -408,7 +387,7 @@ export default function FusionPage() {
       setIsLoading(false);
       setError(e.message || "Failed to start extract");
     }
-  }, [backendUrl, runDir, startPolling]);
+  }, [runDir, startPolling]);
 
   // Smooth progress + derived minute countdown synced to a 5-minute timer
   useEffect(() => {
@@ -445,7 +424,7 @@ export default function FusionPage() {
       <div className="w-full max-w-4xl">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-semibold">Transcript Fusion</h1>
-          <p className="text-muted-foreground text-sm mt-1">1) Generate GPT transcript from Audio. 2) Fuse GPT + Krisp + Teams. Charla optional.</p>
+          <p className="text-muted-foreground text-sm mt-1">1) Generate GPT transcript from Audio. 2) Fuse GPT + Krisp + Teams.</p>
         </div>
         {/* Section 1: Transcribe-only */}
         <Card className="w-full">
@@ -576,7 +555,7 @@ export default function FusionPage() {
                   <li key={a.name}>
                     <a
                       className="text-blue-600 hover:underline"
-                      href={`${backendUrl}/api/fusion/${taskId}/download?name=${encodeURIComponent(a.name)}`}
+                      href={`/api/fusion/${taskId}/download?name=${encodeURIComponent(a.name)}`}
                     >
                       {a.name}
                     </a>

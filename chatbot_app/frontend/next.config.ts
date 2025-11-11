@@ -20,12 +20,11 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  devIndicators: {
-    appIsrStatus: false,
-  },
   experimental: {
     serverActions: {
-      allowedOrigins: ["*"],
+      allowedOrigins: process.env.REPLIT_DEV_DOMAIN 
+        ? [`https://${process.env.REPLIT_DEV_DOMAIN}`]
+        : ["localhost:5000", "127.0.0.1:5000"],
     },
   },
 };

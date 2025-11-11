@@ -13,6 +13,8 @@ This is a full-stack AI-powered chatbot application with transcription capabilit
 - ✅ Updated CORS settings to support Replit domains
 - ✅ Installed all frontend and backend dependencies
 - ✅ Configured environment variables for production use
+- ✅ Both frontend and backend workflows running successfully
+- ✅ Fixed serverActions.allowedOrigins security issue
 
 ## Project Architecture
 
@@ -57,15 +59,15 @@ Optional configuration:
 
 ## Running the Application
 
-### Frontend Only (Current Workflow)
-The frontend runs automatically via the configured workflow:
-```bash
-cd chatbot_app/frontend && npm run dev
-```
-Access at: https://<replit-domain> (port 5000)
+### Automatic Startup (Recommended)
+Both frontend and backend run automatically via configured workflows:
+- **Frontend**: Next.js on port 5000 (webview)
+- **Backend**: FastAPI on port 8000 (console output)
 
-### Backend (Manual Start)
-To start the backend API server:
+Access your application at the Replit webview URL.
+
+### Manual Backend Start (Alternative)
+If you need to restart the backend manually:
 ```bash
 cd chatbot_app/backend
 python -m uvicorn main:app --host 0.0.0.0 --port 8000
@@ -74,11 +76,6 @@ Or use the startup script:
 ```bash
 ./chatbot_app/backend/start.sh
 ```
-
-### Full Stack
-For full functionality, run both frontend and backend:
-1. Frontend runs automatically (workflow configured)
-2. Start backend manually in a separate terminal or add a second workflow
 
 ## Key Files & Directories
 
@@ -109,13 +106,12 @@ For full functionality, run both frontend and backend:
 
 ### Known Limitations
 - WhisperX dependency skipped (not critical for basic functionality)
-- Backend needs manual startup (can be added as second workflow if needed)
 
 ## User Preferences
 - None specified yet
 
 ## Next Steps
-1. Test full application with backend running
-2. Consider adding backend as a second workflow for automatic startup
-3. Run database migrations if needed: `cd chatbot_app/backend && alembic upgrade head`
-4. Verify media upload and transcription functionality
+1. Run database migrations if needed: `cd chatbot_app/backend && alembic upgrade head`
+2. Test media upload and transcription functionality
+3. Verify RAG chatbot responses with your data
+4. Configure additional AI models if desired

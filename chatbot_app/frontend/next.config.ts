@@ -22,9 +22,18 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: process.env.REPLIT_DEV_DOMAIN 
-        ? [`https://${process.env.REPLIT_DEV_DOMAIN}`]
-        : ["localhost:5000", "127.0.0.1:5000"],
+      allowedOrigins: (() => {
+        const origins = ["localhost:5000", "127.0.0.1:5000"];
+        // Add Replit domain
+        if (process.env.REPLIT_DEV_DOMAIN) {
+          origins.push(`https://${process.env.REPLIT_DEV_DOMAIN}`);
+        }
+        // Add Railway domain
+        if (process.env.RAILWAY_PUBLIC_DOMAIN) {
+          origins.push(`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`);
+        }
+        return origins;
+      })(),
     },
   },
 };

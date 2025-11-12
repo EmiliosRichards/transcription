@@ -1,0 +1,11 @@
+# Railway Configuration for Monorepo Deployment
+# This project contains both a Next.js frontend and FastAPI backend
+
+[build]
+builder = "NIXPACKS"
+buildCommand = "echo 'Building frontend and backend...'"
+
+[deploy]
+startCommand = "echo 'Use separate services for frontend and backend'"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10

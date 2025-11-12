@@ -20,9 +20,7 @@ const nextConfig: NextConfig = {
     // Normalize and auto-append port 8080 for Railway private domains when missing
     try {
       const u = new URL(backendUrl);
-      if (u.hostname.endsWith(".railway.internal") && !u.port) {
-        u.port = "8080";
-      }
+      // Do not force a port; Railway private domains route to the correct internal port
       // Use origin (scheme://host[:port]) to avoid duplicate slashes
       backendUrl = u.origin;
     } catch {

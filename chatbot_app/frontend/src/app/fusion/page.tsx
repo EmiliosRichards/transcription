@@ -95,8 +95,8 @@ export default function FusionPage() {
   const timerStartRef = useRef<number | null>(null);
   const tickRef = useRef<number | null>(null);
 
-  // Use same-origin relative API paths so Next.js rewrites can proxy to the backend (avoids CORS/egress)
-  const apiBase = "";
+  // Prefer explicit backend base URL when provided; else fall back to same-origin (rewrites)
+  const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "").trim().replace(/\/+$/, "");
   const pollRef = useRef<number | null>(null);
   const pollRefTranscribe = useRef<number | null>(null);
 
@@ -553,9 +553,9 @@ export default function FusionPage() {
               <ul className="list-disc ml-5 space-y-2">
                 {artifacts.map((a) => (
                   <li key={a.name}>
-                    <a
+                      <a
                       className="text-blue-600 hover:underline"
-                      href={`/api/fusion/${taskId}/download?name=${encodeURIComponent(a.name)}`}
+                        href={`${apiBase || ""}/api/fusion/${taskId}/download?name=${encodeURIComponent(a.name)}`}
                     >
                       {a.name}
                     </a>

@@ -969,6 +969,9 @@ def main() -> int:
                     t_text_v = tinfo.get("text", "")
                     is_fill = _is_filler_only(t_text_v)
                     send_mask.append(not is_fill)
+                # Defaults to avoid UnboundLocalError if code structure changes
+                k_proc: list[str] = []
+                g_proc: list[str] = []
                     if not is_fill:
                         # Prepare Krisp/GPT candidates: courtesy-edge strip + best-subspan trimming
                         trim_window_words = int(config.get("trim_window_words", 5))
@@ -1010,6 +1013,7 @@ def main() -> int:
                         else:
                             k_proc = _prep_list(list(it.get("k_texts", [])))
                             g_proc = _prep_list(list(it.get("g_texts", [])))
+                if not is_fill:
                     segments_payload.append({
                         "t_start": t_start_v,
                         "speaker": tinfo.get("speaker", ""),

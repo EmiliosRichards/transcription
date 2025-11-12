@@ -69,4 +69,5 @@ async def read_root():
 # --- Run the app ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
+    # Bind to IPv6 to support Railway private networking (IPv6-only DNS)
+    uvicorn.run("main:app", host="::", port=port)

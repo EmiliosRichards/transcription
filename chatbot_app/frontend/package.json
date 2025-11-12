@@ -10,6 +10,7 @@
   },
   "scripts": {
     "dev": "next dev -p ${PORT:-5000} -H 0.0.0.0",
+    "prebuild": "node -e \"try{require('fs').rmSync('.next',{recursive:true,force:true})}catch(e){}; require('fs').mkdirSync('.next/cache',{recursive:true})\"",
     "build": "next build",
     "start": "next start -p ${PORT:-5000} -H 0.0.0.0",
     "start:railway": "next start -H 0.0.0.0 -p $PORT",

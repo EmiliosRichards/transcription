@@ -9,10 +9,22 @@ const nextConfig: NextConfig = {
   async rewrites() {
     // Prefer private domain for server-to-server traffic if provided
     let backendUrl = (process.env.API_BASE_URL_SERVER || process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000").trim();
-    if (process.env.NODE_ENV === "production" && !backendUrl.startsWith("http")) {
-      // Use http for Railway private domains; https for public hosts
-      const isPrivate = /(^|\\.)railway\\.internal$/.test(backendUrl);
-      backendUrl = `${isPrivate ? "http" : "https"}://${backendUrl}`;
+    const hasScheme = /^https?:\\/\\//i.test(backendUrl);
+    if (process.env.NODE_ENV === "production" && !hasScheme) {
+      // If no scheme is provided, decide based on host
+      const isPrivateHost = /(^|\\.)railway\\.internal(?::\\d+)?$/i.test(backendUrl);
+      backendUrl = `${isPrivateHost ? "http" : "https"}://${backendUrl}`;
+    }
+    // Normalize and auto-append port 8080 for Railway private domains when missing
+    try {
+      const u = new URL(backendUrl);
+      if (u.hostname.endsWith(".railway.internal") && !u.port) {
+        u.port = "8080";
+      }
+      // Use origin (scheme://host[:port]) to avoid duplicate slashes
+      backendUrl = u.origin;
+    } catch {
+      // leave as-is if URL parsing fails
     }
     return [
       {

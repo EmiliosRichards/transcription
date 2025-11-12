@@ -9,10 +9,12 @@ const nextConfig: NextConfig = {
   async rewrites() {
     // Prefer private domain for server-to-server traffic if provided
     let backendUrl = (process.env.API_BASE_URL_SERVER || process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000").trim();
-    const hasScheme = /^https?:\\/\\//i.test(backendUrl);
+    const hasScheme = backendUrl.startsWith("http://") || backendUrl.startsWith("https://");
     if (process.env.NODE_ENV === "production" && !hasScheme) {
-      // If no scheme is provided, decide based on host
-      const isPrivateHost = /(^|\\.)railway\\.internal(?::\\d+)?$/i.test(backendUrl);
+      // Decide based on host when scheme is missing
+      const hostCandidate = backendUrl.split("/")[0];
+      const hostNoPort = hostCandidate.split(":")[0];
+      const isPrivateHost = hostNoPort === "railway.internal" || hostNoPort.endsWith(".railway.internal");
       backendUrl = `${isPrivateHost ? "http" : "https"}://${backendUrl}`;
     }
     // Normalize and auto-append port 8080 for Railway private domains when missing

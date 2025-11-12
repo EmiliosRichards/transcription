@@ -19,6 +19,7 @@ This is a full-stack AI-powered chatbot application with transcription capabilit
 - ✅ Fixed backend blocking issue - subprocess calls now run in threads
 - ✅ Fixed UI flickering during long-running fusion tasks
 - ✅ Cleaned up 4GB of disk space (temporary files)
+- ✅ Added Railway deployment compatibility (multi-platform support)
 
 ## Project Architecture
 
@@ -111,6 +112,34 @@ Or use the startup script:
 ### Known Limitations
 - WhisperX dependency skipped (not critical for basic functionality)
 
+## Deployment Options
+
+This project supports deployment to multiple platforms:
+
+### Replit (Current Environment)
+- Already configured and running
+- Automatic workflows for frontend and backend
+- Built-in database and secrets management
+- Port 5000 (frontend), Port 8000 (backend)
+
+### Railway
+- Full Railway compatibility added
+- Dynamic port binding support
+- See `RAILWAY_DEPLOYMENT.md` for detailed deployment guide
+- Deploy frontend and backend as separate services
+- Supports Railway Postgres or external databases
+- Configuration files:
+  - `railway.toml` - Root monorepo config
+  - `chatbot_app/frontend/railway.toml` - Frontend service config
+  - `chatbot_app/backend/railway.toml` - Backend service config
+  - `Procfile` - Alternative deployment method
+
+### Key Multi-Platform Features
+- Dynamic PORT environment variable support (defaults to 5000 for Replit)
+- Auto-detection of platform-specific domains (REPLIT_DEV_DOMAIN, RAILWAY_PUBLIC_DOMAIN)
+- Platform-agnostic CORS configuration
+- Environment-based configuration (no hardcoded values)
+
 ## User Preferences
 - None specified yet
 
@@ -119,3 +148,4 @@ Or use the startup script:
 2. Test media upload and transcription functionality
 3. Verify RAG chatbot responses with your data
 4. Configure additional AI models if desired
+5. (Optional) Deploy to Railway - see `RAILWAY_DEPLOYMENT.md`

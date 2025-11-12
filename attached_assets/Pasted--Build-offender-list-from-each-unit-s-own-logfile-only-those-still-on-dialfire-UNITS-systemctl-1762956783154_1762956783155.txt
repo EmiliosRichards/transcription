@@ -1,0 +1,57 @@
+# Build offender list (from each unit’s own logfile; only those still on dialfire)
+UNITS=$(systemctl list-units 'dbsync@*.service' --no-legend --state=running \
+  | awk '{print $1}' | sed -n 's/^dbsync@\([A-Z0-9]\{16\}\)\.service$/\1/p')
+
+OFF=()
+for CID in $UNITS; do
+  LOG=$(journalctl -u dbsync@$CID.service --no-pager \
+        | sed -n 's/.*Logfile: \(.*\.log\).*/\1/p' | tail -n 1)
+  ALIAS=$(pgrep -af "dbsync2_1\.17\.0.*application_name=dbsync2_${CID}" \
+          | sed -n -E 's#.*localhost:6432/([^? ]+).*#\1#p' | head -n 1)
+  [ -z "$LOG" ] || [ ! -f "$LOG" ] && continue
+  tail -n 500 "$LOG" | grep -qi 'prepared statement' || continue
+  [ "$ALIAS" = "dialfire" ] && OFF+=("$CID")
+done
+
+echo "Offenders total:" ${#OFF[@]}
+printf '%s\n' "${OFF[@]}" | head -n 10
+
+# Create overrides (alias dialfire_bf; low concurrency W=1 D=1)
+for CID in "${OFF[@]}"; do
+  sudo mkdir -p /etc/systemd/system/dbsync@${CID}.service.d
+  sudo tee /etc/systemd/system/dbsync@${CID}.service.d/override.conf >/dev/null <<'EOF'
+[Service]
+Environment=DBSYNC_ALIAS=dialfire_bf
+Environment=W=1
+Environment=D=1
+EOF
+done
+sudo systemctl daemon-reload
+
+# Restart in batches of 20 to respect pool headroom
+echo "Restarting in batches of 20..."
+i=0; chunk=()
+for CID in "${OFF[@]}"; do
+  chunk+=("$CID"); i=$((i+1))
+  if [ $i -eq 20 ]; then
+    for X in "${chunk[@]}"; do sudo systemctl restart dbsync@${X}.service; done
+    chunk=(); i=0
+    echo "== SHOW POOLS =="
+    PGPASSWORD='Kii366' psql -h localhost -p 6432 -U kubrakiv -d pgbouncer -At -c 'SHOW POOLS' | egrep '^(dialfire|dialfire_bf)\|'
+    sleep 10
+  fi
+done
+# Restart any remaining <20
+if [ ${#chunk[@]} -gt 0 ]; then
+  for X in "${chunk[@]}"; do sudo systemctl restart dbsync@${X}.service; done
+  echo "== SHOW POOLS (final) =="
+  PGPASSWORD='Kii366' psql -h localhost -p 6432 -U kubrakiv -d pgbouncer -At -c 'SHOW POOLS' | egrep '^(dialfire|dialfire_bf)\|'
+fi
+
+# Spot-check 5 migrated logs (no prepared-stmt errors expected)
+echo "== Sample migrated tails =="
+for CID in $(printf '%s\n' "${OFF[@]}" | head -n 5); do
+  echo "--- $CID ---"
+  LOG=$(journalctl -u dbsync@$CID.service --no-pager | sed -n 's/.*Logfile: \(.*\.log\).*/\1/p' | tail -n 1); echo "$LOG"
+  tail -n 120 "$LOG" | egrep -i 'prepared statement|FATAL' || echo "clean"
+done

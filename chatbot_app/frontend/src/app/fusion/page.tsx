@@ -113,7 +113,11 @@ export default function FusionPage() {
         }
         const data: TaskStatus = await res.json();
         if (typeof data.progress === "number") setProgress(data.progress);
-        if (data.message) setMessage(data.message);
+        // Update message from backend, and mark fusion as running
+        if (data.message) {
+          setMessage(data.message);
+          setIsFusionRun(true);
+        }
         if (data.status === "SUCCESS") {
           window.clearInterval(pollRef.current!);
           if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
@@ -424,9 +428,7 @@ export default function FusionPage() {
         const remainingMs = Math.max(0, total - elapsed);
         const remainingMin = Math.max(1, Math.ceil(remainingMs / 60000));
         setCountdown(remainingMin);
-        if (elapsed > total && isFusionRun) {
-          setMessage("Fusion is taking a little longer than expected. Please wait.");
-        }
+        // Don't override backend message - let polling handle message updates
       }, 200);
     } else {
       if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }

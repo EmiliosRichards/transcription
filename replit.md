@@ -7,7 +7,7 @@ This is a full-stack AI-powered chatbot application with transcription capabilit
 - **Database**: PostgreSQL with vector database (ChromaDB) for RAG
 - **Storage**: Backblaze B2 for media files
 
-## Recent Changes (Nov 11, 2025)
+## Recent Changes (Nov 12, 2025)
 - ✅ Migrated from Vercel to Replit
 - ✅ Configured Next.js to run on port 5000 with 0.0.0.0 binding
 - ✅ Updated CORS settings to support Replit domains
@@ -17,6 +17,8 @@ This is a full-stack AI-powered chatbot application with transcription capabilit
 - ✅ Fixed serverActions.allowedOrigins security issue
 - ✅ Fixed fusion page API calls to use Next.js proxy (relative URLs)
 - ✅ Fixed backend blocking issue - subprocess calls now run in threads
+- ✅ Fixed UI flickering during long-running fusion tasks
+- ✅ Cleaned up 4GB of disk space (temporary files)
 
 ## Project Architecture
 

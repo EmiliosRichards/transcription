@@ -77,6 +77,11 @@ async def read_root():
     logger.info("✅ [HEALTHCHECK] Root endpoint / was called - returning 200")
     return {"message": "Welcome to the Chatbot POC API!", "status": "healthy"}
 
+@app.get("/healthz", tags=["Health"])
+async def healthz():
+    logger.info("✅ [HEALTHCHECK] /healthz endpoint called - returning 200")
+    return {"status": "ok"}
+
 # --- Run the app ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
@@ -86,8 +91,8 @@ if __name__ == "__main__":
     logger.info("🚀 [DIAGNOSTIC] Backend Server Starting")
     logger.info("=" * 80)
     logger.info(f"🔍 [DIAGNOSTIC] PORT environment variable: {os.environ.get('PORT', 'not set (defaulting to 8000)')}")
-    logger.info(f"🔍 [DIAGNOSTIC] Listening on: [::]:{port}")
-    logger.info(f"🔍 [DIAGNOSTIC] IPv6 binding: ENABLED (required for Railway private networking)")
+    logger.info(f"🔍 [DIAGNOSTIC] Listening on: 0.0.0.0:{port}")
+    logger.info(f"🔍 [DIAGNOSTIC] IPv4 binding: ENABLED")
     logger.info(f"🔍 [DIAGNOSTIC] RAILWAY_PRIVATE_DOMAIN: {os.environ.get('RAILWAY_PRIVATE_DOMAIN', 'not set')}")
     logger.info(f"🔍 [DIAGNOSTIC] RAILWAY_PUBLIC_DOMAIN: {os.environ.get('RAILWAY_PUBLIC_DOMAIN', 'not set')}")
     logger.info(f"🔍 [DIAGNOSTIC] CORS allowed origins: {allow_origins}")
@@ -95,5 +100,5 @@ if __name__ == "__main__":
     logger.info(f"💡 Tip: Frontend should connect to http://<service>.railway.internal:{port}")
     logger.info("=" * 80)
     
-    # Bind to IPv6 to support Railway private networking (IPv6-only DNS)
-    uvicorn.run("main:app", host="::", port=port)
+    # Bind to IPv4 for compatibility with platforms that healthcheck via IPv4 only
+    uvicorn.run("main:app", host="0.0.0.0", port=port)

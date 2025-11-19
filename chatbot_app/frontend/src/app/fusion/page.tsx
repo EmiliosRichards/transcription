@@ -106,7 +106,7 @@ export default function FusionPage() {
     if (pollRef.current) window.clearInterval(pollRef.current);
     pollRef.current = window.setInterval(async () => {
       try {
-        const res = await fetch(`/api/tasks/${id}`);
+        const res = await fetch(`${apiBase || ""}/api/tasks/${id}`);
         if (!res.ok) {
           throw new Error("Failed to fetch status");
         }
@@ -125,7 +125,7 @@ export default function FusionPage() {
           setMessage("Fusion completed.");
           setError("");
           // Fetch artifacts list
-          const ares = await fetch(`/api/fusion/${id}/artifacts`);
+          const ares = await fetch(`${apiBase || ""}/api/fusion/${id}/artifacts`);
           if (ares.ok) {
             const ajson = await ares.json();
             setArtifacts(ajson.artifacts || []);
@@ -153,14 +153,14 @@ export default function FusionPage() {
     if (pollRefTranscribe.current) window.clearInterval(pollRefTranscribe.current);
     pollRefTranscribe.current = window.setInterval(async () => {
       try {
-        const res = await fetch(`/api/tasks/${id}`);
+        const res = await fetch(`${apiBase || ""}/api/tasks/${id}`);
         if (!res.ok) throw new Error("Failed to fetch status");
         const data: TaskStatus = await res.json();
         if (data.status === 'SUCCESS') {
           window.clearInterval(pollRefTranscribe.current!);
           if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
           setSmoothProgress(100);
-          const ares = await fetch(`/api/fusion/${id}/artifacts`);
+          const ares = await fetch(`${apiBase || ""}/api/fusion/${id}/artifacts`);
           if (ares.ok) {
             const ajson = await ares.json();
             setArtifacts(ajson.artifacts || []);
@@ -203,7 +203,7 @@ export default function FusionPage() {
       form.append('teams', teams);
       if (language) form.append('language', language);
       if (vocabHints) form.append('vocab_hints', vocabHints);
-      const res = await fetch(`/api/fusion/transcribe-only`, { method: 'POST', body: form });
+      const res = await fetch(`${apiBase || ""}/api/fusion/transcribe-only`, { method: 'POST', body: form });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || 'Failed to start transcription');
@@ -343,7 +343,7 @@ export default function FusionPage() {
       form.append("offset_expand_tokens", "2");
       form.append("offset_similarity_threshold", "0.66");
       form.append("offset_trim_pad_sec", "2");
-      const res = await fetch(`/api/fusion/run`, { method: "POST", body: form });
+      const res = await fetch(`${apiBase || ""}/api/fusion/run`, { method: "POST", body: form });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || "Failed to start fusion");
@@ -377,7 +377,7 @@ export default function FusionPage() {
     try {
       const form = new FormData();
       form.append("run_dir", runDir);
-      const res = await fetch(`/api/fusion/extract`, { method: "POST", body: form });
+      const res = await fetch(`${apiBase || ""}/api/fusion/extract`, { method: "POST", body: form });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || "Failed to start extract");

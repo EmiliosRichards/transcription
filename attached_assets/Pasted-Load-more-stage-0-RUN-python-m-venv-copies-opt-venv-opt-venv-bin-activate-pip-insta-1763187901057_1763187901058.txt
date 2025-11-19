@@ -1,0 +1,54 @@
+Load more
+
+stage-0
+RUN python -m venv --copies /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt
+2m 41s
+Successfully installed Mako-1.3.10 MarkupSafe-3.0.3 PyYAML-6.0.2 aiofiles-24.1.0 aiohappyeyeballs-2.6.1 aiohttp-3.13.2 aiosignal-1.4.0 alembic-1.17.1 annotated-types-0.7.0 antlr4-python3-runtime-4.9.3 anyio-4.11.0 asgiref-3.10.0 asteroid-filterbanks-0.4.0 asyncpg-0.29.0 attrs-25.4.0 av-16.0.1 backoff-2.2.1 bcrypt-5.0.0 boto3-1.34.14 botocore-1.34.162 build-1.3.0 cachetools-6.2.2 certifi-2025.11.12 cffi-2.0.0 charset_normalizer-3.4.4 chromadb-1.0.15 click-8.3.0 coloredlogs-15.0.1 colorlog-6.10.1 ctranslate2-4.4.0 deprecated-1.3.1 diskcache-5.6.3 distro-1.9.0 dnspython-2.8.0 docstring-parser-0.17.0 durationpy-0.10 einops-0.8.1 email_validator-2.3.0 eval-type-backport-0.3.0 fastapi-0.111.0 fastapi-cli-0.0.16 faster-whisper-1.1.0 ffmpeg-python-0.2.0 filelock-3.20.0 flatbuffers-25.9.23 frozenlist-1.8.0 fsspec-2025.10.0 future-1.0.0 google-ai-generativelanguage-0.6.6 google-api-core-2.28.1 google-api-python-client-2.187.0 google-auth-2.43.0 google-auth-httplib2-0.2.1 google-generativeai-0.7.1 googleapis-common-protos-1.72.0 greenlet-3.2.4 grpcio-1.76.0 grpcio-status-1.62.3 h11-0.16.0 hf-xet-1.2.0 httpcore-1.0.9 httplib2-0.31.0 httptools-0.7.1 httpx-0.28.1 huggingface-hub-0.36.0 humanfriendly-10.0 hyperpyyaml-1.2.2 idna-3.11 importlib-metadata-6.11.0 importlib-resources-6.5.2 instructor-1.10.0 jinja2-3.1.6 jiter-0.10.0 jmespath-1.0.1 joblib-1.5.2 jsonschema-4.25.1 jsonschema-specifications-2025.9.1 julius-0.2.7 kubernetes-34.1.0 lightning-2.5.6 lightning-utilities-0.15.2 lxml-6.0.2 markdown-it-py-4.0.0 mdurl-0.1.2 mistralai-1.9.3 mmh3-5.2.0 mpmath-1.3.0 multidict-6.7.0 networkx-3.5 nltk-3.9.2 numpy-2.3.4 nvidia-cublas-cu12-12.8.4.1 nvidia-cuda-cupti-cu12-12.8.90 nvidia-cuda-nvrtc-cu12-12.8.93 nvidia-cuda-runtime-cu12-12.8.90 nvidia-cudnn-cu12-9.10.2.21 nvidia-cufft-cu12-11.3.3.83 nvidia-cufile-cu12-1.13.1.3 nvidia-curand-cu12-10.3.9.90 nvidia-cusolver-cu12-11.7.3.90 nvidia-cusparse-cu12-12.5.8.93 nvidia-cusparselt-cu12-0.7.1 nvidia-nccl-cu12-2.27.5 nvidia-nvjitlink-cu12-12.8.93 nvidia-nvshmem-cu12-3.3.20 nvidia-nvtx-cu12-12.8.90 oauthlib-3.3.1 omegaconf-2.3.0 onnxruntime-1.23.2 openai-1.98.0 opentelemetry-api-1.22.0 opentelemetry-exporter-otlp-proto-common-1.22.0 opentelemetry-exporter-otlp-proto-grpc-1.22.0 opentelemetry-instrumentation-0.43b0 opentelemetry-instrumentation-asgi-0.43b0 opentelemetry-instrumentation-fastapi-0.43b0 opentelemetry-proto-1.22.0 opentelemetry-sdk-1.22.0 opentelemetry-semantic-conventions-0.43b0 opentelemetry-util-http-0.43b0 optuna-4.6.0 orjson-3.11.4 overrides-7.7.0 packaging-25.0 pandas-2.3.3 posthog-5.4.0 primePy-1.3 propcache-0.4.1 proto-plus-1.26.1 protobuf-4.25.8 psycopg2-binary-2.9.9 pyannote.audio-3.3.2 pyannote.core-6.0.1 pyannote.database-6.1.0 pyannote.metrics-4.0.0 pyannote.pipeline-4.0.0 pyasn1-0.6.1 pyasn1-modules-0.4.2 pybase64-1.4.2 pycparser-2.23 pydantic-2.12.4 pydantic-core-2.41.5 pydub-0.25.1 pygments-2.19.2 pyparsing-3.2.5 pypika-0.48.9 pyproject_hooks-1.2.0 python-dateutil-2.9.0.post0 python-docx-1.2.0 python-dotenv-1.0.1 python-multipart-0.0.9 pytorch-lightning-2.5.6 pytorch-metric-learning-2.9.0 pytz-2025.2 referencing-0.37.0 regex-2025.11.3 requests-2.32.5 requests-oauthlib-2.0.0 rich-14.2.0 rich-toolkit-0.15.1 rpds-py-0.28.0 rsa-4.9.1 ruamel.yaml-0.18.16 ruamel.yaml.clib-0.2.14 s3transfer-0.10.4 safetensors-0.6.2 scikit-learn-1.7.2 scipy-1.16.3 semver-3.0.4 sentencepiece-0.2.1 setuptools-80.9.0 shellingham-1.5.4 six-1.17.0 sniffio-1.3.1 sortedcontainers-2.4.0 soundfile-0.13.1 speechbrain-1.0.3 sqlalchemy-2.0.30 starlette-0.37.2 sympy-1.14.0 tenacity-9.1.2 tensorboardX-2.6.4 threadpoolctl-3.6.0 tokenizers-0.22.1 torch-2.9.1 torch-audiomentations-0.12.0 torch-pitch-shift-1.2.5 torchaudio-2.9.1 torchmetrics-1.8.2 tqdm-4.67.1 transformers-4.57.1 triton-3.5.1 typer-0.20.0 typing-extensions-4.15.0 typing-inspection-0.4.2 tzdata-2025.2 ujson-5.11.0 uritemplate-4.2.0 urllib3-2.3.0 uvicorn-0.29.0 uvloop-0.22.1 watchfiles-1.1.1 websocket-client-1.9.0 websockets-15.0.1 whisperx-3.3.0 wrapt-1.17.3 yarl-1.22.0 zipp-3.23.0
+
+stage-0
+COPY . /app/.
+341ms
+
+stage-0
+RUN  pip install -r requirements.txt
+1s
+Requirement already satisfied: ruamel.yaml.clib>=0.2.7 in /opt/venv/lib/python3.12/site-packages (from ruamel.yaml>=0.17.28->hyperpyyaml->speechbrain>=1.0.0->pyannote.audio==3.3.2->whisperx==3.3.0->-r requirements.txt (line 29)) (0.2.14)
+
+stage-0
+RUN printf '\nPATH=/opt/venv/bin:$PATH' >> /root/.profile
+552ms
+
+stage-0
+COPY . /app
+61ms
+
+auth
+sharing credentials for production-europe-west4-drams3a.railway-registry.com
+0ms
+
+importing to docker
+1m 6s
+=== Successfully Built! ===
+Run:
+docker run -it production-europe-west4-drams3a.railway-registry.com/7e0e2725-c9b6-49d7-a7db-fc1df227a4c3:908567ce-7fc7-4a1a-a77f-00dbd1252481
+Build time: 432.76 seconds
+ 
+====================
+Starting Healthcheck
+====================
+Path: /
+Retry window: 1m40s
+ 
+Attempt #1 failed with service unavailable. Continuing to retry for 1m29s
+Attempt #2 failed with service unavailable. Continuing to retry for 1m18s
+Attempt #3 failed with service unavailable. Continuing to retry for 1m5s
+Attempt #4 failed with service unavailable. Continuing to retry for 51s
+Attempt #5 failed with service unavailable. Continuing to retry for 33s
+Attempt #6 failed with service unavailable. Continuing to retry for 7s
+ 
+1/1 replicas never became healthy!
+
+Healthcheck failed!
+
+
+Load more

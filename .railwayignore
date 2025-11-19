@@ -1,0 +1,54 @@
+# Railway Deployment - Files to ignore
+
+# Node modules (will be installed during build)
+node_modules/
+.next/
+.npm/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Environment files (use Railway environment variables instead)
+.env
+.env.local
+.env.*.local
+
+# Development
+.replit
+replit.nix
+.git/
+.gitignore
+
+# Logs
+*.log
+logs/
+/tmp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+__tests__/
+coverage/
+
+# Documentation (optional - remove if you want docs deployed)
+*.md
+!RAILWAY_DEPLOYMENT.md

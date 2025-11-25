@@ -12,12 +12,13 @@ import { PlayCircle } from "lucide-react";
 import { TranscriptionItem } from "@/lib/stores/useTranscribeStore";
 
 export default function HistoryPage() {
-  const { history, audioUrl, fetchAndSetAudioUrl } = useTranscribeStore();
+  const { history, audioUrl, fetchAndSetAudioUrl, error, setError } = useTranscribeStore();
   const { getHistory } = useTranscribeApi();
 
   useEffect(() => {
     getHistory();
-  }, [getHistory]);
+    return () => setError(""); // Clear error on unmount
+  }, [getHistory, setError]);
 
   const handlePlayAudio = (transcriptionId: number) => {
     fetchAndSetAudioUrl(transcriptionId);
@@ -38,6 +39,16 @@ export default function HistoryPage() {
              </Button>
           </Link>
         </div>
+        {error && (
+          <Card className="w-full mb-6 border-red-300/40">
+            <CardHeader>
+              <CardTitle className="text-red-400">Error</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-red-300 whitespace-pre-wrap">{error}</p>
+            </CardContent>
+          </Card>
+        )}
         {audioUrl && (
           <div className="mb-6">
             <AudioPlayer src={audioUrl} />

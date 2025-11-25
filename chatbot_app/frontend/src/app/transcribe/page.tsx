@@ -32,7 +32,8 @@ export default function TranscribePage() {
     setUrl,
   } = useTranscribeStore();
   const { handleSubmit } = useTranscribeApi();
-  const [showResults, setShowResults] = useState(false);
+  // Initialize showResults to true if we already have a transcription in the store
+  const [showResults, setShowResults] = useState(!!(transcription || processedTranscription));
   const resultCardRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // Only scroll when the final processed transcription is loaded and the cinematic is done

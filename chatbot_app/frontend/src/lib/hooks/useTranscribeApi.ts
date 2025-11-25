@@ -190,7 +190,7 @@ export function useTranscribeApi() {
     setIsLoading(true);
     setError("");
     try {
-      const response = await fetch(`${backendUrl}/api/transcriptions/`);
+      const response = await fetch(`${backendUrl}/api/transcriptions`);
       if (!response.ok) {
         const err = await response.json();
         throw new Error(err.detail || "Failed to fetch transcription history.");

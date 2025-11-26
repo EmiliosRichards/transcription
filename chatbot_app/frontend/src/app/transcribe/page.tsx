@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
@@ -14,8 +14,9 @@ import { FileUpload } from "@/components/transcribe/FileUpload";
 import { UrlInput } from "@/components/transcribe/UrlInput";
 import { TranscriptionResult } from "@/components/transcribe/TranscriptionResult";
 import { AudioPlayer } from "@/components/transcribe/AudioPlayer";
+import { useSearchParams } from "next/navigation";
 
-export default function TranscribePage() {
+function TranscribeContent() {
   const {
     file,
     url,
@@ -32,6 +33,18 @@ export default function TranscribePage() {
     setUrl,
   } = useTranscribeStore();
   const { handleSubmit } = useTranscribeApi();
+  const searchParams = useSearchParams();
+  const initialUrl = searchParams.get("url");
+
+  // Handle URL query parameter - decode and set URL when component mounts
+  useEffect(() => {
+    if (initialUrl) {
+      // Decode the URL in case it's URL-encoded
+      const decodedUrl = decodeURIComponent(initialUrl);
+      setUrl(decodedUrl);
+    }
+  }, [initialUrl, setUrl]);
+
   // Initialize showResults to true if we already have a transcription in the store
   const [showResults, setShowResults] = useState(!!(transcription || processedTranscription));
   const resultCardRef = useRef<HTMLDivElement>(null);
@@ -158,5 +171,13 @@ export default function TranscribePage() {
         
       </div>
     </div>
+  );
+}
+
+export default function TranscribePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TranscribeContent />
+    </Suspense>
   );
 }

@@ -169,6 +169,12 @@ export function Sidebar({ refreshKey, activeSessionId, isOpen, onToggle, isOverl
             Transcribe
           </Button>
         </Link>
+        <Link href="/fusion" className="mt-2 block">
+          <Button variant="ghost" className="w-full justify-start font-normal">
+            <Mic className="mr-2 h-4 w-4" />
+            Kickoff Fusion Transcription
+          </Button>
+        </Link>
       </div>
 
       <div className="flex-1 flex flex-col mt-4 overflow-hidden">

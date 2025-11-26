@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Upload } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 
 type TaskStatus = {
   status: string;
@@ -424,10 +425,21 @@ export default function FusionPage() {
   return (
     <div className="p-6 min-h-screen flex flex-col items-center">
       <div className="w-full max-w-4xl">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-semibold">Transcript Fusion</h1>
-          <p className="text-muted-foreground text-sm mt-1">1) Generate GPT transcript from Audio. 2) Fuse GPT + Krisp + Teams.</p>
+        <div className="flex justify-between items-center mb-2">
+          <h1 className="text-3xl text-gray-800 dark:text-white">Transcript Fusion</h1>
+          <div className="flex gap-2">
+            <Link href="/">
+              <Button
+                variant="ghost"
+                className="rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300 dark:from-gray-800 dark:to-gray-700 dark:text-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-sm"
+                size="sm"
+              >
+                Back
+              </Button>
+            </Link>
+          </div>
         </div>
+        <p className="text-muted-foreground text-sm mb-4">1) Generate GPT transcript from Audio. 2) Fuse GPT + Krisp + Teams.</p>
         {/* Section 1: Transcribe-only */}
         <Card className="w-full">
           <CardHeader>

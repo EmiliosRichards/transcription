@@ -51,7 +51,7 @@ export function WelcomeScreen({ onPromptClick }: WelcomeScreenProps) {
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8">
-      <div className="text-3xl mb-2 bg-gradient-to-r from-blue-800 to-sky-400 dark:from-sky-300 dark:to-blue-200 text-transparent bg-clip-text p-2">Good Morning, Lorenz</div>
+      <div className="text-3xl mb-2 bg-gradient-to-r from-blue-800 to-sky-400 dark:from-sky-300 dark:to-blue-200 text-transparent bg-clip-text p-2">Good Morning</div>
       <p className="text-muted-foreground mb-2">
         How can I help with your campaign analysis today?
       </p>

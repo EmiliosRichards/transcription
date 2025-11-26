@@ -38,7 +38,7 @@ export function ChatInput({ inputValue, onInputChange, onSendMessage, isLoading 
 
   return (
     <div className="p-6">
-      <div className="relative">
+      <div className="relative group">
         <textarea
           ref={textareaRef}
           placeholder="Write a message..."
@@ -46,17 +46,24 @@ export function ChatInput({ inputValue, onInputChange, onSendMessage, isLoading 
           onChange={(e) => onInputChange(e.target.value)}
           onKeyDown={onKeyDown}
           rows={1}
-          className="w-full resize-none rounded-2xl py-3 pl-4 pr-14 bg-white/80 dark:bg-black/30 backdrop-blur-md border border-white/40 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-700 text-sm leading-6"
+          className="w-full resize-none rounded-2xl py-3 pl-4 pr-14 bg-white/80 dark:bg-black/30 backdrop-blur-md border border-white/40 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-700 text-sm leading-6 group-hover:cursor-not-allowed"
         />
         <Button
           size="icon"
-          className="absolute right-2 top-[calc(50%-3px)] -translate-y-1/2 rounded-full h-9 w-9"
+          className="absolute right-2 top-[calc(50%-3px)] -translate-y-1/2 rounded-full h-9 w-9 group-hover:cursor-not-allowed"
           onClick={onSendMessage}
           disabled={isLoading || !inputValue.trim()}
           aria-label="Send message"
         >
           <ArrowUp className="h-4 w-4" />
         </Button>
+        <div
+          className="absolute inset-0 z-10 cursor-not-allowed"
+          title="Temporarily disabled"
+          aria-disabled="true"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+        />
       </div>
     </div>
   );

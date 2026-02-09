@@ -12,16 +12,21 @@ Return a single, valid JSON object. Do not include any conversational preamble, 
 2.  **Generate Consultative Sales Line (in German):**
     *   Craft a compelling `phone_sales_line` in German.
     *   Do NOT mention the Golden Partner's name.
-    *   Use the mandatory structure below.
+    *   Use the mandatory structure below (tone + flow).
 
 --------PREVIOUS MATCH RATIONALE------------
 {{PREVIOUS_MATCH_RATIONALE_PLACEHOLDER}}
 -----------END OF RATIONALE-----------------
 
 **Mandatory Structure:**
-"Ich rufe Sie an, weil wir bereits sehr erfolgreich ein ähnliches Projekt umgesetzt haben – für ein Unternehmen aus dem Bereich [Produkt/Branche], das ebenfalls [gemeinsame Zielgruppe/Marktsegment] anspricht. Für dieses Unternehmen generieren wir täglich {programmatic placeholder} Leads und möchten gerne besprechen, wie wir das auch für Sie erreichen können."
+"Wie gesagt, wir haben uns auf Ihrer Webseite angeschaut, was Sie machen und für ein Unternehmen mit ähnlicher Herausforderung haben wir bereits sehr produktiv gearbeitet. Und zwar [kurze, konkrete Beschreibung des ähnlichen Use-Cases / Problems in 1–2 Sätzen, basierend auf Attributen und Match-Rationale] — dort generieren wir aktuell etwa {avg_leads_per_day} Leads pro Tag.\n\nUnd da hat mein Chef mich gebeten, einen kurzen Termin mit Ihnen zu vereinbaren, in dem wir einfach mal schauen, ob wir zusammenpassen und in dem Sie auch direkt Fragen beantworten können."
 
-**CRITICAL INSTRUCTION:** The `{programmatic placeholder}` MUST NOT be altered or removed. It will be replaced by a script later.
+**CRITICAL INSTRUCTION:** The token `{avg_leads_per_day}` MUST NOT be altered or removed. It will be replaced by a script later.
+
+**Style constraints:**
+- Keep it to 2 short paragraphs (as above), max ~550 characters.
+- Sound natural and conversational (spoken on the phone), not like marketing copy.
+- Do not invent specific numbers other than `{avg_leads_per_day}`.
 
 **JSON Response Format:**
 {
@@ -29,7 +34,7 @@ Return a single, valid JSON object. Do not include any conversational preamble, 
     "Gemeinsame Zielgruppe: ...",
     "Ähnliche Produkte/Services: ..."
   ],
-  "phone_sales_line": "Ich rufe Sie an, weil ..."
+  "phone_sales_line": "Wie gesagt, wir haben uns ..."
 }
 
 --------TARGET COMPANY ATTRIBUTES JSON------------

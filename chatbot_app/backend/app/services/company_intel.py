@@ -562,7 +562,11 @@ def generate_sales_pitch_for_company(
     sales_pitch_template = str((sales_pitch or {}).get("phone_sales_line") or "")
     sales_pitch_filled = sales_pitch_template
     if avg_leads is not None:
-        sales_pitch_filled = sales_pitch_template.replace("{programmatic placeholder}", str(int(avg_leads)))
+        # Support both the new and legacy placeholder tokens.
+        sales_pitch_filled = (
+            sales_pitch_template.replace("{avg_leads_per_day}", str(int(avg_leads)))
+            .replace("{programmatic placeholder}", str(int(avg_leads)))
+        )
 
     return {
         "inputs": {"company_url": url, "company_name": company_name},

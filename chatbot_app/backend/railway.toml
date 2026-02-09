@@ -9,3 +9,7 @@ healthcheckPath = "/healthz"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
+
+[env]
+# Railpack defaults to Python 3.13.x, but some deps (e.g. whisperx==3.3.0) require <3.13.
+RAILPACK_PYTHON_VERSION = "3.12"

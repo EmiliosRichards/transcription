@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Loader2 } from "lucide-react";
 
 type EvalResponse = {
   input_url: string;
@@ -150,9 +151,9 @@ export default function CompanyPage() {
             </div>
 
             {isEvaluating && (
-              <div className="flex flex-col gap-2">
-                <Progress value={40} className="w-full [&>div]:bg-blue-500" />
-                <div className="text-xs text-muted-foreground">Researching and scoring…</div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                <div>Researching and scoring…</div>
               </div>
             )}
 
@@ -213,6 +214,13 @@ export default function CompanyPage() {
                 {isPitching ? "Generating..." : "Generate pitch"}
               </Button>
             </div>
+
+            {isPitching && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                <div>Generating pitch…</div>
+              </div>
+            )}
 
             {pitchResult && (
               <Card className="border-gray-200/60 dark:border-gray-800/60">

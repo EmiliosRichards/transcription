@@ -106,8 +106,37 @@ def load_golden_partners() -> List[Dict[str, Any]]:
         return data
 
     def _repo_root() -> Path:
-        # app -> backend -> chatbot_app -> repo root
-        return _app_dir().parents[2]
+        """
+        Best-effort repo/service root resolution.
+
+        Locally, this code lives at:
+          <repo>/chatbot_app/backend/app/...
+        so the repo root is typically 2 levels above `backend/app`.
+
+        On Railway, the service is often deployed with the service directory as
+        the filesystem root (e.g. `/app`), so `backend/app` may effectively be
+        `/app/app` and does NOT have 3+ parent levels. In that case, we fall
+        back to the service root.
+        """
+        app_dir = _app_dir()
+        # Walk upwards looking for a repo marker or the XLSX itself.
+        markers = [
+            "kgs_001_ER47_20250626.xlsx",
+            ".git",
+            "railway.toml",
+            "railway.json",
+        ]
+        for base in [app_dir, *list(app_dir.parents)]:
+            try:
+                for m in markers:
+                    if (base / m).exists():
+                        return base
+            except Exception:
+                # Extremely defensive: just keep walking.
+                pass
+
+        # Fallback: assume the service root is the parent of `app/`.
+        return app_dir.parent if app_dir.parent.exists() else app_dir
 
     def _resolve_path(p: Path) -> Path:
         if p.is_absolute():

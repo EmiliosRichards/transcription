@@ -2,9 +2,11 @@ import { spawn } from "node:child_process";
 import path from "node:path";
 
 const rawPort = (process.env.PORT ?? "").trim();
-// Default to 8080 in production-like environments since that is the common
-// platform expectation (Railway often targets 8080 unless overridden).
-const defaultPort = process.env.NODE_ENV === "production" ? 8080 : 5000;
+// Default to 8080 for production start.
+// On Railway, PORT is typically provided, but some configurations rely on the
+// platform "target port" without exporting PORT. Defaulting to 8080 avoids
+// a silent mismatch that causes healthchecks to fail.
+const defaultPort = 8080;
 const port = rawPort ? Number(rawPort) : defaultPort;
 if (!Number.isFinite(port) || port <= 0) {
   console.error(`[startup] Invalid PORT: ${rawPort || "(unset)"}`);

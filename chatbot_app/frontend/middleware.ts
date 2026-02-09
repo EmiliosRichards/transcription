@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const COOKIE_NAME = "company_auth";
+const COOKIE_NAME = "app_auth";
 
 function toHex(bytes: ArrayBuffer) {
   return Array.from(new Uint8Array(bytes))
@@ -14,29 +14,49 @@ async function sha256Hex(input: string): Promise<string> {
   return toHex(digest);
 }
 
+function isPublicPath(pathname: string) {
+  // Always allow Next.js internals and common public files.
+  if (
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/favicon") ||
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml"
+  ) {
+    return true;
+  }
+
+  // Allow healthcheck unauthenticated (Railway uses this).
+  if (pathname === "/healthz") return true;
+
+  // Allow login + auth endpoints through.
+  if (pathname.startsWith("/login") || pathname.startsWith("/api/auth")) return true;
+
+  return false;
+}
+
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  // Allow login + auth endpoints through.
-  if (pathname.startsWith("/company/login") || pathname.startsWith("/api/company-auth")) {
+  if (isPublicPath(pathname)) {
     return NextResponse.next();
   }
 
-  const password = (process.env.COMPANY_PAGE_PASSWORD || "").trim();
+  const username = (process.env.APP_AUTH_USERNAME || "guest").trim();
+  const password = (process.env.APP_AUTH_PASSWORD || "").trim();
 
-  // If password isn't configured, fail closed in production, open in dev.
+  // If auth isn't configured, fail closed in production, open in dev.
   if (!password) {
     if (process.env.NODE_ENV === "production") {
       if (pathname.startsWith("/api/")) {
-        return NextResponse.json({ detail: "Company page not configured" }, { status: 503 });
+        return NextResponse.json({ detail: "App auth not configured" }, { status: 503 });
       }
-      return new NextResponse("Company page not configured", { status: 503 });
+      return new NextResponse("App auth not configured", { status: 503 });
     }
     return NextResponse.next();
   }
 
   const cookie = req.cookies.get(COOKIE_NAME)?.value || "";
-  const expected = await sha256Hex(password);
+  const expected = await sha256Hex(`${username}:${password}`);
   const ok = cookie && cookie === expected;
 
   if (ok) {
@@ -49,12 +69,13 @@ export async function middleware(req: NextRequest) {
   }
 
   const loginUrl = req.nextUrl.clone();
-  loginUrl.pathname = "/company/login";
+  loginUrl.pathname = "/login";
   loginUrl.searchParams.set("next", pathname);
   return NextResponse.redirect(loginUrl);
 }
 
 export const config = {
-  matcher: ["/company/:path*", "/api/company/:path*"],
+  // Apply to all pages and APIs, excluding Next internals via `isPublicPath`.
+  matcher: ["/:path*"],
 };
 

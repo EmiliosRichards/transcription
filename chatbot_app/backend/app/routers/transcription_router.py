@@ -135,6 +135,12 @@ async def correct_company_name(request: CompanyNameCorrectionRequest, db: AsyncS
         logger.error(f"An error occurred during company name correction: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
+
+# Backwards-compatible alias (older frontend used `/transcriptions/correct-company-name`)
+@router.post("/transcriptions/correct-company-name", tags=["Transcription"], response_model=CorrectedTranscription)
+async def correct_company_name_alias(request: CompanyNameCorrectionRequest, db: AsyncSession = Depends(get_db)):
+    return await correct_company_name(request, db)
+
 @router.get("/transcriptions", tags=["Transcription"], response_model=List[TranscriptionInfo])
 async def get_transcriptions(db: AsyncSession = Depends(get_db)):
     """Retrieves a list of all past transcriptions."""

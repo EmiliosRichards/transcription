@@ -221,7 +221,22 @@ def main() -> None:
     # --- Argparse (parameterization via YAML config) ---
     parser = argparse.ArgumentParser(description="Dexter free-label extraction")
     parser.add_argument("--config", default=None, help="Path to YAML config (e.g., config/phaseA.yml)")
+    parser.add_argument(
+        "--run",
+        default=None,
+        help="Override the run output folder (same meaning as config.output_dir). Creates raw/interim/slim/reports under it.",
+    )
+    parser.add_argument(
+        "--input",
+        default=None,
+        help="Override the grouped calls JSONL input path (same meaning as INPUT_GROUPED_JSONL env var).",
+    )
     args, unknown = parser.parse_known_args()
+
+    # CLI overrides (highest precedence)
+    if args.input:
+        global INPUT_PATH
+        INPUT_PATH = str(args.input)
 
     # --- Load config if provided; override globals ---
     output_dir_from_cfg: str | None = None
@@ -262,6 +277,10 @@ def main() -> None:
         if pv:
             prompt_version = str(pv)
         output_dir_from_cfg = cfg.get("output_dir")
+
+    # If --run is provided, override any config output_dir
+    if args.run:
+        output_dir_from_cfg = str(args.run)
 
     # --- Output/run folder structure ---
     def _ensure(dirpath: str) -> str:

@@ -7,13 +7,18 @@ def main() -> None:
     p = argparse.ArgumentParser(description="Export discovery_labeled.csv by joining final taxonomy labels")
     p.add_argument("--run", required=True, help="Run directory path")
     p.add_argument("--base", required=True, help="Base name of slim CSV (under run/slim)")
+    p.add_argument(
+        "--map",
+        default="taxonomy/cluster_to_reason_label_final.csv",
+        help="Cluster→label mapping CSV (relative to run). Use this to export limited taxonomies too.",
+    )
     args = p.parse_args()
 
     run = Path(args.run)
     base = args.base
 
     clusters_path = run / "clusters_pass1.csv"
-    final_map_path = run / "taxonomy" / "cluster_to_reason_label_final.csv"
+    final_map_path = run / args.map
     slim_path = run / "slim" / f"{base}.csv"
     outp = run / "outputs" / "discovery_labeled.csv"
 

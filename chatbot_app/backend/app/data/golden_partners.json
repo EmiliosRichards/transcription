@@ -1,0 +1,30 @@
+[
+  {
+    "name": "PflegeSoft ERP",
+    "rank": 1,
+    "avg_leads_per_day": 14,
+    "industry": "Pflege / Gesundheitswesen",
+    "target_segments": ["ambulante Pflegedienste", "stationäre Pflegeeinrichtungen", "soziale Träger"],
+    "partner_description": "ERP- und Dokumentationssoftware für Pflegeanbieter in DACH; Fokus auf Dienstplanung, Abrechnung und Telematik-Infrastruktur-Integration.",
+    "case_study_summary": "Skalierbare Lead-Generierung für Pflege-Softwareanbieter mit klarer ICP (Pflegeeinrichtungen) und demo-getriebener Vertriebspipeline."
+  },
+  {
+    "name": "B2B Cybersecurity Platform",
+    "rank": 2,
+    "avg_leads_per_day": 9,
+    "industry": "IT / Cybersecurity",
+    "target_segments": ["Mittelstand", "IT-Leitung", "CISO/CTO", "regulierte Branchen"],
+    "partner_description": "Security-Plattform für DACH-Mittelstand: Endpoint- und Cloud-Schutz, Compliance-Reports, Security-Awareness.",
+    "case_study_summary": "Outbound für IT-Sicherheitsanbieter mit klaren Compliance/ROI-Argumenten und wiederkehrendem Umsatzmodell."
+  },
+  {
+    "name": "SaaS HR & Workforce Scheduling",
+    "rank": 3,
+    "avg_leads_per_day": 7,
+    "industry": "HR / Workforce Management",
+    "target_segments": ["Schichtbetriebe", "Operations", "HR-Leitung", "Filialbetriebe"],
+    "partner_description": "SaaS zur Dienst- und Schichtplanung inkl. Zeiterfassung; Zielgruppe sind Unternehmen mit vielen Mitarbeitenden im Schichtbetrieb.",
+    "case_study_summary": "Telefon-Outbound für Workforce-Planung mit messbaren Effizienzgewinnen und kurzer Time-to-Value."
+  }
+]
+

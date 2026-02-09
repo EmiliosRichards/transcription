@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { BarChart3, Mic, Search, Trash2, ChevronLeft, PencilLine } from "lucide-react";
+import { BarChart3, Mic, Search, Trash2, ChevronLeft, PencilLine, Building2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -173,6 +173,12 @@ export function Sidebar({ refreshKey, activeSessionId, isOpen, onToggle, isOverl
           <Button variant="ghost" className="w-full justify-start font-normal">
             <Mic className="mr-2 h-4 w-4" />
             Kickoff Fusion Transcription
+          </Button>
+        </Link>
+        <Link href="/company" className="mt-2 block">
+          <Button variant="ghost" className="w-full justify-start font-normal">
+            <Building2 className="mr-2 h-4 w-4" />
+            Company Pitch
           </Button>
         </Link>
       </div>

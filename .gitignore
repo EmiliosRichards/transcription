@@ -3,6 +3,10 @@
 *.env
 *.env.local
 
+# Keep example env files in git
+!.env.example
+!**/.env.example
+
 # Python
 .venv*
 *.pyc
@@ -76,6 +80,10 @@ chatbot_app/frontend/out/
 
 dexter_analysis_pitch-regeneration/output/  
 dexter_analysis_pitch-regeneration/data/
+
+# Dexter v2 (fixed taxonomy) run artifacts and local env
+dexter_v2_fixed_taxonomy/runs/
+dexter_v2_fixed_taxonomy/.env
 docs/
 random_csvs/
 random_logs/

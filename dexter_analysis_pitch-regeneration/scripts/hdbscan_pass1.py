@@ -26,6 +26,19 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--append-report", dest="append_report", action="store_true", help="Append to report file (default)")
     p.add_argument("--overwrite-report", dest="append_report", action="store_false", help="Overwrite report file")
     p.set_defaults(append_report=True)
+    p.add_argument(
+        "--make-default-out",
+        dest="make_default_out",
+        action="store_true",
+        help="Also write run/clusters_pass1.csv for downstream compatibility (default)",
+    )
+    p.add_argument(
+        "--no-make-default-out",
+        dest="make_default_out",
+        action="store_false",
+        help="Do not write run/clusters_pass1.csv (only write clusters/<base>_clusters_pass1.csv)",
+    )
+    p.set_defaults(make_default_out=True)
     return p.parse_args()
 
 
@@ -98,6 +111,15 @@ def main() -> None:
         w.writerow(["row_id", "cluster_id", "probability"])
         for rid, lab, p in zip(row_ids, labels, probs):
             w.writerow([rid, int(lab), float(p)])
+
+    # Optional: write a "default" clusters_pass1.csv at run root (many downstream scripts expect this name)
+    if args.make_default_out:
+        default_csv = run / "clusters_pass1.csv"
+        with default_csv.open("w", newline="", encoding="utf-8") as g:
+            w = csv.writer(g)
+            w.writerow(["row_id", "cluster_id", "probability"])
+            for rid, lab, p in zip(row_ids, labels, probs):
+                w.writerow([rid, int(lab), float(p)])
 
     # Report
     total = len(labels)

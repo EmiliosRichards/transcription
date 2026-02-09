@@ -48,7 +48,7 @@ def parse_args() -> argparse.Namespace:
         "--runs-base",
         default=os.environ.get(
             "DEXTER_RUNS_BASE",
-            r"data_pipelines_dexter\data\transcription_dexter_analysis\runs",
+            r"dexter_analysis_pitch-regeneration\data\transcription_dexter_analysis\runs",
         ),
         help="Base directory for auto-run folders",
     )

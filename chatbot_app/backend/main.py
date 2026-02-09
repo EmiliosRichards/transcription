@@ -50,7 +50,10 @@ app = FastAPI(
 )
 
 # --- CORS Middleware ---
+# Prefer same-origin proxying from the Next.js frontend via `/api/*` rewrites.
+# Still, allow sensible defaults for direct browser-to-backend calls.
 # You can override allowed origins via env var ALLOWED_ORIGINS (comma-separated).
+# You can also set ALLOWED_ORIGIN_REGEX for pattern matching.
 replit_domain = os.environ.get("REPLIT_DEV_DOMAIN", "")
 railway_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "")
 default_origins = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5000,http://127.0.0.1:5000"
@@ -60,9 +63,17 @@ if railway_domain:
     default_origins += f",https://{railway_domain}"
 raw_origins = os.environ.get("ALLOWED_ORIGINS", default_origins).split(",")
 allow_origins = [o.strip() for o in raw_origins if o.strip()]
+allow_origin_regex = os.environ.get("ALLOWED_ORIGIN_REGEX") or None
+
+# If not explicitly configured and we appear to be on Railway, allow any Railway public subdomain.
+# This helps when frontend and backend are deployed as separate services.
+if not allow_origin_regex and railway_domain:
+    allow_origin_regex = r"^https:\/\/.*\.up\.railway\.app$"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins if allow_origins != ["*"] else ["*"],
+    allow_origin_regex=allow_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]

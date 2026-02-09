@@ -23,13 +23,13 @@ export default function TranscriptionDetailPage() {
     reset,
   } = useTranscribeStore();
   
-  const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
   const id = params.id as string;
 
   useEffect(() => {
     const fetchTranscription = async () => {
       try {
-        const response = await fetch(`${backendUrl}/api/transcriptions/${id}`);
+        // Use same-origin /api/* so Next rewrites proxy to backend (avoids CORS issues).
+        const response = await fetch(`/api/transcriptions/${id}`);
         if (!response.ok) {
           const err = await response.json();
           throw new Error(err.detail || "Failed to fetch transcription details.");
@@ -54,7 +54,7 @@ export default function TranscriptionDetailPage() {
     return () => {
       reset();
     };
-  }, [id, setTranscription, setProcessedTranscription, fetchAndSetAudioUrl, setError, backendUrl, setCorrectedTranscription, reset]);
+  }, [id, setTranscription, setProcessedTranscription, fetchAndSetAudioUrl, setError, setCorrectedTranscription, reset]);
 
   return (
     <div className="p-6 min-h-screen flex flex-col items-center">

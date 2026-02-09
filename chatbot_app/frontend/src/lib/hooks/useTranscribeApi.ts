@@ -21,7 +21,9 @@ export function useTranscribeApi() {
     setHistory,
   } = useTranscribeStore();
 
-  const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+  // Use same-origin /api/* so Next rewrites proxy to backend (avoids CORS issues).
+  // This relies on `next.config.ts` rewrites().
+  const apiBase = "";
 
   const pollTaskStatus = async (taskId: string) => {
     let isRequestInFlight = false;
@@ -34,7 +36,7 @@ export function useTranscribeApi() {
       let rawTranscriptReceived = false;
 
       try {
-        const response = await fetch(`${backendUrl}/api/tasks/${taskId}`);
+        const response = await fetch(`${apiBase}/api/tasks/${taskId}`);
         if (!response.ok) {
           const err = await response.json().catch(() => ({ detail: response.statusText }));
           throw new Error(`Failed to get task status: ${err.detail}`);
@@ -131,7 +133,7 @@ export function useTranscribeApi() {
     }
 
     try {
-      const response = await fetch(`${backendUrl}/api/transcribe`, {
+      const response = await fetch(`${apiBase}/api/transcribe`, {
         method: "POST",
         body: formData,
       });
@@ -159,8 +161,8 @@ export function useTranscribeApi() {
     setIsCorrecting(true);
     setError("");
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
-      const response = await fetch(`${backendUrl}/api/transcriptions/correct-company-name`, {
+      // Backend route is `/api/correct-company-name` (not nested under /transcriptions)
+      const response = await fetch(`${apiBase}/api/correct-company-name`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -190,7 +192,7 @@ export function useTranscribeApi() {
     setIsLoading(true);
     setError("");
     try {
-      const response = await fetch(`${backendUrl}/api/transcriptions`);
+      const response = await fetch(`${apiBase}/api/transcriptions`);
       if (!response.ok) {
         const err = await response.json();
         throw new Error(err.detail || "Failed to fetch transcription history.");
@@ -202,7 +204,7 @@ export function useTranscribeApi() {
     } finally {
       setIsLoading(false);
     }
-  }, [backendUrl, setIsLoading, setError, setHistory, setAudioUrl, setTranscription, setProcessedTranscription, setTranscriptionId]);
+  }, [setIsLoading, setError, setHistory, setAudioUrl, setTranscription, setProcessedTranscription, setTranscriptionId]);
 
   return { handleSubmit, handleCorrectCompanyName, getHistory };
 }

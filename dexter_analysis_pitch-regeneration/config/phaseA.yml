@@ -1,4 +1,4 @@
-﻿model: gpt-5-mini-2025-08-07
+model: gpt-5-mini-2025-08-07
 truncation:
   head_chars: 600
   tail_chars: 1000
@@ -7,7 +7,9 @@ min_chars:
   qc: 180
 workers: 4
 prompt_version: v3
-output_dir: data_pipelines_dexter/data/transcription_dexter_analysis/runs/2025-09-29
+# Where this run's artifacts will be written.
+# Tip: set a new folder per run (e.g., 2026-01-28_run1) to keep outputs tidy.
+output_dir: dexter_analysis_pitch-regeneration/data/transcription_dexter_analysis/runs/example_run
 unreachable_markers:
   - voicemail
   - mailbox

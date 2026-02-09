@@ -129,8 +129,8 @@ export const useTranscribeStore = create<TranscribeState>()((set) => ({
   setAudioUrl: (url) => set({ audioUrl: url }),
   fetchAndSetAudioUrl: async (id: number) => {
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
-      const response = await fetch(`${backendUrl}/api/audio/${id}`, { method: 'GET' });
+      // Use same-origin /api/* so Next rewrites proxy to backend (avoids CORS issues).
+      const response = await fetch(`/api/audio/${id}`, { method: 'GET' });
       if (!response.ok) {
         throw new Error(`Failed to fetch audio file: ${response.statusText}`);
       }
@@ -146,8 +146,8 @@ export const useTranscribeStore = create<TranscribeState>()((set) => ({
           throw new Error("Pre-signed URL not found in JSON response.");
         }
       } else {
-        // Serve directly from backend endpoint to preserve HTTP Range support
-        set({ audioUrl: `${backendUrl}/api/audio/${id}` });
+        // Serve directly from same-origin endpoint to preserve HTTP Range support
+        set({ audioUrl: `/api/audio/${id}` });
       }
     } catch (error) {
       console.error("Error fetching audio:", error);

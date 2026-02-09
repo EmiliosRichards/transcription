@@ -1,10 +1,13 @@
 import os
 from dotenv import load_dotenv
+import logging
 
 # Define the path to the root of the project
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 # Load environment variables from the .env file in the project root
 load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
+
+logger = logging.getLogger(__name__)
 
 class Settings:
     # --- Database ---
@@ -41,4 +44,6 @@ if not settings.DATABASE_URL:
 if not settings.OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY is not set in the environment.")
 if not settings.GOOGLE_API_KEY:
-    raise ValueError("GOOGLE_API_KEY is not set in the environment.")
+    # Optional: only required for Gemini-based diarization paths.
+    # Keep as a warning so Railway deployments don't fail when Gemini isn't used.
+    logger.warning("GOOGLE_API_KEY is not set; Gemini-based features will be unavailable.")

@@ -1,6 +1,7 @@
 import logging
 from fastapi import APIRouter
 from app.routers import search_router, transcription_router, chat_router, ingestion_router
+from app.routers import company_router
 from app.routers import fusion_router
 
 # Create a new router
@@ -12,3 +13,4 @@ router.include_router(transcription_router.router, tags=["Transcription"])
 router.include_router(chat_router.router, tags=["Chat"])
 router.include_router(ingestion_router.router, tags=["Ingestion"])
 router.include_router(fusion_router.router, tags=["Fusion"])
+router.include_router(company_router.router, tags=["Company"])

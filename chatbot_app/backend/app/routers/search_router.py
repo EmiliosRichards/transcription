@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Request, File, UploadFile, Form, D
 from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, Dict, Any, AsyncGenerator, List, Literal, cast
-from app.services import vector_db, prompt_engine, llm_handler, transcription, task_manager, diarization
+from app.services import vector_db, prompt_engine, llm_handler, transcription, task_manager
 import tempfile
 import os
 import shutil
@@ -12,7 +12,7 @@ from app.services.query_agent import QueryAgent
 from app.services.status_manager import status_manager
 import json
 import uuid
-from sqlalchemy import func, desc, select, delete
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import database
 import datetime
@@ -352,174 +352,8 @@ async def search(
             logger.error(f"An error occurred during non-streaming search: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail="Internal Server Error")
 
-
-@router.post("/correct-company-name", tags=["Transcription"])
-async def correct_company_name(request: CompanyNameCorrectionRequest, db: AsyncSession = Depends(get_db)):
-    """
-    Receives a processed transcript and its ID, and a correct company name,
-    and uses an LLM to replace the incorrect company name.
-    """
-    logger.info(f"Received request to /correct-company-name for ID: {request.transcription_id}")
-    try:
-        prompt = prompt_engine.create_prompt_from_template(
-            "correct_company_name.txt",
-            {
-                "full_transcript": request.full_transcript,
-                "correct_company_name": request.correct_company_name
-            }
-        )
-        logger.info("Generated company name correction prompt.")
-
-        llm_response_str = await llm_handler.get_llm_response(prompt)
-        logger.info("Received response from LLM for company name correction.")
-
-        try:
-            json_start = llm_response_str.find('{')
-            json_end = llm_response_str.rfind('}') + 1
-            if json_start == -1 or json_end == 0:
-                raise ValueError("No JSON object found in the LLM response for correction.")
-            
-            json_str = llm_response_str[json_start:json_end]
-            response_data = json.loads(json_str)
-            logger.info("Successfully parsed JSON from LLM correction response.")
-        except (json.JSONDecodeError, ValueError) as e:
-            logger.error(f"Failed to parse JSON from LLM correction response: {e}")
-            logger.error(f"Raw LLM correction response was: {llm_response_str}")
-            raise HTTPException(status_code=500, detail="Failed to parse correction response from the language model.")
-
-        corrected_transcript = response_data.get("corrected_transcript")
-        if not corrected_transcript:
-            raise HTTPException(status_code=500, detail="LLM correction response did not contain 'corrected_transcript'.")
-
-        # Update database
-        stmt = select(database.Transcription).filter(database.Transcription.id == request.transcription_id)
-        result = await db.execute(stmt)
-        db_transcription = result.scalars().first()
-        if not db_transcription:
-            raise HTTPException(status_code=404, detail="Transcription not found")
-
-        db_transcription.corrected_transcription = corrected_transcript
-        await db.commit()
-
-        return {"corrected_transcript": corrected_transcript}
-
-    except Exception as e:
-        logger.error(f"An error occurred during company name correction: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
-
-
-@router.get("/chats", tags=["Chat"], response_model=List[ChatSessionInfo])
-async def get_chat_sessions(db: AsyncSession = Depends(get_db)):
-    """
-    Retrieves a list of all past chat sessions from the database.
-    """
-    logger.info("Received request to /chats")
-    try:
-        first_message_subq = select(
-            database.ChatLog.session_id,
-            database.ChatLog.content.label('initial_message')
-        ).filter(
-            database.ChatLog.id.in_(
-                select(func.min(database.ChatLog.id)).group_by(database.ChatLog.session_id)
-            )
-        ).subquery('first_messages')
-
-        stmt = select(
-            database.ChatLog.session_id,
-            func.max(database.ChatLog.created_at).label('start_time'),
-            first_message_subq.c.initial_message
-        ).join(
-            first_message_subq,
-            database.ChatLog.session_id == first_message_subq.c.session_id
-        ).group_by(
-            database.ChatLog.session_id,
-            first_message_subq.c.initial_message
-        ).order_by(
-            desc('start_time')
-        )
-        
-        result = await db.execute(stmt)
-        sessions = result.all()
-
-        # Convert SQLAlchemy Row objects to a dict-like structure for Pydantic validation
-        return [ChatSessionInfo.model_validate(session._mapping) for session in sessions]
-    except Exception as e:
-        logger.error(f"An error occurred while fetching chat sessions: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
-
-@router.delete("/chats/{session_id}", tags=["Chat"], status_code=204)
-async def delete_chat_session(session_id: str, db: AsyncSession = Depends(get_db)):
-    """
-    Deletes all logs for a specific chat session.
-    """
-    logger.info(f"Received request to delete chat session ID: {session_id}")
-    try:
-        stmt = select(database.ChatLog).filter(database.ChatLog.session_id == session_id)
-        result = await db.execute(stmt)
-        chat_logs = result.scalars().first()
-        if not chat_logs:
-            raise HTTPException(status_code=404, detail="Chat session not found")
-        
-        delete_stmt = delete(database.ChatLog).filter(database.ChatLog.session_id == session_id)
-        await db.execute(delete_stmt)
-        await db.commit()
-        return
-    except Exception as e:
-        logger.error(f"An error occurred while deleting chat session {session_id}: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
-
-@router.delete("/chats/messages/{message_id}", tags=["Chat"], status_code=204)
-async def delete_chat_message(message_id: int, db: AsyncSession = Depends(get_db)):
-    """
-    Deletes a message.
-    - If it's the first message, the entire chat session is deleted.
-    - Otherwise, deletes the message and all subsequent messages in the session.
-    """
-    logger.info(f"Received request to delete chat message ID: {message_id}")
-    try:
-        stmt = select(database.ChatLog).filter(database.ChatLog.id == message_id)
-        result = await db.execute(stmt)
-        chat_log_entry = result.scalars().first()
-        if not chat_log_entry:
-            raise HTTPException(status_code=404, detail="Chat message not found")
-
-        session_id = chat_log_entry.session_id
-
-        first_message_id_stmt = select(func.min(database.ChatLog.id)).filter(database.ChatLog.session_id == session_id)
-        result = await db.execute(first_message_id_stmt)
-        first_message_id = result.scalar_one_or_none()
-
-        if message_id == first_message_id:
-            logger.info(f"Message {message_id} is the first in session {session_id}. Deleting entire session.")
-            delete_stmt = delete(database.ChatLog).filter(database.ChatLog.session_id == session_id)
-            await db.execute(delete_stmt)
-        else:
-            logger.info(f"Deleting messages from session {session_id} starting from message {message_id}.")
-            delete_stmt = delete(database.ChatLog).filter(
-                database.ChatLog.session_id == session_id,
-                database.ChatLog.id >= message_id
-            )
-            await db.execute(delete_stmt)
-        
-        await db.commit()
-        return
-    except Exception as e:
-        logger.error(f"An error occurred while deleting chat message {message_id}: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
-
-@router.get("/chats/{session_id}", tags=["Chat"], response_model=List[ChatLogInfo])
-async def get_chat_log(session_id: str, db: AsyncSession = Depends(get_db)):
-    """
-    Retrieves all messages for a specific chat session.
-    """
-    logger.info(f"Received request for chat log for session ID: {session_id}")
-    try:
-        stmt = select(database.ChatLog).filter(database.ChatLog.session_id == session_id).order_by(database.ChatLog.created_at)
-        result = await db.execute(stmt)
-        chat_logs = result.scalars().all()
-        if not chat_logs:
-            raise HTTPException(status_code=404, detail="Chat session not found")
-        return [ChatLogInfo.model_validate(log, from_attributes=True) for log in chat_logs]
-    except Exception as e:
-        logger.error(f"An error occurred while fetching chat log for session {session_id}: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
+# NOTE:
+# Chat session CRUD and company-name correction are implemented in
+# `chat_router.py` and `transcription_router.py` respectively.
+# We intentionally keep `search_router.py` focused on the `/search` endpoint
+# to avoid duplicated routes and unpredictable shadowing in FastAPI/OpenAPI.

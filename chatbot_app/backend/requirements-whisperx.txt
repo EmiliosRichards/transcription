@@ -1,0 +1,10 @@
+#
+# Optional dependencies for WhisperX / local ASR.
+#
+# Intentionally NOT included in the Railway "backend" web API service build,
+# because the web API currently uses OpenAI Whisper (cloud) and does not import
+# whisperx directly. Keeping WhisperX separate avoids Railpack/Python version
+# conflicts and reduces build times for the API service.
+#
+whisperx==3.7.6
+

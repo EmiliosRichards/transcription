@@ -1,7 +1,7 @@
 # Railway Configuration for Backend Service
 [build]
-builder = "NIXPACKS"
-buildCommand = "pip install -r requirements.txt"
+# Use Railpack (Nixpacks is deprecated on Railway).
+builder = "RAILPACK"
 
 [deploy]
 startCommand = "python -m uvicorn main:app --host 0.0.0.0 --port $PORT"

@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function CompanyLoginPage() {
+function CompanyLoginInner() {
   const router = useRouter();
   const params = useSearchParams();
   const nextPath = useMemo(() => params.get("next") || "/company", [params]);
@@ -71,6 +71,20 @@ export default function CompanyLoginPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function CompanyLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-6 min-h-screen flex flex-col items-center justify-center">
+          <div className="w-full max-w-md text-sm text-muted-foreground">Loading…</div>
+        </div>
+      }
+    >
+      <CompanyLoginInner />
+    </Suspense>
   );
 }
 

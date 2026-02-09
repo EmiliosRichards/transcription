@@ -1,10 +1,13 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
 
-const rawPort = process.env.PORT;
-const port = rawPort ? Number(rawPort) : 5000;
+const rawPort = (process.env.PORT ?? "").trim();
+// Default to 8080 in production-like environments since that is the common
+// platform expectation (Railway often targets 8080 unless overridden).
+const defaultPort = process.env.NODE_ENV === "production" ? 8080 : 5000;
+const port = rawPort ? Number(rawPort) : defaultPort;
 if (!Number.isFinite(port) || port <= 0) {
-  console.error(`[startup] Invalid PORT: ${rawPort ?? "(unset)"}`);
+  console.error(`[startup] Invalid PORT: ${rawPort || "(unset)"}`);
   process.exit(1);
 }
 

@@ -279,7 +279,7 @@ def summarize_company_from_url(
     for attribute extraction + partner matching + pitch generation.
     """
     url = normalize_url(url)
-    model = (model or os.environ.get("COMPANY_INTEL_MODEL") or "gpt-4o-mini").strip()
+    model = (model or os.environ.get("COMPANY_INTEL_MODEL") or "gpt-5.2-2025-12-11").strip()
     if not model:
         raise ValueError("Missing COMPANY_INTEL_MODEL (empty).")
 
@@ -322,7 +322,7 @@ Company name hint (may be blank): {company_name_hint}
         system_prompt=system_prompt,
         user_prompt=user_prompt,
         tools=[{"type": "web_search_preview"}],
-        max_tool_calls=int(os.environ.get("COMPANY_INTEL_MAX_TOOL_CALLS", "2") or 2),
+        max_tool_calls=int(os.environ.get("COMPANY_INTEL_MAX_TOOL_CALLS", "5") or 5),
         timeout_seconds=float(os.environ.get("COMPANY_INTEL_TIMEOUT_SECONDS", "60") or 60),
     )
     # Ensure the input_url matches the normalized URL for downstream determinism.
@@ -349,7 +349,7 @@ def evaluate_company_url(
     """
     url = normalize_url(url)
     # Default to a widely-available, lower-cost model unless overridden.
-    model = (model or os.environ.get("COMPANY_EVAL_MODEL") or "gpt-5.1-2025-11-13").strip()
+    model = (model or os.environ.get("COMPANY_EVAL_MODEL") or "gpt-5.2-2025-12-11").strip()
     if not model:
         raise ValueError("Missing COMPANY_EVAL_MODEL (empty).")
 
@@ -357,7 +357,7 @@ def evaluate_company_url(
     res, usage, billed_q, citations = evaluate_company_with_usage_and_web_search_artifacts(
         url,
         model,
-        max_tool_calls=int(os.environ.get("COMPANY_EVAL_MAX_TOOL_CALLS", "2") or 2),
+        max_tool_calls=int(os.environ.get("COMPANY_EVAL_MAX_TOOL_CALLS", "15") or 15),
         # Default ON to reduce domain/lookalike misattribution (can still be disabled explicitly).
         second_query_on_uncertainty=(
             os.environ.get("COMPANY_EVAL_SECOND_QUERY", "1").strip().lower() in {"1", "true", "yes", "y"}
@@ -368,6 +368,13 @@ def evaluate_company_url(
     company_name = str(res.get("company_name") or "").strip()
     confidence = str(res.get("confidence") or "").strip().lower() or "low"
     reasoning = str(res.get("reasoning") or "").strip()
+    positives = res.get("positives") if isinstance(res, dict) else None
+    concerns = res.get("concerns") if isinstance(res, dict) else None
+
+    if not isinstance(positives, list):
+        positives = []
+    if not isinstance(concerns, list):
+        concerns = []
 
     out: Dict[str, Any] = {
         "input_url": url,
@@ -375,6 +382,8 @@ def evaluate_company_url(
         "score": score,
         "confidence": confidence,
         "reasoning": reasoning,
+        "positives": [str(x) for x in positives if str(x).strip()],
+        "concerns": [str(x) for x in concerns if str(x).strip()],
         "meta": {
             "model": model,
             "web_search_calls": int(billed_q),
@@ -419,6 +428,9 @@ def generate_sales_pitch_for_company(
     company_url: str,
     company_name: str = "",
     description: Optional[str] = None,
+    eval_score: Optional[float] = None,
+    eval_positives: Optional[List[str]] = None,
+    eval_concerns: Optional[List[str]] = None,
     model: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
@@ -429,7 +441,7 @@ def generate_sales_pitch_for_company(
     - match reasoning
     """
     url = normalize_url(company_url)
-    model = (model or os.environ.get("COMPANY_PITCH_MODEL") or "gpt-4o-mini").strip()
+    model = (model or os.environ.get("COMPANY_PITCH_MODEL") or "gpt-5.2-2025-12-11").strip()
     if not model:
         raise ValueError("Missing COMPANY_PITCH_MODEL (empty).")
 
@@ -493,8 +505,13 @@ def generate_sales_pitch_for_company(
     # 2) Match partner
     partners = load_golden_partners()
     partner_summaries = _render_partner_summaries(partners)
+    loose_match = False
+    try:
+        loose_match = eval_score is not None and float(eval_score) >= 6.0
+    except Exception:
+        loose_match = False
     pm_prompt = _prompt_from_template(
-        PROMPTS_DIR / "german_partner_matching_prompt.txt",
+        PROMPTS_DIR / ("german_partner_matching_prompt_loose.txt" if loose_match else "german_partner_matching_prompt.txt"),
         {
             "{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}": json.dumps(attrs, ensure_ascii=False, indent=2),
             "{{GOLDEN_PARTNER_SUMMARIES_PLACEHOLDER}}": partner_summaries,
@@ -548,6 +565,17 @@ def generate_sales_pitch_for_company(
                 break
 
     no_match = matched_partner is None
+    if no_match and loose_match and partners:
+        # Loose mode: force a "best available" match (fallback to top-ranked partner).
+        matched_partner = partners[0]
+        partner_match = {
+            "match_score": "Low",
+            "matched_partner_name": str(matched_partner.get("name") or ""),
+            "match_rationale_features": [
+                "Best-available Fallstudie gewählt (lockerer Match-Modus bei hohem Manuav-Fit).",
+            ],
+        }
+        no_match = False
     if no_match:
         # Normalize the model output so the UI is consistent.
         partner_match = {
@@ -563,8 +591,12 @@ def generate_sales_pitch_for_company(
         if no_match
         else PROMPTS_DIR / "german_sales_pitch_generation_prompt.txt"
     )
+    eval_positives = eval_positives if isinstance(eval_positives, list) else []
+    eval_concerns = eval_concerns if isinstance(eval_concerns, list) else []
     sp_replacements = {
         "{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}": json.dumps(attrs, ensure_ascii=False, indent=2),
+        "{{EVALUATOR_POSITIVES_JSON_PLACEHOLDER}}": json.dumps(eval_positives, ensure_ascii=False, indent=2),
+        "{{EVALUATOR_CONCERNS_JSON_PLACEHOLDER}}": json.dumps(eval_concerns, ensure_ascii=False, indent=2),
     }
     if not no_match:
         sp_replacements["{{PREVIOUS_MATCH_RATIONALE_PLACEHOLDER}}"] = json.dumps(prev_rationale, ensure_ascii=False, indent=2)

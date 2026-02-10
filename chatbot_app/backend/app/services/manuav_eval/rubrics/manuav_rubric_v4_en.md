@@ -46,6 +46,14 @@ What to look for:
 - A defined ICP and buyer personas (CEO/CRO/CFO/CIO/Head of Sales/Marketing/Operations).
 - Evidence of B2B motion: case studies, customer logos, “request demo”, partner ecosystem, integrations.
 
+Edge cases (important):
+- Some companies look “B2C” at first glance (e.g., e-commerce shops), but still have meaningful **B2B revenue** (selling to trades/SMBs, institutions, or business buyers).
+- Treat as **B2B / viable for outbound** only if there is clear evidence of business purchasing/sales motion, e.g.:
+  - “Firmenkunden / Gewerbekunden / Geschäftskunden”, B2B portal/login, wholesale (“Großhandel”)
+  - invoice purchase (“Rechnung”), bulk ordering (“Mengenrabatt”), dedicated account managers / sales team (“Vertrieb”)
+  - explicit language like “für Unternehmen”, “für Betriebe”, “für Teams”
+- If the company is **mixed** (some B2B signals but mostly consumer-first), do NOT auto-fail — but score conservatively and reflect uncertainty in confidence.
+
 Red flags:
 - App-store-first messaging, influencer/consumer monetization, “download the app”, “fans/users”, ad-driven economics.
 
@@ -141,6 +149,10 @@ Example:
 What to think about:
 - Can you pitch it in **1–2 sentences** with a clear pain → ROI → CTA?
 - Are the buyers reachable and open to cold calls (CEO/CRO/CFO often more receptive than pure legal/compliance)?
+
+Additional context you may be given:
+- If the company has visited Manuav's website directly, treat this as **mild inbound intent**.
+- This is a small positive signal for outreach-readiness (pitchability), but it must NOT override hard lines (B2B clarity, DACH presence, economics).
 
 High-friction personas (needs stronger proof/urgency):
 - Conservative professional services, legal, some compliance-heavy functions that are referral-driven and interruption-averse.

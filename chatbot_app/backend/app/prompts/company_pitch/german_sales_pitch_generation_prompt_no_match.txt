@@ -9,6 +9,7 @@ We did NOT find a suitable "Golden Partner" case study match. Therefore:
 - Still sound natural and like a real phone call.
 - You are speaking as Manuav (a B2B cold-calling / lead generation service). The word "wir" refers to Manuav (not the target company).
 - IMPORTANT: Make it feel specific to the target company by referencing 1–2 concrete attributes if available (e.g., industry, one product/service, ICP/target segment, business model). If the attributes are unclear, use a safe generic phrase like "in Ihrem Bereich" / "für Ihre Zielgruppe".
+ - You will also receive evaluator points (`Evaluator positives/concerns`). Prefer using 1–2 of the evaluator positives as bullets in the pitch (if relevant). Do NOT mention "Evaluator" explicitly.
 
 **Tasks to Perform:**
 
@@ -18,11 +19,11 @@ We did NOT find a suitable "Golden Partner" case study match. Therefore:
 2. **Generate consultative sales line (in German):**
    Craft a compelling `phone_sales_line` in German using the mandatory structure below.
 
-**Mandatory Structure (2 short paragraphs):**
-"Wie gesagt, wir haben uns auf Ihrer Webseite angeschaut, was Sie machen. Wir unterstützen Unternehmen wie Ihres dabei, planbar qualifizierte Gespräche/Leads mit der passenden Zielgruppe aufzubauen — insbesondere wenn [1 konkrete Herausforderung aus den Attributen, z.B. 'komplexe Produkte erklärt werden müssen' / 'viele Entscheider involviert sind' / 'SaaS/Subscription' / etc.].\n\nUnd da hat mein Chef mich gebeten, einen kurzen Termin mit Ihnen zu vereinbaren, in dem wir einfach mal schauen, ob wir zusammenpassen und in dem Sie auch direkt Fragen beantworten können."
+**Mandatory Structure (intro + bullets + closing paragraph):**
+"Wie gesagt, wir haben uns auf Ihrer Webseite angeschaut, was Sie machen.\n\n- [1 Bullet: 1 konkretes Target-Attribut / Problem, das sich für Outbound eignet.]\n- [1 Bullet: Warum das Outbound-/Telefon-Setup hier Sinn macht (Buyer/ICP/Komplexität; gern 1 Evaluator-Positive nutzen).]\n- [1 Bullet: Welche Art von Ergebnis/Prozess wir typischerweise ermöglichen (ohne Zahlen, ohne Case Study).]\n\nUnd da hat mein Chef mich gebeten, einen kurzen Termin mit Ihnen zu vereinbaren, in dem wir einfach mal schauen, ob wir zusammenpassen und in dem Sie auch direkt Fragen beantworten können."
 
 **Style constraints:**
-- Max ~550 characters.
+- Keep it short and scannable: intro + 3 bullets + closing paragraph. Max ~850 characters.
 - Conversational, spoken on the phone.
 - No invented specifics outside the provided attributes.
 - Do not mention any partner, case study, or past project results.
@@ -38,4 +39,12 @@ We did NOT find a suitable "Golden Partner" case study match. Therefore:
 --------TARGET COMPANY ATTRIBUTES JSON------------
 {{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}
 -----------END OF JSON-----------------
+
+--------EVALUATOR POSITIVES (German, optional)------------
+{{EVALUATOR_POSITIVES_JSON_PLACEHOLDER}}
+-----------END OF LIST-----------------
+
+--------EVALUATOR CONCERNS (German, optional)------------
+{{EVALUATOR_CONCERNS_JSON_PLACEHOLDER}}
+-----------END OF LIST-----------------
 

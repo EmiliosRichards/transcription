@@ -74,10 +74,45 @@ def _sanitize_reasoning(text: str, *, max_len: int = REASONING_MAX_LENGTH) -> st
     s = s.replace(_U2028, " ").replace(_U2029, " ")
     s = _MD_LINK_RE.sub(r"\1", s)
     s = _URL_RE.sub("", s)
-    s = re.sub(r"\s+", " ", s).strip()
+    # Preserve line breaks (UI uses whitespace-pre-wrap), but normalize internal whitespace.
+    s = s.replace("\r\n", "\n").replace("\r", "\n")
+    lines_in = [ln.strip() for ln in s.split("\n")]
+    lines = []
+    for ln in lines_in:
+        if not ln:
+            continue
+        # Keep common bullet prefixes, but clean up spacing.
+        prefix = ""
+        body = ln
+        if body.startswith("-"):
+            prefix = "- "
+            body = body[1:].lstrip()
+        elif body.startswith("•"):
+            prefix = "- "
+            body = body[1:].lstrip()
+        body = re.sub(r"\s+", " ", body).strip()
+        if not body:
+            continue
+        lines.append(f"{prefix}{body}" if prefix else body)
+    s = "\n".join(lines).strip()
 
     if len(s) <= max_len:
         return s
+
+    # Prefer cutting at a line boundary, then at sentence boundary.
+    if "\n" in s:
+        out_lines = []
+        remaining = max_len
+        for ln in s.split("\n"):
+            # +1 for newline join (except first)
+            extra = 1 if out_lines else 0
+            if len(ln) + extra > remaining:
+                break
+            out_lines.append(ln)
+            remaining -= len(ln) + extra
+        out = "\n".join(out_lines).rstrip()
+        if out:
+            return out
 
     s = s[:max_len].rstrip()
     for punct in (".", "!", "?"):
@@ -504,20 +539,27 @@ def _evaluate_company_raw(
         extra_instruction_block = (
             "\nExtra instructions:\n"
             "- Default to ONE web search query.\n"
-            "- If (and only if) the first query does NOT yield trustworthy evidence about the company behind the provided domain "
-            "(e.g., domain seems inactive/parked, results point to different entities, or multiple similarly named companies appear), "
-            "you SHOULD run exactly ONE additional disambiguation query.\n"
-            "- Do NOT use a second query just to gather extra detail (e.g., pricing/ARPU) when the company is already clearly identified.\n"
+            "- If (and only if) the first query does NOT yield trustworthy evidence for a decision-critical hard line, "
+            "you SHOULD run exactly ONE additional targeted query.\n"
+            "  - Examples of decision-critical hard lines: B2B vs B2C, operational status, or identity (lookalikes).\n"
+            "  - For B2B vs B2C, look for signals like: B2B, Firmenkunden/Gewerbekunden/Geschäftskunden, Großhandel, "
+            "Mengenrabatte, Rechnungskauf, Vertrieb/Sales-Team, 'für Unternehmen'.\n"
+            "- Do NOT use a second query just to gather extra detail (e.g., pricing/ARPU) when the hard lines are already clear.\n"
             "- Do not use more than two queries total.\n"
         )
 
     user_prompt = f"""\
 Evaluate this company for Manuav using web research and the Manuav Fit logic.
 
+Business context (important):
+- This company has visited Manuav's website directly (inbound intent).
+- This does NOT automatically make them a good fit, but it is a mild positive signal that they are at least curious about outreach/cold calling.
+- Do NOT let this override hard lines like B2B clarity, DACH presence, or economics. Use it mainly as a small boost to "phone pitch potential" / readiness when other fundamentals are borderline.
+
 Instructions:
 - CRITICAL: Anchor identity to the provided domain: {domain or "(unknown domain)"}.
 - Your FIRST web search query should be domain-anchored to avoid lookalikes, e.g.:
-  - site:{domain} (impressum OR kontakt OR about OR pricing OR product)
+  - site:{domain} (impressum OR kontakt OR about OR "über uns" OR karriere OR product OR pricing OR sortiment OR zielgruppen OR b2b OR firmenkunden OR gewerbekunden OR geschäftskunden OR großhandel OR "für unternehmen")
 - Prefer sources that clearly refer to {domain} (the website itself and pages it links to).
 - Use the web search tool to research:
   - the company website itself (product/service, ICP, pricing, cases, careers, legal/imprint)
@@ -525,7 +567,14 @@ Instructions:
 {tool_budget_line}- Be conservative when evidence is missing.
 {extra_instruction_block}- In the JSON output:
   - set input_url exactly to the Company website URL below
-  - keep reasoning SHORT (target 2-3 sentences, ~250-350 characters; hard cap {REASONING_MAX_LENGTH} chars). End with a complete sentence.
+  - Output language: Write `reasoning`, `positives`, and `concerns` in German (Deutsch).
+  - Output format (hard requirement):
+    - `reasoning`: 1–2 short sentences summarizing the fit (neutral tone allowed: "nicht schlecht, nicht ideal").
+    - `positives`: 0–6 concise bullet-like strings (each a complete sentence) describing what could make them a good fit for Manuav.
+    - `concerns`: 0–6 concise bullet-like strings (each a complete sentence) describing concerns / open questions that reduce fit.
+      - If evidence is missing/ambiguous, phrase as an open question to validate (e.g., "Unklar, ob …; falls ja/nein, würde das den Fit verbessern/verschlechtern.").
+    - Do NOT be overly harsh. Low scores should have more `concerns` and fewer `positives`, and vice versa.
+    - Hard cap: {REASONING_MAX_LENGTH} characters for `reasoning` only.
 {sources_instruction}  - do NOT include URLs in `reasoning`.
 
 Company website URL: {normalized_url}

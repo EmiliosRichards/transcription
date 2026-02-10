@@ -14,6 +14,8 @@ type EvalResponse = {
   score: number;
   confidence: "low" | "medium" | "high" | string;
   reasoning: string;
+  positives?: string[] | null;
+  concerns?: string[] | null;
   description?: string | null;
 };
 
@@ -81,6 +83,9 @@ export default function CompanyPage() {
           url: url.trim() || evalResult.input_url,
           company_name: evalResult.company_name || "",
           description: evalResult.description || null,
+          eval_score: typeof evalResult.score === "number" ? evalResult.score : null,
+          eval_positives: Array.isArray(evalResult.positives) ? evalResult.positives : [],
+          eval_concerns: Array.isArray(evalResult.concerns) ? evalResult.concerns : [],
         }),
       });
       if (!res.ok) {
@@ -134,21 +139,28 @@ export default function CompanyPage() {
             <div className="text-sm text-muted-foreground">
               Paste a company website URL. We’ll evaluate fit (0–10) and explain why.
             </div>
-            <div className="flex flex-col md:flex-row gap-3">
+            <form
+              className="flex flex-col md:flex-row gap-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!url.trim() || isEvaluating) return;
+                onEvaluate();
+              }}
+            >
               <Input
                 placeholder="https://company.com"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
               />
               <Button
-                onClick={onEvaluate}
+                type="submit"
                 disabled={!url.trim() || isEvaluating}
                 variant="ghost"
                 className="rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300 dark:from-gray-800 dark:to-gray-700 dark:text-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-sm"
               >
                 {isEvaluating ? "Evaluating..." : "Evaluate"}
               </Button>
-            </div>
+            </form>
 
             {isEvaluating && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -182,7 +194,32 @@ export default function CompanyPage() {
                     <Progress value={scorePct} className="w-full [&>div]:bg-blue-500" />
                   </div>
 
-                  <div className="text-sm whitespace-pre-wrap">{evalResult.reasoning}</div>
+                  <div className="text-sm">
+                    <div className="font-medium">Zusammenfassung:</div>
+                    <div className="mt-1 whitespace-pre-wrap text-muted-foreground">{evalResult.reasoning}</div>
+
+                    {Array.isArray(evalResult.positives) && evalResult.positives.length > 0 && (
+                      <div className="mt-3">
+                        <div className="font-medium">Positive Punkte:</div>
+                        <ul className="list-disc ml-5 mt-1 space-y-1 text-muted-foreground">
+                          {evalResult.positives.map((p, i) => (
+                            <li key={i}>{p}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {Array.isArray(evalResult.concerns) && evalResult.concerns.length > 0 && (
+                      <div className="mt-3">
+                        <div className="font-medium">Bedenken / offene Fragen:</div>
+                        <ul className="list-disc ml-5 mt-1 space-y-1 text-muted-foreground">
+                          {evalResult.concerns.map((c, i) => (
+                            <li key={i}>{c}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
 
                   {evalResult.description && (
                     <details className="text-sm">

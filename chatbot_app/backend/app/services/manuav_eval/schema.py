@@ -14,6 +14,8 @@ OUTPUT_SCHEMA: Dict[str, Any] = {
         "manuav_fit_score": {"type": "number", "minimum": 0, "maximum": 10},
         "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
         "reasoning": {"type": "string", "maxLength": REASONING_MAX_LENGTH},
+        "positives": {"type": "array", "items": {"type": "string"}, "maxItems": 8},
+        "concerns": {"type": "array", "items": {"type": "string"}, "maxItems": 8},
     },
     "required": [
         "input_url",
@@ -21,6 +23,8 @@ OUTPUT_SCHEMA: Dict[str, Any] = {
         "manuav_fit_score",
         "confidence",
         "reasoning",
+        "positives",
+        "concerns",
     ],
 }
 

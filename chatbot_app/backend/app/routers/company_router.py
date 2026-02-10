@@ -41,6 +41,8 @@ class CompanyEvaluateResponse(BaseModel):
     score: float
     confidence: str
     reasoning: str
+    positives: list[str] = Field(default_factory=list)
+    concerns: list[str] = Field(default_factory=list)
     description: Optional[str] = None
     meta: Dict[str, Any]
 
@@ -49,6 +51,9 @@ class CompanyPitchRequest(BaseModel):
     url: str = Field(..., min_length=1, max_length=2048, description="Company website URL")
     company_name: Optional[str] = Field(default="", description="Optional company name")
     description: Optional[str] = Field(default=None, description="Optional description text to reuse (from evaluation step)")
+    eval_score: Optional[float] = Field(default=None, description="Optional Manuav fit score (0..10) from evaluation step")
+    eval_positives: list[str] = Field(default_factory=list, description="Optional evaluator positives (German)")
+    eval_concerns: list[str] = Field(default_factory=list, description="Optional evaluator concerns (German)")
 
 
 @router.post("/company/evaluate", response_model=CompanyEvaluateResponse, tags=["Company"])
@@ -63,6 +68,8 @@ def evaluate_company(req: CompanyEvaluateRequest, _api_key: str = Security(requi
             score=float(out.get("score") or 0),
             confidence=str(out.get("confidence") or "low"),
             reasoning=str(out.get("reasoning") or ""),
+            positives=list(out.get("positives") or []),
+            concerns=list(out.get("concerns") or []),
             description=(str(out.get("description") or "").strip() or None),
             meta=dict(out.get("meta") or {}),
         )
@@ -82,6 +89,9 @@ def generate_pitch(req: CompanyPitchRequest, _api_key: str = Security(require_ap
             company_url=req.url,
             company_name=req.company_name or "",
             description=req.description,
+            eval_score=req.eval_score,
+            eval_positives=req.eval_positives,
+            eval_concerns=req.eval_concerns,
         )
         # Shape the response to what the UI needs now:
         partner_match = (out.get("partner_match") or {}) if isinstance(out.get("partner_match"), dict) else {}

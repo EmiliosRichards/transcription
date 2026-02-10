@@ -14,20 +14,21 @@ Return a single, valid JSON object. Do not include any conversational preamble, 
     *   Do NOT mention the Golden Partner's name.
     *   IMPORTANT: You are speaking as Manuav (a B2B cold-calling / lead generation service). The word "wir" refers to Manuav.
     *   CRITICAL: When describing what the matched Golden Partner does (their product/service), NEVER use first person ("wir bieten ..."). Describe them in third person, e.g. "ein Unternehmen, das ..." / "ein Anbieter, der ...".
-    *   Use the mandatory structure below (tone + flow).
+    *   Use the mandatory structure below (tone + flow + bullet proof points).
     *   IMPORTANT: Make it feel specific to the target company by naturally referencing 1–2 concrete attributes if available (e.g., industry, one product/service, ICP/target segment, business model). Do not force it if the attributes are unclear—use a safe generic phrase like "in Ihrem Bereich" / "für Ihre Zielgruppe".
+    *   You will also receive evaluator points (`Evaluator positives/concerns`). Prefer using 1–2 of the evaluator positives as bullets in the pitch (if relevant). Do NOT mention "Evaluator" explicitly.
 
 --------PREVIOUS MATCH RATIONALE------------
 {{PREVIOUS_MATCH_RATIONALE_PLACEHOLDER}}
 -----------END OF RATIONALE-----------------
 
 **Mandatory Structure:**
-"Wie gesagt, wir haben uns auf Ihrer Webseite angeschaut, was Sie machen und für ein Unternehmen mit ähnlicher Herausforderung haben wir bereits sehr produktiv gearbeitet. Und zwar für ein Unternehmen, das [kurze, konkrete Beschreibung des ähnlichen Use-Cases / Problems in 1–2 Sätzen, basierend auf Attributen und Match-Rationale; 3. Person, z.B. 'digitale Lösungen für … anbietet'] — dort generieren wir aktuell etwa {avg_leads_per_day} Leads pro Tag.\n\nUnd da hat mein Chef mich gebeten, einen kurzen Termin mit Ihnen zu vereinbaren, in dem wir einfach mal schauen, ob wir zusammenpassen und in dem Sie auch direkt Fragen beantworten können."
+"Wie gesagt, wir haben uns auf Ihrer Webseite angeschaut, was Sie machen und für ein Unternehmen mit ähnlicher Herausforderung haben wir bereits sehr produktiv gearbeitet.\n\n- [1 Bullet: Konkrete Ähnlichkeit Target ↔ ähnliches Unternehmen/Use-Case (aus Attributen + Match-Rationale).]\n- [1 Bullet: Welche Herausforderung wir dort gelöst haben / was wir verbessert haben (kurz, plausibel, keine erfundenen Zahlen).]\n- [1 Bullet: Warum das auch bei Ihnen Sinn macht (1–2 konkrete Target-Attribute; gern 1 Evaluator-Positive nutzen).]\n- [1 Bullet: Ergebnis/Outcome als Social Proof: „Dort generieren wir aktuell etwa {avg_leads_per_day} Leads pro Tag.“]\n\nUnd da hat mein Chef mich gebeten, einen kurzen Termin mit Ihnen zu vereinbaren, in dem wir einfach mal schauen, ob wir zusammenpassen und in dem Sie auch direkt Fragen beantworten können."
 
 **CRITICAL INSTRUCTION:** The token `{avg_leads_per_day}` MUST NOT be altered or removed. It will be replaced by a script later.
 
 **Style constraints:**
-- Keep it to 2 short paragraphs (as above), max ~550 characters.
+- Keep it short and scannable: intro + 4 bullets + closing paragraph. Max ~900 characters.
 - Sound natural and conversational (spoken on the phone), not like marketing copy.
 - Do not invent specific numbers other than `{avg_leads_per_day}`.
 - Do not invent facts that are not supported by the Target Company Attributes JSON.
@@ -48,4 +49,12 @@ Return a single, valid JSON object. Do not include any conversational preamble, 
 --------MATCHED GOLDEN PARTNER JSON------------
 {{MATCHED_GOLDEN_PARTNER_JSON_PLACEHOLDER}}
 -----------END OF JSON-----------------
+
+--------EVALUATOR POSITIVES (German, optional)------------
+{{EVALUATOR_POSITIVES_JSON_PLACEHOLDER}}
+-----------END OF LIST-----------------
+
+--------EVALUATOR CONCERNS (German, optional)------------
+{{EVALUATOR_CONCERNS_JSON_PLACEHOLDER}}
+-----------END OF LIST-----------------
 

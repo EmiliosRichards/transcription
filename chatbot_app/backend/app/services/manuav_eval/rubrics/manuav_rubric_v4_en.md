@@ -33,7 +33,8 @@ Use these categories as **thinking prompts** to judge fit.
 
 ### Hard lines (gating constraints)
 Treat the following as **hard-line constraints** (or near-hard caps) that should push the final score into the low bands when clearly violated:
-- **B2B clarity**: If the company is fundamentally B2C/consumer-first, Manuav fit is usually very low.
+- **B2B clarity**: If the company is fundamentally B2C/consumer-first, Manuav fit is usually low.
+  - Exception: if there is clear evidence of a meaningful **B2B procurement / institutional buying** segment (e.g., workwear/PPE for businesses, team/club outfitting, bulk orders/invoice purchasing, wholesale/trade accounts), do NOT auto-fail. Treat this as “mixed B2C/B2B” and allow a mid score if economics and buyer personas make outbound plausible.
 - **DACH focus/presence**: If there are no meaningful DACH signals, be conservative (even if the global story looks strong).
 - **Operational status / GTM maturity**: If the business is not actually operating (e.g., insolvent, shut down, dormant) or is clearly “pre-launch” with no real go-to-market proof, the score should be heavily penalized.
 - **Economics**: If pricing/ACV/LTV looks too small to justify paid outbound, the final score should not be high.
@@ -52,7 +53,10 @@ Edge cases (important):
   - “Firmenkunden / Gewerbekunden / Geschäftskunden”, B2B portal/login, wholesale (“Großhandel”)
   - invoice purchase (“Rechnung”), bulk ordering (“Mengenrabatt”), dedicated account managers / sales team (“Vertrieb”)
   - explicit language like “für Unternehmen”, “für Betriebe”, “für Teams”
-- If the company is **mixed** (some B2B signals but mostly consumer-first), do NOT auto-fail — but score conservatively and reflect uncertainty in confidence.
+- If the company is **mixed** (some B2B signals but mostly consumer-first), do NOT auto-fail — score conservatively and reflect uncertainty in confidence.
+  - Scoring guidance for mixed e-commerce:
+    - If there is credible B2B procurement use (e.g., workwear/PPE for businesses, team/club equipment incl. printing, recurring outfitting needs) but economics are unclear: typical outcome is **4–6** (“not bad, not great”).
+    - If there is explicit B2B motion + higher deal sizes (wholesale, trade accounts, invoices, bulk) and a callable buyer persona (procurement/ops/club board): **6–7** can be justified.
 
 Red flags:
 - App-store-first messaging, influencer/consumer monetization, “download the app”, “fans/users”, ad-driven economics.
@@ -149,6 +153,10 @@ Example:
 What to think about:
 - Can you pitch it in **1–2 sentences** with a clear pain → ROI → CTA?
 - Are the buyers reachable and open to cold calls (CEO/CRO/CFO often more receptive than pure legal/compliance)?
+
+Special note (mixed B2C/B2B commerce):
+- Outbound can still make sense for e-commerce businesses when the real motion is **B2B procurement** (e.g., trades buying workwear/PPE, clubs/teams ordering kits + printing, institutions ordering in bulk).
+- In those cases, the buyer persona is often **operations/procurement, club/association board, store/branch managers**, not “end consumers”.
 
 Additional context you may be given:
 - If the company has visited Manuav's website directly, treat this as **mild inbound intent**.

@@ -7,6 +7,7 @@ We did NOT find a suitable "Golden Partner" case study match. Therefore:
 - Do NOT reference any previous case study or "ähnliches Projekt" with concrete outcomes.
 - Do NOT mention any numbers (no leads/day).
 - Still sound natural and like a real phone call.
+- You are speaking as Manuav (a B2B cold-calling / lead generation service). The word "wir" refers to Manuav (not the target company).
 - IMPORTANT: Make it feel specific to the target company by referencing 1–2 concrete attributes if available (e.g., industry, one product/service, ICP/target segment, business model). If the attributes are unclear, use a safe generic phrase like "in Ihrem Bereich" / "für Ihre Zielgruppe".
 
 **Tasks to Perform:**

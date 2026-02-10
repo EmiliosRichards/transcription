@@ -12,6 +12,8 @@ Return a single, valid JSON object. Do not include any conversational preamble, 
 2.  **Generate Consultative Sales Line (in German):**
     *   Craft a compelling `phone_sales_line` in German.
     *   Do NOT mention the Golden Partner's name.
+    *   IMPORTANT: You are speaking as Manuav (a B2B cold-calling / lead generation service). The word "wir" refers to Manuav.
+    *   CRITICAL: When describing what the matched Golden Partner does (their product/service), NEVER use first person ("wir bieten ..."). Describe them in third person, e.g. "ein Unternehmen, das ..." / "ein Anbieter, der ...".
     *   Use the mandatory structure below (tone + flow).
     *   IMPORTANT: Make it feel specific to the target company by naturally referencing 1–2 concrete attributes if available (e.g., industry, one product/service, ICP/target segment, business model). Do not force it if the attributes are unclear—use a safe generic phrase like "in Ihrem Bereich" / "für Ihre Zielgruppe".
 
@@ -20,7 +22,7 @@ Return a single, valid JSON object. Do not include any conversational preamble, 
 -----------END OF RATIONALE-----------------
 
 **Mandatory Structure:**
-"Wie gesagt, wir haben uns auf Ihrer Webseite angeschaut, was Sie machen und für ein Unternehmen mit ähnlicher Herausforderung haben wir bereits sehr produktiv gearbeitet. Und zwar [kurze, konkrete Beschreibung des ähnlichen Use-Cases / Problems in 1–2 Sätzen, basierend auf Attributen und Match-Rationale] — dort generieren wir aktuell etwa {avg_leads_per_day} Leads pro Tag.\n\nUnd da hat mein Chef mich gebeten, einen kurzen Termin mit Ihnen zu vereinbaren, in dem wir einfach mal schauen, ob wir zusammenpassen und in dem Sie auch direkt Fragen beantworten können."
+"Wie gesagt, wir haben uns auf Ihrer Webseite angeschaut, was Sie machen und für ein Unternehmen mit ähnlicher Herausforderung haben wir bereits sehr produktiv gearbeitet. Und zwar für ein Unternehmen, das [kurze, konkrete Beschreibung des ähnlichen Use-Cases / Problems in 1–2 Sätzen, basierend auf Attributen und Match-Rationale; 3. Person, z.B. 'digitale Lösungen für … anbietet'] — dort generieren wir aktuell etwa {avg_leads_per_day} Leads pro Tag.\n\nUnd da hat mein Chef mich gebeten, einen kurzen Termin mit Ihnen zu vereinbaren, in dem wir einfach mal schauen, ob wir zusammenpassen und in dem Sie auch direkt Fragen beantworten können."
 
 **CRITICAL INSTRUCTION:** The token `{avg_leads_per_day}` MUST NOT be altered or removed. It will be replaced by a script later.
 

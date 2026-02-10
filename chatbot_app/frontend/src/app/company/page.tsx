@@ -16,6 +16,7 @@ type EvalResponse = {
   reasoning: string;
   positives?: string[] | null;
   concerns?: string[] | null;
+  fit_attributes?: Record<string, any> | null;
   description?: string | null;
 };
 
@@ -83,9 +84,9 @@ export default function CompanyPage() {
           url: url.trim() || evalResult.input_url,
           company_name: evalResult.company_name || "",
           description: evalResult.description || null,
-          eval_score: typeof evalResult.score === "number" ? evalResult.score : null,
           eval_positives: Array.isArray(evalResult.positives) ? evalResult.positives : [],
           eval_concerns: Array.isArray(evalResult.concerns) ? evalResult.concerns : [],
+          fit_attributes: evalResult.fit_attributes && typeof evalResult.fit_attributes === "object" ? evalResult.fit_attributes : {},
         }),
       });
       if (!res.ok) {

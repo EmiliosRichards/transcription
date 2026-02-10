@@ -94,8 +94,8 @@ def load_golden_partners() -> List[Dict[str, Any]]:
     """
     Loads golden partners from either:
     - env `GOLDEN_PARTNERS_JSON` (JSON array), or
-    - env `GOLDEN_PARTNERS_PATH` (path to JSON or XLSX), or
-    - repo-root `kgs_001_ER47_20250626.xlsx` (if present), or
+    - env `GOLDEN_PARTNERS_PATH` (path to JSON, CSV, or XLSX), or
+    - repo-root `kgs_001_ER47_20250626.csv` / `kgs_001_ER47_20250626.xlsx` (if present), or
     - bundled `app/data/golden_partners.json` (fallback)
     """
     env_json = (os.environ.get("GOLDEN_PARTNERS_JSON") or "").strip()
@@ -119,8 +119,9 @@ def load_golden_partners() -> List[Dict[str, Any]]:
         back to the service root.
         """
         app_dir = _app_dir()
-        # Walk upwards looking for a repo marker or the XLSX itself.
+        # Walk upwards looking for a repo marker or the partner file itself.
         markers = [
+            "kgs_001_ER47_20250626.csv",
             "kgs_001_ER47_20250626.xlsx",
             ".git",
             "railway.toml",
@@ -154,6 +155,135 @@ def load_golden_partners() -> List[Dict[str, Any]]:
         # Prefer semicolons; fall back to commas.
         parts = [p.strip() for p in raw.split(";")] if ";" in raw else [p.strip() for p in raw.split(",")]
         return [p for p in parts if p]
+
+    EXCLUDED_PARTNER_NAMES = {"pnp media", "visitronic gmbh"}
+
+    def _is_excluded_partner_name(name: str) -> bool:
+        return str(name or "").strip().lower() in EXCLUDED_PARTNER_NAMES
+
+    def _load_from_csv(path: Path) -> List[Dict[str, Any]]:
+        import csv
+
+        def _truthy(v: Any) -> bool:
+            s = str(v or "").strip().lower()
+            return s in {"1", "true", "yes", "y", "t"}
+
+        def _cell_str(v: Any) -> str:
+            return str(v or "").strip()
+
+        def _cell_bool(v: Any) -> Optional[bool]:
+            s = _cell_str(v).strip().lower()
+            if not s:
+                return None
+            if s in {"not found", "unknown", "n/a", "na", "none", "-"}:
+                return None
+            if s in {"0", "false", "no", "n"}:
+                return False
+            if s in {"1", "true", "yes", "y", "t"}:
+                return True
+            return None
+
+        def _cell_int(v: Any) -> Optional[int]:
+            s = _cell_str(v)
+            if not s:
+                return None
+            try:
+                return int(float(s))
+            except Exception:
+                return None
+
+        try:
+            with path.open("r", encoding="utf-8-sig", newline="") as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+        except Exception as e:
+            raise ValueError(f"Failed to read golden partners CSV: {path} ({type(e).__name__}: {e})")
+
+        partners: List[Dict[str, Any]] = []
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+
+            # Optional filter: only keep successful partners
+            if "Is Successful Partner" in row and not _truthy(row.get("Is Successful Partner")):
+                continue
+
+            name = _cell_str(row.get("Company Name"))
+            if not name:
+                continue
+            if _is_excluded_partner_name(name):
+                continue
+
+            industry = _cell_str(row.get("Industry"))
+            products = _cell_str(row.get("Products/Services Offered"))
+            usp = _cell_str(row.get("USP (Unique Selling Proposition) / Key Selling Points"))
+            segments = _cell_str(row.get("Customer Target Segments"))
+            business_model = _cell_str(row.get("Business Model"))
+            company_size_indicators_text = _cell_str(row.get("Company Size Indicators"))
+            innovation_level_indicators_text = _cell_str(row.get("Innovation Level Indicators"))
+            geo = _cell_str(row.get("Geographic Reach"))
+            targets_specific_industry_type_raw = _cell_str(row.get("Targets_Specific_Industry_Type"))
+
+            avg = _cell_int(row.get("Avg Leads Per Day")) or 0
+            rank = _cell_int(row.get("Rank (1-47)")) or _cell_int(row.get("Rank")) or 0
+
+            target_segments = _split_listish(segments)
+            targets_specific_industry_type = _split_listish(targets_specific_industry_type_raw)
+
+            is_startup = _cell_bool(row.get("Is_Startup"))
+            is_ai_software = _cell_bool(row.get("Is_AI_Software"))
+            is_innovative_product = _cell_bool(row.get("Is_Innovative_Product"))
+            is_disruptive_product = _cell_bool(row.get("Is_Disruptive_Product"))
+            is_vc_funded = _cell_bool(row.get("Is_VC_Funded"))
+            is_saas_software = _cell_bool(row.get("Is_SaaS_Software"))
+            is_complex_solution = _cell_bool(row.get("Is_Complex_Solution"))
+            is_investment_product = _cell_bool(row.get("Is_Investment_Product"))
+
+            partner_description_parts = []
+            if industry:
+                partner_description_parts.append(f"Industry: {industry}")
+            if products:
+                partner_description_parts.append(f"Products/Services: {products}")
+            if usp:
+                partner_description_parts.append(f"USP: {usp}")
+            if business_model:
+                partner_description_parts.append(f"Business model: {business_model}")
+            if company_size_indicators_text:
+                partner_description_parts.append(f"Company size signals: {company_size_indicators_text}")
+            if innovation_level_indicators_text:
+                partner_description_parts.append(f"Innovation signals: {innovation_level_indicators_text}")
+            if geo:
+                partner_description_parts.append(f"Geo: {geo}")
+
+            partners.append(
+                {
+                    "name": name,
+                    "rank": int(rank) if rank else None,
+                    "avg_leads_per_day": int(avg) if avg else None,
+                    "industry": industry or None,
+                    "target_segments": target_segments,
+                    "products_services_offered": products or None,
+                    "usp_key_selling_points": usp or None,
+                    "business_model": business_model or None,
+                    "company_size_indicators_text": company_size_indicators_text or None,
+                    "innovation_level_indicators_text": innovation_level_indicators_text or None,
+                    "targets_specific_industry_type": targets_specific_industry_type,
+                    "is_startup": is_startup,
+                    "is_ai_software": is_ai_software,
+                    "is_innovative_product": is_innovative_product,
+                    "is_disruptive_product": is_disruptive_product,
+                    "is_vc_funded": is_vc_funded,
+                    "is_saas_software": is_saas_software,
+                    "is_complex_solution": is_complex_solution,
+                    "is_investment_product": is_investment_product,
+                    "partner_description": " | ".join(partner_description_parts)[:2000] if partner_description_parts else None,
+                    "case_study_summary": None,
+                }
+            )
+
+        # Sort by rank if present.
+        partners.sort(key=lambda p: (p.get("rank") is None, p.get("rank") or 10**9, p.get("name") or ""))
+        return partners
 
     def _load_from_xlsx(path: Path) -> List[Dict[str, Any]]:
         try:
@@ -205,20 +335,45 @@ def load_golden_partners() -> List[Dict[str, Any]]:
             name = _cell_str(row.get("Company Name"))
             if not name:
                 continue
+            if _is_excluded_partner_name(name):
+                continue
 
             industry = _cell_str(row.get("Industry"))
             products = _cell_str(row.get("Products/Services Offered"))
             usp = _cell_str(row.get("USP (Unique Selling Proposition) / Key Selling Points"))
             segments = _cell_str(row.get("Customer Target Segments"))
             business_model = _cell_str(row.get("Business Model"))
+            company_size_indicators_text = _cell_str(row.get("Company Size Indicators"))
+            innovation_level_indicators_text = _cell_str(row.get("Innovation Level Indicators"))
             geo = _cell_str(row.get("Geographic Reach"))
-            website = _cell_str(row.get("Website"))
-            notes = _cell_str(row.get("Source Document Section/Notes"))
+            targets_specific_industry_type_raw = _cell_str(row.get("Targets_Specific_Industry_Type"))
 
             avg = _cell_int(row.get("Avg Leads Per Day")) or 0
             rank = _cell_int(row.get("Rank (1-47)")) or _cell_int(row.get("Rank")) or 0
 
             target_segments = _split_listish(segments)
+            targets_specific_industry_type = _split_listish(targets_specific_industry_type_raw)
+
+            def _cell_bool(v: Any) -> Optional[bool]:
+                s = _cell_str(v).strip().lower()
+                if not s:
+                    return None
+                if s in {"not found", "unknown", "n/a", "na", "none", "-"}:
+                    return None
+                if s in {"0", "false", "no", "n"}:
+                    return False
+                if s in {"1", "true", "yes", "y", "t"}:
+                    return True
+                return None
+
+            is_startup = _cell_bool(row.get("Is_Startup"))
+            is_ai_software = _cell_bool(row.get("Is_AI_Software"))
+            is_innovative_product = _cell_bool(row.get("Is_Innovative_Product"))
+            is_disruptive_product = _cell_bool(row.get("Is_Disruptive_Product"))
+            is_vc_funded = _cell_bool(row.get("Is_VC_Funded"))
+            is_saas_software = _cell_bool(row.get("Is_SaaS_Software"))
+            is_complex_solution = _cell_bool(row.get("Is_Complex_Solution"))
+            is_investment_product = _cell_bool(row.get("Is_Investment_Product"))
 
             partner_description_parts = []
             if industry:
@@ -229,10 +384,12 @@ def load_golden_partners() -> List[Dict[str, Any]]:
                 partner_description_parts.append(f"USP: {usp}")
             if business_model:
                 partner_description_parts.append(f"Business model: {business_model}")
+            if company_size_indicators_text:
+                partner_description_parts.append(f"Company size signals: {company_size_indicators_text}")
+            if innovation_level_indicators_text:
+                partner_description_parts.append(f"Innovation signals: {innovation_level_indicators_text}")
             if geo:
                 partner_description_parts.append(f"Geo: {geo}")
-            if website:
-                partner_description_parts.append(f"Website: {website}")
 
             partners.append(
                 {
@@ -241,8 +398,22 @@ def load_golden_partners() -> List[Dict[str, Any]]:
                     "avg_leads_per_day": int(avg) if avg else None,
                     "industry": industry or None,
                     "target_segments": target_segments,
+                    "products_services_offered": products or None,
+                    "usp_key_selling_points": usp or None,
+                    "business_model": business_model or None,
+                    "company_size_indicators_text": company_size_indicators_text or None,
+                    "innovation_level_indicators_text": innovation_level_indicators_text or None,
+                    "targets_specific_industry_type": targets_specific_industry_type,
+                    "is_startup": is_startup,
+                    "is_ai_software": is_ai_software,
+                    "is_innovative_product": is_innovative_product,
+                    "is_disruptive_product": is_disruptive_product,
+                    "is_vc_funded": is_vc_funded,
+                    "is_saas_software": is_saas_software,
+                    "is_complex_solution": is_complex_solution,
+                    "is_investment_product": is_investment_product,
                     "partner_description": " | ".join(partner_description_parts)[:2000] if partner_description_parts else None,
-                    "case_study_summary": (notes or "").strip() or None,
+                    "case_study_summary": None,
                 }
             )
 
@@ -254,12 +425,18 @@ def load_golden_partners() -> List[Dict[str, Any]]:
     if env_path:
         path = _resolve_path(Path(env_path))
     else:
-        # Repo-root XLSX (provided by user) – auto-detect if present.
-        path = _repo_root() / "kgs_001_ER47_20250626.xlsx"
+        # Repo-root partner file (provided by user) – auto-detect if present (prefer CSV).
+        root = _repo_root()
+        path = root / "kgs_001_ER47_20250626.csv"
+        if not path.exists():
+            path = root / "kgs_001_ER47_20250626.xlsx"
         if not path.exists():
             path = DATA_DIR / "golden_partners.json"
 
-    if str(path).lower().endswith((".xlsx", ".xls")):
+    lower = str(path).lower()
+    if lower.endswith(".csv"):
+        return _load_from_csv(path)
+    if lower.endswith((".xlsx", ".xls")):
         return _load_from_xlsx(path)
 
     data = json.loads(_load_text(path))
@@ -376,6 +553,22 @@ def evaluate_company_url(
     if not isinstance(concerns, list):
         concerns = []
 
+    fit_attributes = {}
+    if isinstance(res, dict):
+        fit_attributes = {
+            "company_size_indicators_text": res.get("company_size_indicators_text"),
+            "innovation_level_indicators_text": res.get("innovation_level_indicators_text"),
+            "targets_specific_industry_type": res.get("targets_specific_industry_type") or [],
+            "is_startup": res.get("is_startup"),
+            "is_ai_software": res.get("is_ai_software"),
+            "is_innovative_product": res.get("is_innovative_product"),
+            "is_disruptive_product": res.get("is_disruptive_product"),
+            "is_vc_funded": res.get("is_vc_funded"),
+            "is_saas_software": res.get("is_saas_software"),
+            "is_complex_solution": res.get("is_complex_solution"),
+            "is_investment_product": res.get("is_investment_product"),
+        }
+
     out: Dict[str, Any] = {
         "input_url": url,
         "company_name": company_name,
@@ -384,6 +577,7 @@ def evaluate_company_url(
         "reasoning": reasoning,
         "positives": [str(x) for x in positives if str(x).strip()],
         "concerns": [str(x) for x in concerns if str(x).strip()],
+        "fit_attributes": fit_attributes,
         "meta": {
             "model": model,
             "web_search_calls": int(billed_q),
@@ -402,15 +596,34 @@ def _render_partner_summaries(partners: List[Dict[str, Any]]) -> str:
     # Prompt-friendly format: JSON list is usually easiest for the model to scan.
     compact = []
     for p in partners:
+        def _trunc(v: Any, n: int) -> Any:
+            if v is None:
+                return None
+            if isinstance(v, str):
+                s = v.strip()
+                return (s[:n] + "…") if len(s) > n else s
+            return v
+
         compact.append(
             {
                 "name": p.get("name", ""),
-                "rank": p.get("rank", None),
                 "avg_leads_per_day": p.get("avg_leads_per_day", None),
-                "industry": p.get("industry", None),
+                "industry": _trunc(p.get("industry", None), 220),
                 "target_segments": p.get("target_segments", None),
-                "partner_description": p.get("partner_description", None),
-                "case_study_summary": p.get("case_study_summary", None),
+                "products_services_offered": _trunc(p.get("products_services_offered", None), 520),
+                "usp_key_selling_points": _trunc(p.get("usp_key_selling_points", None), 520),
+                "business_model": _trunc(p.get("business_model", None), 260),
+                "company_size_indicators_text": _trunc(p.get("company_size_indicators_text", None), 320),
+                "innovation_level_indicators_text": _trunc(p.get("innovation_level_indicators_text", None), 320),
+                "targets_specific_industry_type": p.get("targets_specific_industry_type", None),
+                "is_startup": p.get("is_startup", None),
+                "is_ai_software": p.get("is_ai_software", None),
+                "is_innovative_product": p.get("is_innovative_product", None),
+                "is_disruptive_product": p.get("is_disruptive_product", None),
+                "is_vc_funded": p.get("is_vc_funded", None),
+                "is_saas_software": p.get("is_saas_software", None),
+                "is_complex_solution": p.get("is_complex_solution", None),
+                "is_investment_product": p.get("is_investment_product", None),
             }
         )
     return json.dumps(compact, ensure_ascii=False, indent=2)
@@ -428,9 +641,9 @@ def generate_sales_pitch_for_company(
     company_url: str,
     company_name: str = "",
     description: Optional[str] = None,
-    eval_score: Optional[float] = None,
     eval_positives: Optional[List[str]] = None,
     eval_concerns: Optional[List[str]] = None,
+    eval_fit_attributes: Optional[Dict[str, Any]] = None,
     model: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
@@ -502,16 +715,21 @@ def generate_sales_pitch_for_company(
     if isinstance(attrs, dict):
         attrs["input_summary_url"] = url
 
+    # Merge structured fit attributes from the evaluator (if provided).
+    if isinstance(attrs, dict) and isinstance(eval_fit_attributes, dict) and eval_fit_attributes:
+        for k, v in eval_fit_attributes.items():
+            # Prefer evaluator values when present; keep extractor output otherwise.
+            if v is None:
+                continue
+            if isinstance(v, str) and not v.strip():
+                continue
+            attrs[k] = v
+
     # 2) Match partner
     partners = load_golden_partners()
     partner_summaries = _render_partner_summaries(partners)
-    loose_match = False
-    try:
-        loose_match = eval_score is not None and float(eval_score) >= 6.0
-    except Exception:
-        loose_match = False
     pm_prompt = _prompt_from_template(
-        PROMPTS_DIR / ("german_partner_matching_prompt_loose.txt" if loose_match else "german_partner_matching_prompt.txt"),
+        PROMPTS_DIR / "german_partner_matching_prompt.txt",
         {
             "{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}": json.dumps(attrs, ensure_ascii=False, indent=2),
             "{{GOLDEN_PARTNER_SUMMARIES_PLACEHOLDER}}": partner_summaries,
@@ -559,23 +777,14 @@ def generate_sales_pitch_for_company(
 
     matched_partner = None
     if matched_name and not _is_no_match(matched_name, match_score):
-        for p in partners:
-            if str(p.get("name") or "").strip() == matched_name:
-                matched_partner = p
-                break
+        # Prefer exact match, but allow case-insensitive fallback to reduce "no match" from minor formatting.
+        by_exact: Dict[str, Dict[str, Any]] = {str(p.get("name") or "").strip(): p for p in partners}
+        matched_partner = by_exact.get(matched_name)
+        if matched_partner is None:
+            lookup = {str(k).strip().lower(): v for k, v in by_exact.items() if str(k).strip()}
+            matched_partner = lookup.get(matched_name.strip().lower())
 
     no_match = matched_partner is None
-    if no_match and loose_match and partners:
-        # Loose mode: force a "best available" match (fallback to top-ranked partner).
-        matched_partner = partners[0]
-        partner_match = {
-            "match_score": "Low",
-            "matched_partner_name": str(matched_partner.get("name") or ""),
-            "match_rationale_features": [
-                "Best-available Fallstudie gewählt (lockerer Match-Modus bei hohem Manuav-Fit).",
-            ],
-        }
-        no_match = False
     if no_match:
         # Normalize the model output so the UI is consistent.
         partner_match = {

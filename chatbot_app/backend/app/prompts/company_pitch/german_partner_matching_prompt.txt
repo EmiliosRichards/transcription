@@ -1,22 +1,36 @@
-Your primary task is to analyze the provided [Target Company Attributes JSON] and the [List of Golden Partner Summaries]. Your goal is to identify the most relevant "Golden Partner" to use as a case study.
+You will be given:
+- [Target Company Attributes JSON]
+- [List of Golden Partner Summaries]
 
-Return a single, valid JSON object. Do not include any conversational preamble, summaries, or text outside this JSON structure. Do not wrap the JSON in markdown formatting like ```json. Your response must begin with '{' and end with '}'.
+Your job is to pick the best Golden Partner to anchor a phone call: we use the match to build rapport, demonstrate understanding, and increase the prospect's confidence ("wir haben bereits für ein sehr ähnliches Unternehmen produktiv gearbeitet").
 
-**CRITICAL MATCHING CRITERIA:**
-1.  **Primary Filter: Shared Industry/Audience.** Identify explicit similarities in industry terms, products/services offered, and target audience segments. Consider matches high-confidence when there's a direct semantic match or substantial overlap in key industry or target audience terms.
-2.  **Secondary Filter: Rank.** If multiple partners share equally relevant similarities, choose the partner with the better (lower numeric) rank.
-3.  **No Match Condition.** For the `matched_partner_name` return "No suitable match found" ONLY if there is no direct semantic or substantial overlap in the industry or target audience. `match_score` of "Low". Do not force a match. Do NOT return "No suitable match" when at least one significant keyword or audience segment is shared explicitly.
+Return ONLY a single JSON object (no markdown).
 
-4.  **Identify Key Rationale (in German).** Based on the shared attributes, provide a list of 2-4 key reasons for the match in the `match_rationale_features` field. These should be concise, clear, and in German. Examples: "Gemeinsame Zielgruppe: ...", "Ähnliche Produkte/Services: ...", "Überschneidende Marktsegmente: ..."
+**How to match (important):**
+- Do NOT match on shallow keywords. Match on the *sales / go-to-market challenge* and context.
+- Think in terms of: buyer persona, sales cycle complexity, deal size signals, B2B vs B2C motion, target customer type, regulated vs non-regulated, product/service complexity, and similar pain points when selling.
+- Use the structured signals when available (e.g., `is_saas_software`, `is_complex_solution`, `is_ai_software`, `targets_specific_industry_type`, size/innovation indicators).
+- Avoid silly matches (example: do NOT match a taxi service to a logistics software company just because both involve "transport").
 
-**JSON Response Format:**
+**Similarity score (required):**
+- `match_score` must be one of: "High", "Medium", "Low".
+  - High: strong overlap in buyer persona + problem + sales context (very believable as a case-study anchor).
+  - Medium: some overlap, but not perfect (still usable for rapport).
+  - Low: weak overlap; only choose if it is still the best available. If even this is not credible, return "No suitable match found".
+
+**No-match rule (allowed):**
+- Return `matched_partner_name` = "No suitable match found" ONLY if you cannot find a credible case-study anchor.
+- If you return no-match, `match_score` MUST be "Low" and `match_rationale_features` should explain briefly why no credible anchor exists.
+
+**Rationale (German):**
+- `match_rationale_features`: 2–4 short bullet-like strings in German explaining the match.
+- Focus on why the match helps build trust in the call (similar buyer persona, similar "selling challenge", similar target customers, similar complexity).
+
+**JSON format:**
 {
   "match_score": "High",
-  "matched_partner_name": "Partner Name",
-  "match_rationale_features": [
-    "Gemeinsame Zielgruppe im Gesundheitsbereich, speziell Einrichtungen mit hohem Bedarf an technologiebasierten Lösungen.",
-    "Ähnliche technologische Ausrichtung: Software und assistive Technologien zur Verbesserung der Patientenversorgung und Mobilität."
-  ]
+  "matched_partner_name": "Partner Name OR No suitable match found",
+  "match_rationale_features": ["…"]
 }
 
 --------TARGET COMPANY ATTRIBUTES JSON------------

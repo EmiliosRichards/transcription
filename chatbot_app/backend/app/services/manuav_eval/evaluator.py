@@ -575,6 +575,11 @@ Instructions:
       - If evidence is missing/ambiguous, phrase as an open question to validate (e.g., "Unklar, ob …; falls ja/nein, würde das den Fit verbessern/verschlechtern.").
     - Do NOT be overly harsh. Low scores should have more `concerns` and fewer `positives`, and vice versa.
     - Hard cap: {REASONING_MAX_LENGTH} characters for `reasoning` only.
+  - Also fill these structured attributes (use null if unknown; do not guess):
+    - `company_size_indicators_text` (German): any concrete signals (team size, locations, #customers, revenue class, “Mittelstand”, etc.).
+    - `innovation_level_indicators_text` (German): any concrete innovation/tech/product signals (AI, automation, patents, “innovativ”, etc.).
+    - `targets_specific_industry_type` (array of strings): 0–6 specific target industries/types inferred (e.g., "Healthcare (Hospitals/Clinics)", "Manufacturing (General)", "Tax / Accounting Sector"). Keep items short.
+    - Flags (booleans or null): `is_startup`, `is_ai_software`, `is_innovative_product`, `is_disruptive_product`, `is_vc_funded`, `is_saas_software`, `is_complex_solution`, `is_investment_product`.
 {sources_instruction}  - do NOT include URLs in `reasoning`.
 
 Company website URL: {normalized_url}

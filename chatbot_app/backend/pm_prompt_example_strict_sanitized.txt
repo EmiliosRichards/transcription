@@ -1,0 +1,96 @@
+SANITIZED SAMPLE — fully rendered pm_prompt (STRICT mode)
+URL example: https://247group.de
+Notes:
+- This is the exact strict template with placeholders replaced.
+- Sanitization: only top 3 partners included; long fields shortened with "…".
+- In real runs we include the full partner list and full field text.
+
+Your primary task is to analyze the provided [Target Company Attributes JSON] and the [List of Golden Partner Summaries]. Your goal is to identify the most relevant "Golden Partner" to use as a case study.
+
+Return a single, valid JSON object. Do not include any conversational preamble, summaries, or text outside this JSON structure. Do not wrap the JSON in markdown formatting like ```json. Your response must begin with '{' and end with '}'.
+
+**CRITICAL MATCHING CRITERIA:**
+1.  **Primary Filter: Shared Industry/Audience.** Identify explicit similarities in industry terms, products/services offered, and target audience segments. Consider matches high-confidence when there's a direct semantic match or substantial overlap in key industry or target audience terms.
+2.  **Secondary Filter: Rank.** If multiple partners share equally relevant similarities, choose the partner with the better (lower numeric) rank.
+3.  **No Match Condition.** For the `matched_partner_name` return "No suitable match found" ONLY if there is no direct semantic or substantial overlap in the industry or target audience. `match_score` of "Low". Do not force a match. Do NOT return "No suitable match" when at least one significant keyword or audience segment is shared explicitly.
+
+4.  **Identify Key Rationale (in German).** Based on the shared attributes, provide a list of 2-4 key reasons for the match in the `match_rationale_features` field. These should be concise, clear, and in German. Examples: "Gemeinsame Zielgruppe: ...", "Ähnliche Produkte/Services: ...", "Überschneidende Marktsegmente: ..."
+
+**JSON Response Format:**
+{
+  "match_score": "High",
+  "matched_partner_name": "Partner Name",
+  "match_rationale_features": [
+    "Gemeinsame Zielgruppe im Gesundheitsbereich, speziell Einrichtungen mit hohem Bedarf an technologiebasierten Lösungen.",
+    "Ähnliche technologische Ausrichtung: Software und assistive Technologien zur Verbesserung der Patientenversorgung und Mobilität."
+  ]
+}
+
+--------TARGET COMPANY ATTRIBUTES JSON------------
+{
+  "input_summary_url": "https://247group.de",
+  "b2b_indicator": null,
+  "phone_outreach_suitability": null,
+  "target_group_size_assessment": "Mittel bis groß (verschiedene Zielgruppen/Sortimente), B2B-Anteil unklar.",
+  "industry": "E-Commerce / Onlinehandel (mehrere Spezialshops; u. a. Workwear & Teamsport).",
+  "products_services_offered": [
+    "Online-Shops für Workwear/PPE, Teamsport (inkl. Bedruckung), Moto/Fan/Style/Fight, Kindermode",
+    "Versandhandel / Logistik"
+  ],
+  "usp_key_selling_points": [
+    "Mehrere spezialisierte Sortimentswelten mit gemeinsamem Login/Warenkorb",
+    "Schneller Versand, Service-Hotline, 60 Tage Rückgabe"
+  ],
+  "customer_target_segments": [
+    "Endkund:innen (B2C) in verschiedenen Verticals",
+    "Mögliche B2B-Bedarfe: Handwerk/Betriebe (Workwear), Vereine/Teams (Ausstattung + Druck)"
+  ],
+  "business_model": "E-Commerce (Retail) mit potenziellen B2B-Teilsegmenten (Beschaffung/Teams).",
+  "company_size_indicators_text": "Mehrere Shops, Lager/Logistik, Hotline; wirkt etabliert (genaue Größe unklar).",
+  "company_size_category_inferred": null,
+  "innovation_level_indicators_text": "Combined Shopping Experience (gemeinsamer Login/Warenkorb); sonst keine klaren Tech-Claims.",
+  "website_clarity_notes": "B2B-Angebote/Bestellprozesse (Rechnung, Mengenrabatt, Firmenkunden) nicht eindeutig sichtbar in der Kurzsicht."
+}
+-----------END OF JSON-----------------
+
+--------LIST OF GOLDEN PARTNER SUMMARIES------------
+[
+  {
+    "name": "go.ecoblister GmbH",
+    "rank": 1,
+    "avg_leads_per_day": 10,
+    "industry": "Sustainable Blister Packaging Solutions; Pharmaceutical Packaging Technology (specifically for pharmacies, care facilities, and blister centers)",
+    "target_segments": [
+      "Pharmacies",
+      "Care facilities (including nursing homes and retirement homes)",
+      "Blister centers."
+    ],
+    "partner_description": "Industry: Sustainable Blister Packaging Solutions; Pharmaceutical Packaging Technology (specifically for pharmacies, care facilities, and blister centers) | Products/Services: Sustainable medication calendars (100% plastic-free blister packs); BlisterJacky® (light-guided system for filling blister cards); Celia® Blisterautomat (automated blister production machine); …",
+    "case_study_summary": "Kunde 10"
+  },
+  {
+    "name": "Cannaleo Digital GmbH",
+    "rank": 2,
+    "avg_leads_per_day": 40,
+    "industry": "Digital solutions for medical cannabis distribution; SaaS for pharmacies.",
+    "target_segments": [
+      "Pharmacies (primarily in Germany)",
+      "Doctors (for consulting and training)."
+    ],
+    "partner_description": "Industry: Digital solutions for medical cannabis distribution; SaaS for pharmacies. | Products/Services: Custom medical cannabis websites for pharmacies (SEO-optimized, GDPR-compliant, with live inventory & product catalog); Ordering and reservation system for medical cannabis; Consulting & training; …",
+    "case_study_summary": "Kunde 14"
+  },
+  {
+    "name": "Notara",
+    "rank": 3,
+    "avg_leads_per_day": 5,
+    "industry": "Legal Tech Software (specifically for notaries)",
+    "target_segments": [
+      "Notaries' offices (Notariate) in Germany."
+    ],
+    "partner_description": "Industry: Legal Tech Software (specifically for notaries) | Products/Services: Digital client data sheets for appointment types; automated data collection; integration with notary software; implementation services. | USP: reduces admin effort; GDPR; …",
+    "case_study_summary": "Kunde 27"
+  }
+]
+-----------END OF SUMMARIES-----------------
+

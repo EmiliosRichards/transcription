@@ -517,23 +517,55 @@ def generate_sales_pitch_for_company(
     )
 
     matched_name = str((partner_match or {}).get("matched_partner_name") or "").strip()
+    match_score = str((partner_match or {}).get("match_score") or "").strip()
+
+    def _is_no_match(name: str, score: str) -> bool:
+        if not name:
+            return True
+        n = name.strip().lower()
+        if n in {
+            "no suitable match found",
+            "no suitable match",
+            "no match",
+            "none",
+            "n/a",
+            "-",
+        }:
+            return True
+        if score.strip().lower() == "low" and n.startswith("no"):
+            return True
+        return False
+
     matched_partner = None
-    if matched_name:
+    if matched_name and not _is_no_match(matched_name, match_score):
         for p in partners:
             if str(p.get("name") or "").strip() == matched_name:
                 matched_partner = p
                 break
 
+    no_match = matched_partner is None
+    if no_match:
+        # Normalize the model output so the UI is consistent.
+        partner_match = {
+            "match_score": "Low",
+            "matched_partner_name": "No suitable match found",
+            "match_rationale_features": [],
+        }
+
     # 3) Generate pitch
     prev_rationale = (partner_match or {}).get("match_rationale_features") or []
-    sp_prompt = _prompt_from_template(
-        PROMPTS_DIR / "german_sales_pitch_generation_prompt.txt",
-        {
-            "{{PREVIOUS_MATCH_RATIONALE_PLACEHOLDER}}": json.dumps(prev_rationale, ensure_ascii=False, indent=2),
-            "{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}": json.dumps(attrs, ensure_ascii=False, indent=2),
-            "{{MATCHED_GOLDEN_PARTNER_JSON_PLACEHOLDER}}": json.dumps(matched_partner or {}, ensure_ascii=False, indent=2),
-        },
+    sp_template = (
+        PROMPTS_DIR / "german_sales_pitch_generation_prompt_no_match.txt"
+        if no_match
+        else PROMPTS_DIR / "german_sales_pitch_generation_prompt.txt"
     )
+    sp_replacements = {
+        "{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}": json.dumps(attrs, ensure_ascii=False, indent=2),
+    }
+    if not no_match:
+        sp_replacements["{{PREVIOUS_MATCH_RATIONALE_PLACEHOLDER}}"] = json.dumps(prev_rationale, ensure_ascii=False, indent=2)
+        sp_replacements["{{MATCHED_GOLDEN_PARTNER_JSON_PLACEHOLDER}}"] = json.dumps(matched_partner or {}, ensure_ascii=False, indent=2)
+    sp_prompt = _prompt_from_template(sp_template, sp_replacements)
     sp_schema: Dict[str, Any] = {
         "type": "object",
         "additionalProperties": False,
@@ -561,12 +593,27 @@ def generate_sales_pitch_for_company(
         avg_leads = None
     sales_pitch_template = str((sales_pitch or {}).get("phone_sales_line") or "")
     sales_pitch_filled = sales_pitch_template
-    if avg_leads is not None:
-        # Support both the new and legacy placeholder tokens.
-        sales_pitch_filled = (
-            sales_pitch_template.replace("{avg_leads_per_day}", str(int(avg_leads)))
-            .replace("{programmatic placeholder}", str(int(avg_leads)))
-        )
+    if not no_match:
+        # Only fill lead placeholders when we actually have a matched partner case study.
+        if avg_leads is not None:
+            # Support both the new and legacy placeholder tokens.
+            sales_pitch_filled = (
+                sales_pitch_template.replace("{avg_leads_per_day}", str(int(avg_leads)))
+                .replace("{programmatic placeholder}", str(int(avg_leads)))
+            )
+        else:
+            # Ensure we never leak placeholder tokens to the UI.
+            sales_pitch_filled = (
+                sales_pitch_template.replace("{avg_leads_per_day}", "mehrere")
+                .replace("{programmatic placeholder}", "mehrere")
+            )
+    else:
+        # Make the "match reasoning" section explicit in the UI.
+        if isinstance(sales_pitch, dict):
+            sales_pitch.setdefault(
+                "match_rationale_features",
+                ["Kein passender Golden-Partner-Match gefunden; generischer Pitch ohne Fallstudie."],
+            )
 
     return {
         "inputs": {"company_url": url, "company_name": company_name},

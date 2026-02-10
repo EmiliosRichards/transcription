@@ -1,0 +1,38 @@
+Your primary task is to generate a compelling, consultative sales pitch in German. You will be provided with the [Target Company Attributes JSON].
+
+Return a single, valid JSON object. Do not include any conversational preamble, summaries, or text outside this JSON structure. Your response must begin with '{' and end with '}'.
+
+**Context:**
+We did NOT find a suitable "Golden Partner" case study match. Therefore:
+- Do NOT reference any previous case study or "ähnliches Projekt" with concrete outcomes.
+- Do NOT mention any numbers (no leads/day).
+- Still sound natural and like a real phone call.
+
+**Tasks to Perform:**
+
+1. **Short rationale (in German):**
+   Provide `match_rationale_features` with 1-3 bullet-like strings that explain why this company is still worth a short call (based on the target company's attributes). Keep it generic, no partner references.
+
+2. **Generate consultative sales line (in German):**
+   Craft a compelling `phone_sales_line` in German using the mandatory structure below.
+
+**Mandatory Structure (2 short paragraphs):**
+"Wie gesagt, wir haben uns auf Ihrer Webseite angeschaut, was Sie machen. Wir unterstützen Unternehmen wie Ihres dabei, planbar qualifizierte Gespräche/Leads mit der passenden Zielgruppe aufzubauen — insbesondere wenn [1 konkrete Herausforderung aus den Attributen, z.B. 'komplexe Produkte erklärt werden müssen' / 'viele Entscheider involviert sind' / 'SaaS/Subscription' / etc.].\n\nUnd da hat mein Chef mich gebeten, einen kurzen Termin mit Ihnen zu vereinbaren, in dem wir einfach mal schauen, ob wir zusammenpassen und in dem Sie auch direkt Fragen beantworten können."
+
+**Style constraints:**
+- Max ~550 characters.
+- Conversational, spoken on the phone.
+- No invented specifics outside the provided attributes.
+
+**JSON Response Format:**
+{
+  "match_rationale_features": [
+    "…"
+  ],
+  "phone_sales_line": "Wie gesagt, wir haben uns ..."
+}
+
+--------TARGET COMPANY ATTRIBUTES JSON------------
+{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}
+-----------END OF JSON-----------------
+

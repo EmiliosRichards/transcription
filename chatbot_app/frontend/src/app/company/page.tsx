@@ -228,19 +228,28 @@ export default function CompanyPage() {
                   <CardTitle className="text-base">Pitch output</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
+                  {(() => {
+                    const matched = (pitchResult.matched_partner_name || "").trim();
+                    const hasMatch = matched && matched.toLowerCase() !== "no suitable match found";
+                    const rationaleLabel = hasMatch ? "Match reasoning:" : "Pitch rationale:";
+                    return (
+                      <>
                   <div className="text-sm">
                     <span className="font-medium">Golden partner match:</span>{" "}
                     <span className="text-muted-foreground">{pitchResult.matched_partner_name || "—"}</span>
                   </div>
 
                   <div className="text-sm">
-                    <span className="font-medium">Match reasoning:</span>
+                    <span className="font-medium">{rationaleLabel}</span>
                     <ul className="list-disc ml-5 mt-1 space-y-1 text-muted-foreground">
                       {Array.isArray(pitchResult.match_reasoning)
                         ? pitchResult.match_reasoning.map((r, i) => <li key={i}>{r}</li>)
                         : <li>{pitchResult.match_reasoning}</li>}
                     </ul>
                   </div>
+                      </>
+                    );
+                  })()}
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">

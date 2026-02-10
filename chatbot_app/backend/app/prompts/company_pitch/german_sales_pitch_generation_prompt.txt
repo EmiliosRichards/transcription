@@ -13,6 +13,7 @@ Return a single, valid JSON object. Do not include any conversational preamble, 
     *   Craft a compelling `phone_sales_line` in German.
     *   Do NOT mention the Golden Partner's name.
     *   Use the mandatory structure below (tone + flow).
+    *   IMPORTANT: Make it feel specific to the target company by naturally referencing 1–2 concrete attributes if available (e.g., industry, one product/service, ICP/target segment, business model). Do not force it if the attributes are unclear—use a safe generic phrase like "in Ihrem Bereich" / "für Ihre Zielgruppe".
 
 --------PREVIOUS MATCH RATIONALE------------
 {{PREVIOUS_MATCH_RATIONALE_PLACEHOLDER}}
@@ -27,6 +28,7 @@ Return a single, valid JSON object. Do not include any conversational preamble, 
 - Keep it to 2 short paragraphs (as above), max ~550 characters.
 - Sound natural and conversational (spoken on the phone), not like marketing copy.
 - Do not invent specific numbers other than `{avg_leads_per_day}`.
+- Do not invent facts that are not supported by the Target Company Attributes JSON.
 
 **JSON Response Format:**
 {

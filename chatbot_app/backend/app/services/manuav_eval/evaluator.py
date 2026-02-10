@@ -5,6 +5,7 @@ import json
 import random
 import re
 import time
+from urllib.parse import urlparse
 from typing import Any, Dict
 
 from openai import OpenAI
@@ -47,6 +48,10 @@ Entity disambiguation (guideline):
   - product description, ICP, and branding match
   - the official LinkedIn/company page referenced by the website
 - If attribution is uncertain, either avoid relying on the source or briefly note the uncertainty in your reasoning.
+
+Hard rule (important):
+- The company you are evaluating is the one behind the provided domain. Do not accidentally evaluate a different company with a similar name.
+- Prioritize evidence that is clearly tied to the provided domain (especially the site itself, imprint/legal pages, and any linked official profiles).
 """
 
 _U2028 = "\u2028"
@@ -471,6 +476,10 @@ def _evaluate_company_raw(
     normalized_url = (url or "").strip()
     if normalized_url and not normalized_url.lower().startswith(("http://", "https://")):
         normalized_url = f"https://{normalized_url}"
+    parsed = urlparse(normalized_url)
+    domain = (parsed.netloc or "").strip().lower()
+    if domain.startswith("www."):
+        domain = domain[4:]
 
     tool_budget_line = (
         f"- Tool-call budget: you can make at most {max_tool_calls} web search tool call(s). Use them wisely.\n"
@@ -506,6 +515,10 @@ def _evaluate_company_raw(
 Evaluate this company for Manuav using web research and the Manuav Fit logic.
 
 Instructions:
+- CRITICAL: Anchor identity to the provided domain: {domain or "(unknown domain)"}.
+- Your FIRST web search query should be domain-anchored to avoid lookalikes, e.g.:
+  - site:{domain} (impressum OR kontakt OR about OR pricing OR product)
+- Prefer sources that clearly refer to {domain} (the website itself and pages it links to).
 - Use the web search tool to research:
   - the company website itself (product/service, ICP, pricing, cases, careers, legal/imprint)
   - and the broader web for each rubric category (DACH presence, operational status, TAM, competition, innovation, economics, onboarding, pitchability, risk).

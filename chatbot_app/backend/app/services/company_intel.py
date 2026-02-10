@@ -307,8 +307,9 @@ Requirements:
 - Use the web search tool (required).
 - Prefer the company's own website (home, product, pricing, cases, careers, legal/imprint/contact) and corroborate with 1-2 reputable third-party sources when possible.
 - Output JSON only (no markdown).
-- `description` should be a short, information-dense paragraph (English is fine).
-- `highlights` should be 5-10 bullet-like strings capturing concrete facts (ICP, product, pricing signals, region focus, business model, etc).
+- Write `description` in German (short, information-dense paragraph).
+- Write `highlights` in German (5-10 bullet-like strings) capturing concrete facts (ICP, Produkt, Pricing-Signale, Region-Fokus, Business Model, etc.).
+- If something is unclear, state uncertainty explicitly in German rather than guessing.
 
 Input URL: {url}
 Company name hint (may be blank): {company_name_hint}
@@ -357,7 +358,10 @@ def evaluate_company_url(
         url,
         model,
         max_tool_calls=int(os.environ.get("COMPANY_EVAL_MAX_TOOL_CALLS", "2") or 2),
-        second_query_on_uncertainty=(os.environ.get("COMPANY_EVAL_SECOND_QUERY", "").strip().lower() in {"1", "true", "yes", "y"}),
+        # Default ON to reduce domain/lookalike misattribution (can still be disabled explicitly).
+        second_query_on_uncertainty=(
+            os.environ.get("COMPANY_EVAL_SECOND_QUERY", "1").strip().lower() in {"1", "true", "yes", "y"}
+        ),
     )
 
     score = float(res.get("manuav_fit_score", 0))

@@ -7,11 +7,12 @@ We did NOT find a suitable "Golden Partner" case study match. Therefore:
 - Do NOT reference any previous case study or "ähnliches Projekt" with concrete outcomes.
 - Do NOT mention any numbers (no leads/day).
 - Still sound natural and like a real phone call.
+- IMPORTANT: Make it feel specific to the target company by referencing 1–2 concrete attributes if available (e.g., industry, one product/service, ICP/target segment, business model). If the attributes are unclear, use a safe generic phrase like "in Ihrem Bereich" / "für Ihre Zielgruppe".
 
 **Tasks to Perform:**
 
 1. **Short rationale (in German):**
-   Provide `match_rationale_features` with 1-3 bullet-like strings that explain why this company is still worth a short call (based on the target company's attributes). Keep it generic, no partner references.
+   Provide `match_rationale_features` with 1-3 bullet-like strings that explain why this company is still worth a short call (based on the target company's attributes). No partner references; tie at least one bullet to a concrete attribute when possible.
 
 2. **Generate consultative sales line (in German):**
    Craft a compelling `phone_sales_line` in German using the mandatory structure below.
@@ -23,6 +24,7 @@ We did NOT find a suitable "Golden Partner" case study match. Therefore:
 - Max ~550 characters.
 - Conversational, spoken on the phone.
 - No invented specifics outside the provided attributes.
+- Do not mention any partner, case study, or past project results.
 
 **JSON Response Format:**
 {

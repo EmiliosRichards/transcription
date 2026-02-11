@@ -299,7 +299,7 @@ export default function CompanyPage() {
                     <textarea
                       value={pitchResult.sales_pitch || ""}
                       readOnly
-                      className="w-full min-h-[140px] rounded-md border border-gray-200/60 dark:border-gray-800/60 bg-transparent p-3 text-sm"
+                      className="w-full min-h-[320px] resize-y rounded-md border border-gray-200/60 dark:border-gray-800/60 bg-transparent p-3 text-sm"
                     />
                   </div>
                 </CardContent>

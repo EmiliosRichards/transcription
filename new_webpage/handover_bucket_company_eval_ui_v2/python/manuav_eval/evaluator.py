@@ -66,6 +66,8 @@ def _sanitize_reasoning(text: str, *, max_len: int = REASONING_MAX_LENGTH) -> st
     - no URLs in reasoning
     - length capped
     - normalize U+2028/U+2029 which can break some JSONL consumers
+
+    Note: We preserve line breaks (UI can render with whitespace-pre-wrap).
     """
     s = (text or "").strip()
     if not s:
@@ -74,14 +76,12 @@ def _sanitize_reasoning(text: str, *, max_len: int = REASONING_MAX_LENGTH) -> st
     s = s.replace(_U2028, " ").replace(_U2029, " ")
     s = _MD_LINK_RE.sub(r"\1", s)
     s = _URL_RE.sub("", s)
-    # Preserve line breaks (UI uses whitespace-pre-wrap), but normalize internal whitespace.
     s = s.replace("\r\n", "\n").replace("\r", "\n")
     lines_in = [ln.strip() for ln in s.split("\n")]
-    lines = []
+    lines: list[str] = []
     for ln in lines_in:
         if not ln:
             continue
-        # Keep common bullet prefixes, but clean up spacing.
         prefix = ""
         body = ln
         if body.startswith("-"):
@@ -101,10 +101,9 @@ def _sanitize_reasoning(text: str, *, max_len: int = REASONING_MAX_LENGTH) -> st
 
     # Prefer cutting at a line boundary, then at sentence boundary.
     if "\n" in s:
-        out_lines = []
+        out_lines: list[str] = []
         remaining = max_len
         for ln in s.split("\n"):
-            # +1 for newline join (except first)
             extra = 1 if out_lines else 0
             if len(ln) + extra > remaining:
                 break
@@ -317,174 +316,45 @@ def evaluate_company_with_usage_and_web_search_artifacts(
 
 
 def _billable_web_search_calls(ws_stats: Dict[str, Any]) -> int:
-    """
-    Best-available estimate of billable web-search calls.
-    OpenAI dashboard appears to count query-type searches; we treat kind='query' as billable.
-    """
     by_kind_completed = ws_stats.get("by_kind_completed") or {}
     if isinstance(by_kind_completed, dict) and "query" in by_kind_completed:
         try:
             return int(by_kind_completed.get("query", 0) or 0)
         except Exception:
             return 0
+    # Fallback to best-effort count across tool kinds.
     try:
-        return int(ws_stats.get("completed", 0) or 0)
+        return int(sum(int(v or 0) for v in by_kind_completed.values()))
     except Exception:
         return 0
 
 
 def _web_search_call_debug(resp: Any) -> Dict[str, Any]:
-    output = getattr(resp, "output", []) or []
-    output_item_types = [getattr(it, "type", None) for it in output]
-
-    def _safe_model_dump(obj: Any) -> Dict[str, Any]:
-        if obj is None:
-            return {}
-        if isinstance(obj, dict):
-            return obj
-        md = getattr(obj, "model_dump", None)
-        if callable(md):
-            try:
-                d = md()
-                return d if isinstance(d, dict) else {}
-            except Exception:
-                return {}
-        out: Dict[str, Any] = {}
-        for k in ("id", "type", "status", "query", "url", "input", "arguments", "action", "name"):
-            try:
-                v = getattr(obj, k, None)
-            except Exception:
-                v = None
-            if v is not None:
-                out[k] = v
-        return out
-
-    def _classify_call(it: Any) -> Dict[str, Any]:
-        raw = _safe_model_dump(it)
-        action = raw.get("action") or raw.get("name") or ""
-        inp = raw.get("input") or raw.get("arguments") or {}
-        if not isinstance(inp, dict):
-            inp = {}
-        query = raw.get("query") or inp.get("query") or inp.get("q") or inp.get("search_query") or inp.get("searchTerm")
-        url = raw.get("url") or inp.get("url") or inp.get("link") or inp.get("target_url")
-        action_s = str(action or "").strip().lower()
-        kind = "unknown"
-        if isinstance(query, str) and query.strip():
-            kind = "query"
-        elif isinstance(url, str) and url.strip():
-            kind = "open"
-        else:
-            if any(tok in action_s for tok in ("search", "query")):
-                kind = "query"
-            elif any(tok in action_s for tok in ("open", "visit", "fetch", "browse")):
-                kind = "open"
-        out: Dict[str, Any] = {
-            "id": getattr(it, "id", None),
-            "status": getattr(it, "status", None) or "unknown",
-            "kind": kind,
-        }
-        if isinstance(query, str) and query.strip():
-            out["query"] = query.strip()
-        if isinstance(url, str) and url.strip():
-            out["url"] = url.strip()
-        if action_s:
-            out["action_hint"] = action_s
-        return out
-
-    def _extract_url_citations() -> list[dict[str, str]]:
-        citations: list[dict[str, str]] = []
-        seen: set[str] = set()
-        for item in output:
-            if getattr(item, "type", None) != "message":
+    """
+    Best-effort extraction of tool-call debug info from OpenAI responses.
+    """
+    ws: Dict[str, Any] = {"by_kind_completed": {}, "url_citations": []}
+    try:
+        for item in getattr(resp, "output", []) or []:
+            if getattr(item, "type", None) != "tool_call":
                 continue
-            for c in getattr(item, "content", []) or []:
-                anns = getattr(c, "annotations", None) or []
-                for ann in anns:
-                    if getattr(ann, "type", None) != "url_citation":
-                        continue
-                    uc = getattr(ann, "url_citation", None)
-                    url = getattr(uc, "url", None) if uc is not None else None
-                    title = getattr(uc, "title", None) if uc is not None else None
-                    if isinstance(url, str) and url and url not in seen:
-                        citations.append({"url": url, "title": title or ""})
-                        seen.add(url)
-        return citations
-
-    calls = []
-    by_status: Dict[str, int] = {}
-    by_kind: Dict[str, int] = {}
-    by_kind_completed: Dict[str, int] = {}
-    total = 0
-    completed = 0
-
-    for it in output:
-        if getattr(it, "type", None) != "web_search_call":
-            continue
-        total += 1
-        status = getattr(it, "status", None) or "unknown"
-        by_status[status] = by_status.get(status, 0) + 1
-        if status == "completed":
-            completed += 1
-        c = _classify_call(it)
-        kind = c.get("kind") or "unknown"
-        by_kind[str(kind)] = by_kind.get(str(kind), 0) + 1
-        if status == "completed":
-            by_kind_completed[str(kind)] = by_kind_completed.get(str(kind), 0) + 1
-        calls.append(c)
-
-    return {
-        "output_item_types": output_item_types,
-        "total": total,
-        "completed": completed,
-        "by_status": by_status,
-        "by_kind": by_kind,
-        "by_kind_completed": by_kind_completed,
-        "calls": calls,
-        "url_citations": _extract_url_citations(),
-    }
+            name = getattr(item, "name", None) or getattr(item, "tool_name", None) or ""
+            if not isinstance(name, str):
+                name = str(name)
+            ws["by_kind_completed"][name] = int(ws["by_kind_completed"].get(name, 0) or 0) + 1
+    except Exception:
+        pass
+    # Citations are optional and provider-dependent; leave empty if not present.
+    return ws
 
 
 def _normalize_service_tier(service_tier: str | None) -> str | None:
     st = (service_tier or "").strip().lower()
-    if not st or st == "auto":
+    if not st:
+        return None
+    if st not in {"auto", "flex"}:
         return None
     return st
-
-
-def _status_code_from_exc(exc: Exception) -> int | None:
-    status = getattr(exc, "status_code", None)
-    if status is None:
-        resp = getattr(exc, "response", None)
-        status = getattr(resp, "status_code", None)
-    try:
-        return int(status) if status is not None else None
-    except Exception:
-        return None
-
-
-def _is_resource_unavailable_429(exc: Exception) -> bool:
-    if _status_code_from_exc(exc) != 429:
-        return False
-    return "resource unavailable" in str(exc).lower()
-
-
-def _is_transient_retryable(exc: Exception) -> bool:
-    status = _status_code_from_exc(exc)
-    if status is None:
-        return False
-    if status in (500, 502, 503, 504):
-        return True
-    if status == 429:
-        msg = str(exc).lower()
-        return ("rate limit" in msg) or ("too many requests" in msg) or ("resource unavailable" in msg)
-    return False
-
-
-def _is_prompt_cache_retention_unsupported_400(exc: Exception) -> bool:
-    if _status_code_from_exc(exc) != 400:
-        return False
-    msg = str(exc).lower()
-    return "prompt_cache_retention" in msg and "not supported" in msg
 
 
 def _evaluate_company_raw(
@@ -536,25 +406,19 @@ def _evaluate_company_raw(
     if extra_user_instructions and extra_user_instructions.strip():
         extra_instruction_block = f"\nExtra instructions (debug):\n{extra_user_instructions.strip()}\n"
     elif second_query_on_uncertainty:
+        # IMPORTANT: keep the original bucket semantics (disambiguation only).
         extra_instruction_block = (
             "\nExtra instructions:\n"
             "- Default to ONE web search query.\n"
-            "- If (and only if) the first query does NOT yield trustworthy evidence for a decision-critical hard line, "
-            "you SHOULD run exactly ONE additional targeted query.\n"
-            "  - Examples of decision-critical hard lines: B2B vs B2C, operational status, or identity (lookalikes).\n"
-            "  - For B2B vs B2C, look for signals like: B2B, Firmenkunden/Gewerbekunden/Geschäftskunden, Großhandel, "
-            "Mengenrabatte, Rechnungskauf, Vertrieb/Sales-Team, 'für Unternehmen'.\n"
-            "- Do NOT use a second query just to gather extra detail (e.g., pricing/ARPU) when the hard lines are already clear.\n"
+            "- If (and only if) the first query does NOT yield trustworthy evidence about the company behind the provided domain "
+            "(e.g., domain seems inactive/parked, results point to different entities, or multiple similarly named companies appear), "
+            "you SHOULD run exactly ONE additional disambiguation query.\n"
+            "- Do NOT use a second query just to gather extra detail (e.g., pricing/ARPU) when the company is already clearly identified.\n"
             "- Do not use more than two queries total.\n"
         )
 
     user_prompt = f"""\
 Evaluate this company for Manuav using web research and the Manuav Fit logic.
-
-Business context (important):
-- This company has visited Manuav's website directly (inbound intent).
-- This does NOT automatically make them a good fit, but it is a mild positive signal that they are at least curious about outreach/cold calling.
-- Do NOT let this override hard lines like B2B clarity, DACH presence, or economics. Use it mainly as a small boost to "phone pitch potential" / readiness when other fundamentals are borderline.
 
 Scoring lens (important):
 - Do NOT judge fit only by the company's "majority business" (e.g., "90% B2C so it's a bad fit").
@@ -583,7 +447,7 @@ Instructions:
   - Also fill these structured attributes (use null if unknown; do not guess):
     - `company_size_indicators_text` (German): any concrete signals (team size, locations, #customers, revenue class, “Mittelstand”, etc.).
     - `innovation_level_indicators_text` (German): any concrete innovation/tech/product signals (AI, automation, patents, “innovativ”, etc.).
-    - `targets_specific_industry_type` (array of strings): 0–6 specific target industries/types inferred (e.g., "Healthcare (Hospitals/Clinics)", "Manufacturing (General)", "Tax / Accounting Sector"). Keep items short.
+    - `targets_specific_industry_type` (array of strings): 0–6 specific target industries/types inferred. Keep items short.
     - Flags (booleans or null): `is_startup`, `is_ai_software`, `is_innovative_product`, `is_disruptive_product`, `is_vc_funded`, `is_saas_software`, `is_complex_solution`, `is_investment_product`.
 {sources_instruction}  - do NOT include URLs in `reasoning`.
 
@@ -635,13 +499,13 @@ Company website URL: {normalized_url}
             resp = call_client.responses.create(**create_kwargs)
             break
         except Exception as e:  # pragma: no cover
-            if create_kwargs.get("prompt_cache_retention") is not None and _is_prompt_cache_retention_unsupported_400(e):
-                create_kwargs.pop("prompt_cache_retention", None)
-                retry_meta["attempts"] += 1
-                resp = call_client.responses.create(**create_kwargs)
-                break
-
-            if st != "flex" or not (_is_resource_unavailable_429(e) or _is_transient_retryable(e)):
+            # Only retry flex-related transient errors; otherwise raise.
+            if st != "flex":
+                raise
+            msg = str(e).lower()
+            status = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
+            retryable = (status in (500, 502, 503, 504, 429)) or ("rate limit" in msg) or ("resource unavailable" in msg)
+            if not retryable:
                 raise
 
             if attempt >= max_retries:
@@ -667,5 +531,5 @@ Company website URL: {normalized_url}
         result["reasoning"] = _sanitize_reasoning(result["reasoning"])
     ws_stats = _web_search_call_debug(resp)
     ws_stats["flex"] = retry_meta
-    return result, resp.usage, ws_stats
+    return result, getattr(resp, "usage", None), ws_stats
 

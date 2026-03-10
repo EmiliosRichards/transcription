@@ -51,6 +51,9 @@ Return ONLY a single JSON object (no markdown).
 
 --------EVALUATOR POSITIVES (German, optional)------------
 {{EVALUATOR_POSITIVES_JSON_PLACEHOLDER}}
------------END OF LIST-------------------------EVALUATOR CONCERNS (German, optional)------------
+-----------END OF LIST-----------------
+
+--------EVALUATOR CONCERNS (German, optional)------------
 {{EVALUATOR_CONCERNS_JSON_PLACEHOLDER}}
 -----------END OF LIST-----------------
+

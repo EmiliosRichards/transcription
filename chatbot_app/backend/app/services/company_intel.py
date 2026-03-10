@@ -594,6 +594,9 @@ def evaluate_company_url(
 
 def _render_partner_summaries(partners: List[Dict[str, Any]]) -> str:
     # Prompt-friendly format: JSON list is usually easiest for the model to scan.
+    # Keep this intentionally compact so we can include ALL partners without
+    # blowing up prompt size. For matching, "who we can call" (target_segments)
+    # matters most; product/model/flags are supporting context only.
     compact = []
     for p in partners:
         def _trunc(v: Any, n: int) -> Any:
@@ -607,26 +610,204 @@ def _render_partner_summaries(partners: List[Dict[str, Any]]) -> str:
         compact.append(
             {
                 "name": p.get("name", ""),
-                "avg_leads_per_day": p.get("avg_leads_per_day", None),
                 "industry": _trunc(p.get("industry", None), 220),
-                "target_segments": p.get("target_segments", None),
-                "products_services_offered": _trunc(p.get("products_services_offered", None), 520),
-                "usp_key_selling_points": _trunc(p.get("usp_key_selling_points", None), 520),
-                "business_model": _trunc(p.get("business_model", None), 260),
-                "company_size_indicators_text": _trunc(p.get("company_size_indicators_text", None), 320),
-                "innovation_level_indicators_text": _trunc(p.get("innovation_level_indicators_text", None), 320),
-                "targets_specific_industry_type": p.get("targets_specific_industry_type", None),
+                "target_segments": p.get("target_segments", []) or [],
+                "products_services_offered": _trunc(p.get("products_services_offered", None), 360),
+                "business_model": _trunc(p.get("business_model", None), 220),
+                "targets_specific_industry_type": p.get("targets_specific_industry_type", []) or [],
                 "is_startup": p.get("is_startup", None),
                 "is_ai_software": p.get("is_ai_software", None),
-                "is_innovative_product": p.get("is_innovative_product", None),
-                "is_disruptive_product": p.get("is_disruptive_product", None),
-                "is_vc_funded": p.get("is_vc_funded", None),
                 "is_saas_software": p.get("is_saas_software", None),
                 "is_complex_solution": p.get("is_complex_solution", None),
-                "is_investment_product": p.get("is_investment_product", None),
             }
         )
     return json.dumps(compact, ensure_ascii=False, indent=2)
+
+
+def _prefilter_partners_for_matching(
+    partners: List[Dict[str, Any]],
+    *,
+    target_attrs: Dict[str, Any],
+    limit: int = 12,
+) -> List[Dict[str, Any]]:
+    """
+    Reduce prompt size and avoid shallow matches by prefiltering partners to a
+    small candidate set based on structured similarity signals.
+
+    - Uses `targets_specific_industry_type` overlap when available.
+    - Uses a few boolean flags (SaaS/AI/complex/startup) as weak tie-breakers.
+    - Falls back to rank ordering when evidence is sparse.
+    """
+    limit = max(5, min(int(limit or 12), 25))
+    if not partners:
+        return []
+    if not isinstance(target_attrs, dict):
+        return sorted(
+            partners,
+            key=lambda p: (
+                (p.get("rank") is None) or (int(p.get("rank") or 0) <= 0),
+                int(p.get("rank") or 10**9) if int(p.get("rank") or 0) > 0 else 10**9,
+                str(p.get("name") or ""),
+            ),
+        )[:limit]
+
+    def _norm_list(v: Any) -> List[str]:
+        if not isinstance(v, list):
+            return []
+        out = []
+        for x in v:
+            s = str(x or "").strip().lower()
+            if s:
+                out.append(s)
+        return out
+
+    def _norm_bool(v: Any) -> Optional[bool]:
+        if isinstance(v, bool):
+            return v
+        return None
+
+    target_types = set(_norm_list(target_attrs.get("targets_specific_industry_type")))
+    t_is_saas = _norm_bool(target_attrs.get("is_saas_software"))
+    t_is_ai = _norm_bool(target_attrs.get("is_ai_software"))
+    t_is_complex = _norm_bool(target_attrs.get("is_complex_solution"))
+    t_is_startup = _norm_bool(target_attrs.get("is_startup"))
+
+    import re
+
+    _word_re = re.compile(r"[a-z0-9]+", re.IGNORECASE)
+    _stop = {
+        "and",
+        "the",
+        "for",
+        "with",
+        "from",
+        "into",
+        "over",
+        "under",
+        "other",
+        "general",
+        "services",
+        "service",
+        "solutions",
+        "solution",
+        "software",
+        "platform",
+        "products",
+        "product",
+        "sector",
+        "industry",
+        "industrie",
+        "und",
+        "der",
+        "die",
+        "das",
+        "mit",
+        "für",
+        "von",
+        "im",
+        "in",
+        "am",
+        "an",
+        "auf",
+        "bei",
+        "zum",
+        "zur",
+        "b2b",
+        "b2c",
+    }
+
+    def _label_words(labels: Any) -> set[str]:
+        if not isinstance(labels, list):
+            return set()
+        out: set[str] = set()
+        for lbl in labels:
+            s = str(lbl or "").strip().lower()
+            for w in _word_re.findall(s):
+                if len(w) < 3:
+                    continue
+                if w in _stop:
+                    continue
+                out.add(w)
+        return out
+
+    target_type_words = _label_words(list(target_types))
+    target_industry_words = set(_word_re.findall(str(target_attrs.get("industry") or "").lower())) - _stop
+
+    def _overlap_score(p: Dict[str, Any]) -> float:
+        p_types = set(_norm_list(p.get("targets_specific_industry_type")))
+        # Exact label overlap (best signal when taxonomies align).
+        if target_types and p_types:
+            inter = len(target_types.intersection(p_types))
+            union = len(target_types.union(p_types)) or 1
+            exact = (inter / union) * 10.0
+        else:
+            exact = 0.0
+
+        # Word-level overlap across labels (helps when label sets differ but share keywords).
+        p_type_words = _label_words(list(p_types))
+        if target_type_words and p_type_words:
+            winter = len(target_type_words.intersection(p_type_words))
+            wunion = len(target_type_words.union(p_type_words)) or 1
+            words = (winter / wunion) * 6.0
+        else:
+            words = 0.0
+
+        # Tiny industry-word overlap as last resort.
+        p_industry_words = set(_word_re.findall(str(p.get("industry") or "").lower())) - _stop
+        if target_industry_words and p_industry_words:
+            iinter = len(target_industry_words.intersection(p_industry_words))
+            iunion = len(target_industry_words.union(p_industry_words)) or 1
+            ind = (iinter / iunion) * 2.0
+        else:
+            ind = 0.0
+
+        base = exact + words + ind
+
+        # Gentle tie-breakers on high-level motion/complexity flags
+        bonus = 0.0
+        for key, tv in [
+            ("is_saas_software", t_is_saas),
+            ("is_ai_software", t_is_ai),
+            ("is_complex_solution", t_is_complex),
+            ("is_startup", t_is_startup),
+        ]:
+            pv = _norm_bool(p.get(key))
+            if tv is None or pv is None:
+                continue
+            if tv == pv:
+                bonus += 0.75
+            else:
+                bonus -= 0.25
+
+        # Very mild preference for higher-ranked partners when all else equal.
+        try:
+            r = p.get("rank")
+            rank_penalty = 0.0 if r is None else (min(50.0, float(r)) / 200.0)
+        except Exception:
+            rank_penalty = 0.0
+
+        return base + bonus - rank_penalty
+
+    scored = [(p, _overlap_score(p)) for p in partners]
+    # If everything is 0-ish (no types + no flags), just take the top by rank.
+    if max((s for _, s in scored), default=0.0) <= 0.01:
+        return sorted(
+            partners,
+            key=lambda p: (
+                (p.get("rank") is None) or (int(p.get("rank") or 0) <= 0),
+                int(p.get("rank") or 10**9) if int(p.get("rank") or 0) > 0 else 10**9,
+                str(p.get("name") or ""),
+            ),
+        )[:limit]
+
+    scored.sort(
+        key=lambda t: (
+            -(t[1] or 0.0),
+            ((t[0].get("rank") is None) or (int(t[0].get("rank") or 0) <= 0), int(t[0].get("rank") or 10**9)),
+            str(t[0].get("name") or ""),
+        )
+    )
+    return [p for p, _s in scored[:limit]]
 
 
 def _prompt_from_template(path: Path, replacements: Dict[str, str]) -> str:
@@ -681,6 +862,8 @@ def generate_sales_pitch_for_company(
             "products_services_offered": {"type": "array", "items": {"type": "string"}},
             "usp_key_selling_points": {"type": "array", "items": {"type": "string"}},
             "customer_target_segments": {"type": "array", "items": {"type": "string"}},
+            "callable_account_types": {"type": "array", "items": {"type": "string"}, "maxItems": 10},
+            "callable_buyer_roles": {"type": "array", "items": {"type": "string"}, "maxItems": 12},
             "business_model": {"anyOf": [{"type": "string"}, {"type": "null"}]},
             "company_size_indicators_text": {"anyOf": [{"type": "string"}, {"type": "null"}]},
             "company_size_category_inferred": {"anyOf": [{"type": "string"}, {"type": "null"}]},
@@ -696,6 +879,8 @@ def generate_sales_pitch_for_company(
             "products_services_offered",
             "usp_key_selling_points",
             "customer_target_segments",
+            "callable_account_types",
+            "callable_buyer_roles",
             "business_model",
             "company_size_indicators_text",
             "company_size_category_inferred",
@@ -727,12 +912,18 @@ def generate_sales_pitch_for_company(
 
     # 2) Match partner
     partners = load_golden_partners()
+    # IMPORTANT: We intentionally include ALL partners for matching, but keep
+    # their summaries compact so the model can compare globally.
     partner_summaries = _render_partner_summaries(partners)
+    eval_positives = eval_positives if isinstance(eval_positives, list) else []
+    eval_concerns = eval_concerns if isinstance(eval_concerns, list) else []
     pm_prompt = _prompt_from_template(
         PROMPTS_DIR / "german_partner_matching_prompt.txt",
         {
             "{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}": json.dumps(attrs, ensure_ascii=False, indent=2),
             "{{GOLDEN_PARTNER_SUMMARIES_PLACEHOLDER}}": partner_summaries,
+            "{{EVALUATOR_POSITIVES_JSON_PLACEHOLDER}}": json.dumps(eval_positives, ensure_ascii=False, indent=2),
+            "{{EVALUATOR_CONCERNS_JSON_PLACEHOLDER}}": json.dumps(eval_concerns, ensure_ascii=False, indent=2),
         },
     )
     pm_schema: Dict[str, Any] = {
@@ -800,8 +991,6 @@ def generate_sales_pitch_for_company(
         if no_match
         else PROMPTS_DIR / "german_sales_pitch_generation_prompt.txt"
     )
-    eval_positives = eval_positives if isinstance(eval_positives, list) else []
-    eval_concerns = eval_concerns if isinstance(eval_concerns, list) else []
     sp_replacements = {
         "{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}": json.dumps(attrs, ensure_ascii=False, indent=2),
         "{{EVALUATOR_POSITIVES_JSON_PLACEHOLDER}}": json.dumps(eval_positives, ensure_ascii=False, indent=2),

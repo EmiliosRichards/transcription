@@ -160,10 +160,6 @@ Special note (mixed B2C/B2B commerce):
 - Outbound can still make sense for e-commerce businesses when the real motion is **B2B procurement** (e.g., trades buying workwear/PPE, clubs/teams ordering kits + printing, institutions ordering in bulk).
 - In those cases, the buyer persona is often **operations/procurement, club/association board, store/branch managers**, not “end consumers”.
 
-Additional context you may be given:
-- If the company has visited Manuav's website directly, treat this as **mild inbound intent**.
-- This is a small positive signal for outreach-readiness (pitchability), but it must NOT override hard lines (B2B clarity, DACH presence, economics).
-
 High-friction personas (needs stronger proof/urgency):
 - Conservative professional services, legal, some compliance-heavy functions that are referral-driven and interruption-averse.
 
@@ -183,5 +179,4 @@ Typically exclude or score very conservatively:
 
 Also treat “hot” categories conservatively unless evidence is strong:
 - Crypto/DeFi, gambling, adult, politically sensitive topics, some regulated health/legal niches
-
 

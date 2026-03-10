@@ -1,0 +1,7 @@
+# Sample URLs for eval + match + pitch suite
+# Add one URL per line. Lines starting with # are ignored.
+
+247group.de
+notara.de
+gvs-eg.de
+medwing.com

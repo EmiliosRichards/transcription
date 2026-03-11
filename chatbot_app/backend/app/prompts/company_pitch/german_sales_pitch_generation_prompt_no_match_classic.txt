@@ -21,9 +21,9 @@ We did NOT find a suitable "Golden Partner" case study match. Therefore:
 **Mandatory first sentence:**
 "Ich rufe Sie an, weil wir glauben, dass Outbound in Ihrem Bereich grundsätzlich gut funktionieren kann."
 
-After that, add:
-- ONE short sentence making it specific to the target company
-- ONE short CTA sentence asking for a brief conversation
+**Optional additions after the mandatory first sentence:**
+- Add ONE short sentence making it specific to the target company.
+- Add ONE short CTA sentence asking for a brief conversation.
 
 **Style constraints:**
 - Keep it short and natural: 3 short sentences total.

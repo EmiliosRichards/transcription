@@ -23,7 +23,9 @@ Return a single, valid JSON object. Do not include any conversational preamble, 
 
 **CRITICAL INSTRUCTION:** The token `{avg_leads_per_day}` MUST NOT be altered or removed. It will be replaced by a script later.
 
-After the two sentences, add ONE short CTA sentence that naturally asks for a short appointment (keep it simple and natural).
+**Optional addition after the two mandatory sentences:**
+- Add ONE short CTA sentence that naturally asks for a short appointment.
+- Keep it simple, natural, and spoken.
 
 **JSON Response Format:**
 {

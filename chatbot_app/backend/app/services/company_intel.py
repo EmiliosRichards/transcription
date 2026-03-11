@@ -825,6 +825,7 @@ def generate_sales_pitch_for_company(
     eval_positives: Optional[List[str]] = None,
     eval_concerns: Optional[List[str]] = None,
     eval_fit_attributes: Optional[Dict[str, Any]] = None,
+    pitch_template: Optional[str] = None,
     model: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
@@ -986,11 +987,18 @@ def generate_sales_pitch_for_company(
 
     # 3) Generate pitch
     prev_rationale = (partner_match or {}).get("match_rationale_features") or []
-    sp_template = (
-        PROMPTS_DIR / "german_sales_pitch_generation_prompt_no_match.txt"
-        if no_match
-        else PROMPTS_DIR / "german_sales_pitch_generation_prompt.txt"
-    )
+    pt = (pitch_template or "bullets").strip().lower()
+    if pt not in {"bullets", "classic"}:
+        pt = "bullets"
+
+    if no_match:
+        sp_template = PROMPTS_DIR / "german_sales_pitch_generation_prompt_no_match.txt"
+    else:
+        sp_template = (
+            PROMPTS_DIR / "german_sales_pitch_generation_prompt_classic.txt"
+            if pt == "classic"
+            else PROMPTS_DIR / "german_sales_pitch_generation_prompt.txt"
+        )
     sp_replacements = {
         "{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}": json.dumps(attrs, ensure_ascii=False, indent=2),
         "{{EVALUATOR_POSITIVES_JSON_PLACEHOLDER}}": json.dumps(eval_positives, ensure_ascii=False, indent=2),

@@ -55,6 +55,10 @@ class CompanyPitchRequest(BaseModel):
     eval_positives: list[str] = Field(default_factory=list, description="Optional evaluator positives (German)")
     eval_concerns: list[str] = Field(default_factory=list, description="Optional evaluator concerns (German)")
     fit_attributes: Dict[str, Any] = Field(default_factory=dict, description="Optional structured fit attributes from evaluation step")
+    pitch_template: Optional[str] = Field(
+        default="bullets",
+        description='Optional pitch template selector. Supported: "bullets" (current) | "classic" (2 sentences + CTA).',
+    )
 
 
 @router.post("/company/evaluate", response_model=CompanyEvaluateResponse, tags=["Company"])
@@ -94,6 +98,7 @@ def generate_pitch(req: CompanyPitchRequest, _api_key: str = Security(require_ap
             eval_positives=req.eval_positives,
             eval_concerns=req.eval_concerns,
             eval_fit_attributes=req.fit_attributes,
+            pitch_template=req.pitch_template,
         )
         # Shape the response to what the UI needs now:
         partner_match = (out.get("partner_match") or {}) if isinstance(out.get("partner_match"), dict) else {}

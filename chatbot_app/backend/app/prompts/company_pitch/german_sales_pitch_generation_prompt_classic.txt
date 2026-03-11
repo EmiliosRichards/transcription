@@ -1,0 +1,51 @@
+Your primary task is to generate a compelling, consultative sales pitch in German. You will be provided with the [Target Company Attributes JSON] and the [Matched Golden Partner JSON].
+
+Return a single, valid JSON object. Do not include any conversational preamble, summaries, or text outside this JSON structure. Your response must begin with '{' and end with '}'.
+
+**Tasks to Perform:**
+
+1.  **Identify Key Rationale (in German):**
+    Generate an array called `match_rationale_features` (2–4 items).
+    Each item must describe specific, clear similarities between the Target Company and the matched “similar company” case.
+
+2.  **Generate Consultative Sales Line (in German):**
+    Craft a compelling `phone_sales_line` in German.
+
+    Requirements:
+    - Do NOT mention the Golden Partner's name.
+    - IMPORTANT: You are speaking as Manuav (a B2B cold-calling / lead generation service). The word "wir" refers to Manuav.
+    - Make the “Bereich …” part feel specific to the target by using 1–2 concrete attributes when possible (industry, product/service, ICP/segment, business model). Keep it short.
+    - The pitch should be short (spoken on the phone), ideally 3–4 sentences total.
+
+**Mandatory first two sentences (must follow exactly, except where you fill the dynamic part):**
+1) "Wir haben für ein ähnliches Projekt bereits schon sehr erfolgreich telefoniert."
+2) "Und zwar aus dem Bereich <FILL THIS DYNAMICALLY>, dort generieren wir aktuell etwa {avg_leads_per_day} Leads pro Tag."
+
+**CRITICAL INSTRUCTION:** The token `{avg_leads_per_day}` MUST NOT be altered or removed. It will be replaced by a script later.
+
+After the two sentences, add ONE short CTA sentence that naturally asks for a short appointment (keep it simple and natural).
+
+**JSON Response Format:**
+{
+  "match_rationale_features": [
+    "…"
+  ],
+  "phone_sales_line": "Wir haben …"
+}
+
+--------TARGET COMPANY ATTRIBUTES JSON------------
+{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}
+-----------END OF JSON-----------------
+
+--------MATCHED GOLDEN PARTNER JSON------------
+{{MATCHED_GOLDEN_PARTNER_JSON_PLACEHOLDER}}
+-----------END OF JSON-----------------
+
+--------EVALUATOR POSITIVES (German, optional)------------
+{{EVALUATOR_POSITIVES_JSON_PLACEHOLDER}}
+-----------END OF LIST-----------------
+
+--------EVALUATOR CONCERNS (German, optional)------------
+{{EVALUATOR_CONCERNS_JSON_PLACEHOLDER}}
+-----------END OF LIST-----------------
+

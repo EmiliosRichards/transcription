@@ -38,6 +38,7 @@ export default function CompanyPage() {
   const [isPitching, setIsPitching] = useState(false);
   const [error, setError] = useState<string>("");
   const [copied, setCopied] = useState(false);
+  const [pitchTemplate, setPitchTemplate] = useState<"classic" | "bullets">("bullets");
 
   const scorePct = useMemo(() => {
     if (!evalResult) return 0;
@@ -87,6 +88,7 @@ export default function CompanyPage() {
           eval_positives: Array.isArray(evalResult.positives) ? evalResult.positives : [],
           eval_concerns: Array.isArray(evalResult.concerns) ? evalResult.concerns : [],
           fit_attributes: evalResult.fit_attributes && typeof evalResult.fit_attributes === "object" ? evalResult.fit_attributes : {},
+          pitch_template: pitchTemplate,
         }),
       });
       if (!res.ok) {
@@ -241,6 +243,43 @@ export default function CompanyPage() {
           <CardContent className="flex flex-col gap-4">
             <div className="text-sm text-muted-foreground">
               This compares the company to our “golden partners” and generates a pitch you can copy.
+            </div>
+            <div className="text-sm">
+              <div className="font-medium mb-2">Pitch template</div>
+              <div className="flex flex-col gap-2">
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="pitchTemplate"
+                    value="classic"
+                    checked={pitchTemplate === "classic"}
+                    onChange={() => setPitchTemplate("classic")}
+                    disabled={isPitching}
+                    className="mt-1"
+                  />
+                  <div>
+                    <div>Classic (2 sentences + CTA)</div>
+                    <div className="text-xs text-muted-foreground">
+                      “Wir haben … telefoniert … dort generieren wir aktuell etwa X Leads pro Tag.”
+                    </div>
+                  </div>
+                </label>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="pitchTemplate"
+                    value="bullets"
+                    checked={pitchTemplate === "bullets"}
+                    onChange={() => setPitchTemplate("bullets")}
+                    disabled={isPitching}
+                    className="mt-1"
+                  />
+                  <div>
+                    <div>Bullets (current)</div>
+                    <div className="text-xs text-muted-foreground">Intro + bullet proof points + closing paragraph.</div>
+                  </div>
+                </label>
+              </div>
             </div>
             <div className="flex gap-3">
               <Button

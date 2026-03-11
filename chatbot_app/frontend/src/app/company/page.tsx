@@ -258,7 +258,7 @@ export default function CompanyPage() {
                     className="mt-1"
                   />
                   <div>
-                    <div>Classic (2 sentences + CTA)</div>
+                    <div>Classic</div>
                     <div className="text-xs text-muted-foreground">
                       “Wir haben … telefoniert … dort generieren wir aktuell etwa X Leads pro Tag.”
                     </div>
@@ -275,7 +275,7 @@ export default function CompanyPage() {
                     className="mt-1"
                   />
                   <div>
-                    <div>Bullets (current)</div>
+                    <div>Bullets</div>
                     <div className="text-xs text-muted-foreground">Intro + bullet proof points + closing paragraph.</div>
                   </div>
                 </label>

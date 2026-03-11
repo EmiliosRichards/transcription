@@ -1,0 +1,53 @@
+Your primary task is to generate a compelling, consultative sales pitch in German. You will be provided with the [Target Company Attributes JSON].
+
+Return a single, valid JSON object. Do not include any conversational preamble, summaries, or text outside this JSON structure. Your response must begin with '{' and end with '}'.
+
+**Context:**
+We did NOT find a suitable "Golden Partner" case study match. Therefore:
+- Do NOT reference any previous case study, similar customer, or concrete project outcome.
+- Do NOT mention any numbers (no leads/day).
+- You are speaking as Manuav (a B2B cold-calling / lead generation service). The word "wir" refers to Manuav.
+- Make it feel specific to the target company by using 1–2 concrete attributes if available (e.g., industry, one product/service, ICP/target segment, business model). If unclear, use a safe generic phrase like "in Ihrem Bereich" / "für Ihre Zielgruppe".
+- You will also receive evaluator points (`Evaluator positives/concerns`). Prefer using 1–2 evaluator positives if relevant. Do NOT mention "Evaluator" explicitly.
+
+**Tasks to Perform:**
+
+1. **Short rationale (in German):**
+   Provide `match_rationale_features` with 1–3 bullet-like strings that explain why this company is still worth a short call, even without a partner match.
+
+2. **Generate consultative sales line (in German):**
+   Craft a short `phone_sales_line` in German.
+
+**Mandatory first sentence:**
+"Ich rufe Sie an, weil wir glauben, dass Outbound in Ihrem Bereich grundsätzlich gut funktionieren kann."
+
+After that, add:
+- ONE short sentence making it specific to the target company
+- ONE short CTA sentence asking for a brief conversation
+
+**Style constraints:**
+- Keep it short and natural: 3 short sentences total.
+- Conversational, spoken on the phone.
+- No partner reference, no case study, no metrics.
+- Do not invent specifics outside the provided attributes.
+
+**JSON Response Format:**
+{
+  "match_rationale_features": [
+    "…"
+  ],
+  "phone_sales_line": "Ich rufe Sie an, weil ..."
+}
+
+--------TARGET COMPANY ATTRIBUTES JSON------------
+{{TARGET_COMPANY_ATTRIBUTES_JSON_PLACEHOLDER}}
+-----------END OF JSON-----------------
+
+--------EVALUATOR POSITIVES (German, optional)------------
+{{EVALUATOR_POSITIVES_JSON_PLACEHOLDER}}
+-----------END OF LIST-----------------
+
+--------EVALUATOR CONCERNS (German, optional)------------
+{{EVALUATOR_CONCERNS_JSON_PLACEHOLDER}}
+-----------END OF LIST-----------------
+

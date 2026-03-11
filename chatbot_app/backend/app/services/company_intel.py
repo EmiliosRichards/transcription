@@ -992,7 +992,11 @@ def generate_sales_pitch_for_company(
         pt = "bullets"
 
     if no_match:
-        sp_template = PROMPTS_DIR / "german_sales_pitch_generation_prompt_no_match.txt"
+        sp_template = (
+            PROMPTS_DIR / "german_sales_pitch_generation_prompt_no_match_classic.txt"
+            if pt == "classic"
+            else PROMPTS_DIR / "german_sales_pitch_generation_prompt_no_match.txt"
+        )
     else:
         sp_template = (
             PROMPTS_DIR / "german_sales_pitch_generation_prompt_classic.txt"

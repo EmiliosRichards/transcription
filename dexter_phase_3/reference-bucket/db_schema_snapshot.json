@@ -1,0 +1,4655 @@
+{
+  "meta": {
+    "generatedAt": "2026-01-21T13:49:07.005Z",
+    "schema": "public",
+    "database": "dialfire"
+  },
+  "tables": {
+    "agent_state_durations": {
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "day",
+          "dataType": "text",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "agent_name",
+          "dataType": "text",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "state_key",
+          "dataType": "text",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "seconds",
+          "dataType": "integer",
+          "nullable": false,
+          "default": "0"
+        },
+        {
+          "name": "updated_at",
+          "dataType": "timestamp without time zone",
+          "nullable": true,
+          "default": "now()"
+        },
+        {
+          "name": "created_at",
+          "dataType": "timestamp without time zone",
+          "nullable": true,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "agent_state_durations_day_agent_state_uniq",
+          "def": "CREATE UNIQUE INDEX agent_state_durations_day_agent_state_uniq ON public.agent_state_durations USING btree (day, agent_name, state_key)"
+        },
+        {
+          "name": "agent_state_durations_pkey",
+          "def": "CREATE UNIQUE INDEX agent_state_durations_pkey ON public.agent_state_durations USING btree (id)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "agent_state_durations_pkey",
+          "type": "p",
+          "def": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    "connections": {
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "character varying",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "parent_connection_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "transfer_target_address",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "call_uuid",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "global_call_uuid",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "transaction_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "task_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "contact_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "phone",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "user",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "actor",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "hangup_party",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "isThirdPartyConnection",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "dialerdomain",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "fired",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "started",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "initiated",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "connected",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "disconnected",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ended",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "duration",
+          "dataType": "numeric",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "remote_number",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "line_number",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "technology",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "result",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "code",
+          "dataType": "numeric",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "call_initiated",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "call_connected",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "call_disconnected",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$changed",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "name": "connections_pkey",
+          "def": "CREATE UNIQUE INDEX connections_pkey ON public.connections USING btree (id)"
+        },
+        {
+          "name": "idx_connections_tx",
+          "def": "CREATE INDEX idx_connections_tx ON public.connections USING btree (transaction_id)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "connections_pkey",
+          "type": "p",
+          "def": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    "contacts": {
+      "columns": [
+        {
+          "name": "$id",
+          "dataType": "character varying",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "$md5",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$ref",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$version",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$campaign_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$task_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$task",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$status",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$status_detail",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$created_date",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$entry_date",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$owner",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$follow_up_date",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$phone",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$timezone",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$caller_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$source",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$comment",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$error",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$recording",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$recording_url",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$changed",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$$anrufen_task",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$$anrufen_user",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$$anrufen_date",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$$anrufen_status",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$$anrufen_status_detail",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Telefonnummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ansprache",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Titel",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "vorname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "nachname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "firma",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "strasse",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "adresszusatz",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "plz",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ort",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "email",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "url",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "info_1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "info_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "info_3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "info_4",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "info_5",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "HOT_LEAD",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "notiz",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Wiedervorlagenart",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Geprüfte_Email",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Geprüfte_Anrede",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP_Vorname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP_Nachname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP_Funktion",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Datum_bei_Termin",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mobiltelefonnummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Job_Title",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mobile",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Direct",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "HQ",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fax",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "EBINR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "MITARBEITERKLASSE_TEXT",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BRANCHE_TEXT",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Anzahlbetten",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "cc",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "www",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "A",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Anrufen",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Geburtsjahr",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Anzahl_Allgemeinmediziner",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Name_for_Emails",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "___Employees",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Industry",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Street",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_City",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_State",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Country",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Postal_Code",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Apollo_Account_Id",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___Vorname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2_Nachname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3_Vorname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3_Nachname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Persönliche_E_Mail",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "telefax",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "transfer_nummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Geprufte_Anrede",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ergebnisfeld_1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ergebnisfeld_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ergebnisfeld_3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ergebnisfeld_4",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ergebnisfeld_5",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Phone_number",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "datenid",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "firma2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "firma3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "anrede",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "titel",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "position",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "briefanrede",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "lkz",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "land",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "bundesland",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "regierungsbezirk",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "landkreis",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "branchen",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "einwohner",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "geo_breite",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "geo_laenge",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "mitarbeiter",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "No",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "inter_tel",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "homepage",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Gesprochen_mit_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Wer_ruft_an_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "stationär",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ambulant",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Tel__Nr_1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Gesprochen_mit",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Number_Type",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Description",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Number_Found_At",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Short_Description",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "is_mechanical",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "is_mechanical_reason",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "is_mechanical_industry",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Address",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mitarbeiterklassifizierung",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Zusatz",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Branchen",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Aufzeichnung_gesendet_AP",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Aufzeichnung_gesendet_GK",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Ort_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "adressID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Kategorie",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Branche",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "KID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "E_Mail",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Notizen",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP_Email",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP_Anrede",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Datum",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Status",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Ergebnis",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Datum_Termin",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Aufnahme_Call",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Agent",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Datum_Termin_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Record_Id",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "geprüfte_Email",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "geprüfte_Anrede",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "No__of_Employees",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Steuerberater",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Wirtschaftsprüfer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Rechtsanwälte",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fragezeichen_1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fragezeichen_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fragezeichen_3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Link",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Kommentar",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "_Number",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "City_Number",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Website",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Impressum",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Country",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mitarbeiter",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Hierarchie",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Kontaktstandort__Land_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mitarbeiterzahl",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Branche__Unterkategorie_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Land",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Ländercode",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Termin_Durchgeführt_von",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Ansprechpartner",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Deal___Titel",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Deal___Label",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Deal_erstellt",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Nummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Account_Stage",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Linkedin_Url",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Facebook_Url",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Twitter_Url",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Keywords",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Technologies",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Total_Funding",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Latest_Funding",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Latest_Funding_Amount",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Last_Raised_At",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Annual_Revenue",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Number_of_Retail_Locations",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "SIC_Codes",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Founded_Year",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Logo_Url",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Subsidiary_of",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Primary_Intent_Topic",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Primary_Intent_Score",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Secondary_Intent_Topic",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Secondary_Intent_Score",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mitglieds_Nr___HGK",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "GVS_Partner",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Telefax",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Adm_HGK",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Satdt",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Tel",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Pflegedienst",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Infos_zum_Gespräch",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Datum_import",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "daten_export",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Termin_Uhrzeit",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_4",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_4",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_5",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_5",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_6",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_6",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_7",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_7",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_8",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_8",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_9",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_9",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_10",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_10",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_11",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_11",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_12",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_12",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_13",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_13",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_14",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_14",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_15",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_15",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_16",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_16",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_17",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_17",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_18",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_18",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_19",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_19",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_20",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_20",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_21",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_21",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_22",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_22",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_23",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_23",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_24",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_24",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_25",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_25",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_26",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_26",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_27",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_27",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_28",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_28",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_29",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_29",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_30",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_30",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_31",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_31",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_32",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_32",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_33",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_33",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_34",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_34",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_35",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_35",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_36",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_36",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_37",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_37",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_38",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_38",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_39",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_39",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_40",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_40",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_41",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_41",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_42",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_42",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_43",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_43",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_44",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_44",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_45",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_45",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_46",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_46",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_47",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_47",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_48",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_48",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_49",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_49",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_50",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_50",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_51",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_51",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_52",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_52",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_53",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_53",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_54",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_54",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_55",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_55",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_56",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_56",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_57",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_57",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_58",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_58",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_59",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_59",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_60",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_60",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_61",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_61",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_62",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_62",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_63",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_63",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_64",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_64",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_65",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_65",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_66",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_66",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_67",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_67",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_68",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_68",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Fachabteilungen_69",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leitung_69",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Abteilung",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Bettenanzahl",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "CB_Rank__Company_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Headquarters_Location",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Operating_Status",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Type",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Full_Description",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Number_of_Employees",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Industries",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Zielgruppe",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ZG_Größe",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Old_id",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "campaign_id",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "LinkedIn_URL",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Ziegruppe",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Contact_Telefonnummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Kaltakquise",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Sales_Pitch",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Beschreibung",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Key_Resonating_Themes",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Matched_Partner_Name",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Matched_Partner_Description",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "is_b2b",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "serves_1000",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "matched_golden_partner",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "match_reasoning",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Avg_Leads_Per_Day",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Rank",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Spalte1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Bezeichnung",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Entfernung_km_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Krankenhaus",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "FachAbteilung",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Person___Label",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Person___E_Mail_Adresse___Privat",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Person___E_Mail_Adresse___Sonstiger",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Person___Telefon___Privat",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Person___Telefon___Mobil",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Person___Telefon___Sonstiger",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "KHM53K6GGECUBTLV",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "JUZT8N9UBU2LHP8H",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "export_negative",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "open",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "_2024_05_22T07_46_00_975Z",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "_2024_05_22T07_48_46_273Z",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "_492661939677",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Europe_Berlin",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "import_2024_05_22_07_45",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "_02661_93_96_77",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "anrufen_stufe",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "_2024_05_22T07_48_46_268Z",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "failed",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BZ_Unternehmen",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BZ_Adresse",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BZ_Telefonnummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "DB_SVG_Schlüssel",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "KD_Nummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "G_Branche",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "is_hochbau",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "hochbau_confidence",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "hochbau_evidence",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Branche__WZ_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "PhoneDetails",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "HR_Amtsgericht",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Register_ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "North_Data_URL",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Rechtsform",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "USt__Id_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Ges__Vertreter_1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Ges__Vertreter_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Ges__Vertreter_3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Finanzkennzahlen_Datum",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Stamm__Grundkapital_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Bilanzsumme_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Gewinn_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Gewinn_CAGR__",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Umsatz_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Umsatz_CAGR__",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Umsatzrendite__",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Eigenkapital_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "EK_Quote__",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "EK_Rendite__",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Umsatz_pro_Mitarbeiter_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Steuern_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Steuer_Quote__",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Kassenbestand_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Forderungen_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Verbindlichkeiten_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Materialaufwand_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Personalaufwand_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Personalaufwand_pro_Mitarbeiter_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Pensionsrückstellungen_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Immobilien_und_Grundstücke_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mktg_Tech_Bezugszeitraum",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Anzahl_Förderungen_pro_Jahr",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Gesamtfördersumme_pro_Jahr_EUR",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Patente_pro_Jahr",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Marken_pro_Jahr",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Address",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "City",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Zip",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Lead_Source_Detail",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Lead_Source",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ICP_Fit",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Prio",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ICP_Text",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Last_Contact_Manuav",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Project_Name",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Project_Start",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Project_Details",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "KI_Simple_Project_Name",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Simple_Project_Details",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Phone",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Street",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Zip_Code",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "jobtitle",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Seniority",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Departments",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Contact_Owner",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Stage",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "State",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Apollo_Contact_Id",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "First_Name",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Last_Name",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Title",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Lists",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Last_Contacted",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Account_Owner",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Email_Status",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Primary_Email_Source",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Phone",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Letzte_Kontaktaufnahme",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Notiz",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Datensatz_ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "__Aktualisiert_von_Benutzer__ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "__Erstellt_von_Benutzer__ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Zeitpunkt",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Priorität",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Begründung",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Firmenprofil_ausführlicher",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Alias",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Email_Confidence",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Work_Direct_Phone",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Home_Phone",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mobile_Phone",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Other_Phone",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Person_Linkedin_Url",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "SEO_Description",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Email_Sent",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Email_Open",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Email_Bounced",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Replied",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Demoed",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Secondary_Email",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Secondary_Email_Source",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Tertiary_Email",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Tertiary_Email_Source",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Name",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Office",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "cid_aid",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Branche_pitch",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Lead_Pitch",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "categoryName",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Kontakt",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Letzer_Kontakt",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Gender",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Column1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_E_mail",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Postcode",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Town",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Deal_ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Kontakt_ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Adresse2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Bundesland",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "id",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "customer_target_segments",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Deal_Name",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Kurzbezeichnung",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Datensatz_ID___Company",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "picture",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "linkedinUrl",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "timezone",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "companyDomain",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "emailStatus",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "icebreaker",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Greetings",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "lastState",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "status",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "_id",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Lead_Status__Manuav_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Kommentar__Manuav_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Lead_ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Business_Model",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1_Job",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL4",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL5",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL6",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___Anrede",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___Nachname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___Job",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___Email",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___TEL1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___TEL2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___TEL3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___TEL4",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___TEL5",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3___Anrede",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3___Vorname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3___Nachname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3___Job",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3___Email",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3___TEL1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3___TEL2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3___TEL3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP4___Anrede",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP4___Vorname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP4___Nachname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP4___Job",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP4___Email",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP4___TEL1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP4___TEL2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP4___TEL3",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2___ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP3___ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP4___ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___Anrede_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___Vorname_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___Nachname_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___ID_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___Job_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___Email_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL1_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL2_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL3_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL4_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL5_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1___TEL6_2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Gegenstand",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "customer_request",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Position",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Industrie",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Abteilungen",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Geschäftsführer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "System",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "gefundene_Firmenbezeichnung_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Gefundener_Firmenname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "gefundene_Firmenbezeichnung",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1_Position",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Original_Number",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2_Vorname",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2_Position",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2_TEL1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Originalnummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Zugeordneter__Golden_Partner_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Ø_Leads_pro_Tag",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Vertriebspartner",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Leadquelle",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Rolle",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Eintrag_ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Lead_Name",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Webseite",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Zweite_E_Mail",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mobil",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Bundesland___Region",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Anzahl_Mitarbeiter",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Anzahl_Patienten",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP_TEL2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Full_address",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Level_1_division",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Handynummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Für_Unternehmen_zuständiger_Mitarbeiter",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Datensatz_ID___Contact",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Land_Region",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "is_b2b_reason",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "German_Industry",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Phase",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "serves_1000_reason",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Vertriebler",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Jahresumsatz",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mobilnummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Durchwahl",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Firmennummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Jobtitel",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Datum_der_letzten_Aktivität",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Zoho_ID",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Lead_Status",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Hausnummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Anzahl_der_Mitarbeiter",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Associated_Contact",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Full_Address",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Empty",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1_E_Mail",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP1_Telefonnummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2_Position_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2_E_Mail",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AP2_Telefonnummer",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Bundesland_Region",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Industry__custom_",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Umsatzbereich",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Träger_Art",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Träger_Name",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Typ",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Standort",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Betten_gesamt",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "PhoneType_Found",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "model_score",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "reasoning",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Company_Size_Inferred",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Innovation_Level_Indicators",
+          "dataType": "text",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "name": "$id|$md5",
+          "def": "CREATE INDEX \"$id|$md5\" ON public.contacts USING btree (\"$id\", \"$md5\")"
+        },
+        {
+          "name": "contacts_pkey",
+          "def": "CREATE UNIQUE INDEX contacts_pkey ON public.contacts USING btree (\"$id\")"
+        },
+        {
+          "name": "idx_contacts_campaign",
+          "def": "CREATE INDEX idx_contacts_campaign ON public.contacts USING btree (campaign_id)"
+        },
+        {
+          "name": "idx_contacts_campaign_trim",
+          "def": "CREATE INDEX idx_contacts_campaign_trim ON public.contacts USING btree (btrim(campaign_id))"
+        },
+        {
+          "name": "idx_contacts_id_campaign",
+          "def": "CREATE INDEX idx_contacts_id_campaign ON public.contacts USING btree (id, campaign_id)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "contacts_pkey",
+          "type": "p",
+          "def": "PRIMARY KEY (\"$id\")"
+        }
+      ]
+    },
+    "inbound_calls": {
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "character varying",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "line_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "campaign_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "task_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "task_name",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "contact_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "remote_number",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "line_number",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "started",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "connected",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "disconnected",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "user",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "state",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "connectable_time",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "disposition",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "dispatch_error",
+          "dataType": "boolean",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$changed",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "name": "inbound_calls_pkey",
+          "def": "CREATE UNIQUE INDEX inbound_calls_pkey ON public.inbound_calls USING btree (id)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "inbound_calls_pkey",
+          "type": "p",
+          "def": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    "recordings": {
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "character varying",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "contact_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "connection_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "started",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "stopped",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "filename",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "location",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$changed",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_recordings_connection",
+          "def": "CREATE INDEX idx_recordings_connection ON public.recordings USING btree (connection_id)"
+        },
+        {
+          "name": "idx_recordings_started_desc",
+          "def": "CREATE INDEX idx_recordings_started_desc ON public.recordings USING btree (started DESC)"
+        },
+        {
+          "name": "recordings_pkey",
+          "def": "CREATE UNIQUE INDEX recordings_pkey ON public.recordings USING btree (id)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "recordings_pkey",
+          "type": "p",
+          "def": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    "transactions": {
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "character varying",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "contact_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "task_id",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "task",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "status",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "status_detail",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "fired",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "pause_time_sec",
+          "dataType": "numeric",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "edit_time_sec",
+          "dataType": "numeric",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "wrapup_time_sec",
+          "dataType": "numeric",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "wait_time_sec",
+          "dataType": "numeric",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "user",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "user_loginName",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "user_branch",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "user_tenantAlias",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "actor",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "type",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "result",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "trigger",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "isHI",
+          "dataType": "boolean",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "revoked",
+          "dataType": "boolean",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "$changed",
+          "dataType": "character varying",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_transactions_contact_date",
+          "def": "CREATE INDEX idx_transactions_contact_date ON public.transactions USING btree (contact_id, fired)"
+        },
+        {
+          "name": "idx_transactions_date",
+          "def": "CREATE INDEX idx_transactions_date ON public.transactions USING btree (fired)"
+        },
+        {
+          "name": "idx_transactions_login_norm",
+          "def": "CREATE INDEX idx_transactions_login_norm ON public.transactions USING btree (lower(btrim((\"user_loginName\")::text)))"
+        },
+        {
+          "name": "idx_transactions_status",
+          "def": "CREATE INDEX idx_transactions_status ON public.transactions USING btree (status)"
+        },
+        {
+          "name": "idx_transactions_status_detail",
+          "def": "CREATE INDEX idx_transactions_status_detail ON public.transactions USING btree (status_detail)"
+        },
+        {
+          "name": "idx_transactions_user_date",
+          "def": "CREATE INDEX idx_transactions_user_date ON public.transactions USING btree (\"user_loginName\", fired)"
+        },
+        {
+          "name": "transactions_pkey",
+          "def": "CREATE UNIQUE INDEX transactions_pkey ON public.transactions USING btree (id)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "transactions_pkey",
+          "type": "p",
+          "def": "PRIMARY KEY (id)"
+        }
+      ]
+    }
+  }
+}

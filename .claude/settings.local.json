@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.\\(md|sql|py\\)$\")",
+      "Bash(head -50 /c/Users/EmiliosRichards/Projects/transcription/chatbot_app/backend/app/prompts/company_pitch/*)",
+      "Bash(find /c/Users/EmiliosRichards/Projects/transcription -iname *phase*3* -o -iname *dexter_phase* -o -iname *Kundenzitate* -o -iname *jaguta* -o -iname *dexterjaguta*)",
+      "Bash(python -c \":*)",
+      "Bash(python scripts/00_prepare_inputs.py)"
+    ]
+  }
+}

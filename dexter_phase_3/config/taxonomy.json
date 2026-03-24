@@ -1,0 +1,292 @@
+{
+  "gatekeeper": [
+    {
+      "id": "GK01",
+      "role": "GK",
+      "label": "Bereits Anbieter / System vorhanden",
+      "quotes": [
+        "Wir arbeiten bereits mit einem anderen Anbieter zusammen.",
+        "Wir haben schon ein System im Einsatz.",
+        "Das läuft bei uns über einen bestehenden Partner.",
+        "Wir sind mit unserem aktuellen Anbieter zufrieden."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja [datum] miteinander gesprochen. Wir haben inzwischen einige neue Funktionen hinzugefügt, die uns deutlich besser machen. Und wir arbeiten schon mit dem Haus… bei Ihnen in der Nähe zusammen, also ist das vielleicht inzwischen doch für Ihr Haus interessant. Stellen Sie mich bitte durch.",
+      "action": "pitch"
+    },
+    {
+      "id": "GK02",
+      "role": "GK",
+      "label": "Zentralisierte Entscheidung / Hauptstelle zuständig",
+      "quotes": [
+        "Das wird bei uns zentral entschieden.",
+        "Da müssen Sie sich an unsere Hauptverwaltung wenden.",
+        "Das entscheidet unsere Trägerorganisation.",
+        "Das läuft alles über die Zentrale."
+      ],
+      "answer_template": "raus (Gruppieren und schauen, ob wir die erreichen)",
+      "action": "exclude"
+    },
+    {
+      "id": "GK03",
+      "role": "GK",
+      "label": "Kein Interesse / kein Bedarf",
+      "quotes": [
+        "Das Thema ist für uns aktuell nicht relevant.",
+        "Wir brauchen das momentan nicht.",
+        "Das ist bei uns kein Thema.",
+        "Nein, daran besteht kein Interesse."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja [datum] miteinander gesprochen. Sie sind also mein Ansprechpartner und entscheiden über diese Dinge?Nein? Dann würde ich lieber mit dem Verantwortlichen sprechen. Das war vielleicht beim letzten Mal noch nicht interessant, aber mit unseren neuen Funktionen ändert sich das jetzt vielleicht",
+      "action": "pitch"
+    },
+    {
+      "id": "GK04",
+      "role": "GK",
+      "label": "Rahmenverträge / Anbieterbindung",
+      "quotes": [
+        "Wir dürfen nur über unseren Hauptanbieter einkaufen.",
+        "Wir haben feste Verträge mit einem anderen Anbieter.",
+        "Das ist vertraglich geregelt.",
+        "Wir sind an einen Rahmenvertrag gebunden."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten am [datum] schonmal ein Gespräch. Sie sagten, Ihr Haus ist vertraglich gebunden, aber das ist ja jetzt schon eine Weile her. Ich wollte nachhaken, ob sich an der Situation schon was geändert hat. Inzwischen haben wir neue Funktionen und das Haus... im Nachbarort benutzt Dexter auch schon erfolgreich. Ich denke, Herr… möchte sich das heute einmal anhören.",
+      "action": "pitch"
+    },
+    {
+      "id": "GK05",
+      "role": "GK",
+      "label": "Falsche Organisation / Zentrale zuständig",
+      "quotes": [
+        "Da sind Sie hier falsch, das macht die Verwaltung.",
+        "Ich bin nur die Rezeption, das läuft über die Hauptstelle.",
+        "Das bearbeitet unser Träger direkt.",
+        "Das wird in der Verwaltung entschieden, nicht hier."
+      ],
+      "answer_template": "raus",
+      "action": "exclude"
+    },
+    {
+      "id": "GK06",
+      "role": "GK",
+      "label": "Kontakt verweigert / keine Durchstellung",
+      "quotes": [
+        "Nein, kann ich Sie nicht verbinden.",
+        "Die Leitung nimmt keine externen Anrufe an.",
+        "Ohne Termin kann ich Sie leider nicht durchstellen.",
+        "Ich darf keine Kontakte weitergeben."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja [datum] miteinander gesprochen. Sie sollen mir keine datenschutzrelevanten Infos geben, sondern mich nochmal zur PDL weiterleiten, wir waren schon im Gespräch und ich hatte versprochen mich später nochmal zu melden.",
+      "action": "pitch"
+    },
+    {
+      "id": "GK07",
+      "role": "GK",
+      "label": "Kein Budget / Verwaltung macht das",
+      "quotes": [
+        "Das macht unsere Verwaltung.",
+        "Ich habe mit Budgets nichts zu tun.",
+        "Da müssen Sie mit der Buchhaltung sprechen.",
+        "Finanzentscheidungen treffen wir hier nicht."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja [datum] miteinander gesprochen da hieß es, ich müsste bitte mit der Verwaltung/Buchhaltung sprechen. Stellen Sie mich bitte einmal durch.",
+      "action": "pitch"
+    },
+    {
+      "id": "GK08",
+      "role": "GK",
+      "label": "Entscheider abwesend",
+      "quotes": [
+        "Die Leitung ist heute nicht da.",
+        "Der Ansprechpartner ist im Urlaub.",
+        "Der ist aktuell in einer Besprechung.",
+        "Die Leitung ist erst nächste Woche wieder da."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja am [datum] schon Kontakt. Da sagten Sie mir, dass [mein AP] aktuell nicht erreichbar sei. Stellen Sie mich bitte einmal durch. / Dann sagen Sie mir doch bitte, wann ich wieder anrufen kann und wie mein AP heißt.",
+      "action": "pitch"
+    },
+    {
+      "id": "GK09",
+      "role": "GK",
+      "label": "Technische / organisatorische Barrieren",
+      "quotes": [
+        "Das darf ich aus Datenschutzgründen nicht weitergeben.",
+        "Wir dürfen keine Anfragen telefonisch annehmen.",
+        "Das geht nur über unser Online-Formular.",
+        "Wir arbeiten mit einer geschlossenen IT-Struktur."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja am [datum] miteinander gesprochen. Es hieß, es gäbe organisatorische Barrieren. Leiten Sie mich bitte zur PDL weiter, wir hatten schonmal Kontakt und ich hatte versprochen mich später nochmal zu melden.",
+      "action": "pitch"
+    },
+    {
+      "id": "GK10",
+      "role": "GK",
+      "label": "Späterer Kontakt gewünscht",
+      "quotes": [
+        "Können Sie bitte zu einem späteren Zeitpunkt nochmal anrufen?",
+        "Melden Sie sich am besten im nächsten Jahr wieder.",
+        "Das Thema ist aktuell nicht relevant, aber vielleicht später.",
+        "Tragen Sie uns gerne für einen späteren Zeitpunkt ein."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja [datum] Kontakt, da hieß es, ich solle mich später nochmal melden. Ist jetzt ein guter Zeitpunkt? Dann sagen Sie mir doch bitte, wann ich mich nochmal melden soll. In 4 Wochen? Wer ist denn dann mein direkter AP?",
+      "action": "pitch"
+    }
+  ],
+  "decision_maker": [
+    {
+      "id": "DM01",
+      "role": "DM",
+      "label": "Kein Bedarf kein Interesse",
+      "quotes": [
+        "Wir sind an diesem Thema aktuell nicht interessiert.",
+        "Das benötigen wir im Moment nicht.",
+        "Das ist für uns gerade nicht relevant.",
+        "Wir haben keinen Bedarf an einer neuen Lösung."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja am [Datum] miteinander gesprochen. Es ging damals um unsere Sprachdokumentation für Pflegemitarbeiter via mobiler App. Damals war das für Sie noch nicht interessant, weil [Grund]. Wir haben jetzt neue Funktionen und wir sind auch schon im Haus [Name Heim] in [Ort in der Nähe] mit eingebunden, die Kollegen sind ganz begeistert von der zeitlichen Einsparung. Deshalb rufe ich Sie heute nochmal an, dass wir nochmal darüber sprechen.",
+      "generic_followup": "Wollen wir uns dazu nochmal austauschen? Ja Wann passt es Ihnen denn, dass Sie sich nochmal mit meinem Kollegen in einem VideoCall treffen? Das dauert ungefähr 15 Minuten, dass er ihnen das System wirklich mal zeigt und sie richtig beurteilen können, was es macht.",
+      "action": "pitch"
+    },
+    {
+      "id": "DM02",
+      "role": "DM",
+      "label": "Schlechtes Timing keine Zeit",
+      "quotes": [
+        "Ich habe gerade keine Zeit.",
+        "Momentan ist es bei uns sehr stressig.",
+        "Wir sind aktuell voll ausgelastet.",
+        "Bitte rufen Sie in ein paar Wochen nochmal an."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja am [Datum] miteinander gesprochen. Es ging damals um unsere Sprachdokumentation für Pflegemitarbeiter via mobiler App. Letztes Mal war es vom Timing schlecht, deshalb rufe ich heute nochmal an. Und: Wir haben unser System inzwischen auch schon im [Name Heim] bei Ihnen um die Ecke in [Ort in der Nähe] eingeführt. Die Kollegen sind begeistert und deswegen dachte ich, ich rufe sie noch mal an.",
+      "generic_followup": "Haben Sie jetzt ein paar Minuten für mich? Wann würde es Ihnen denn am Besten passen?",
+      "action": "pitch"
+    },
+    {
+      "id": "DM03",
+      "role": "DM",
+      "label": "Falscher Ansprechpartner",
+      "quotes": [
+        "Das macht bei uns jemand anderes.",
+        "Ich bin dafür nicht zuständig.",
+        "Da müssen Sie die Zentrale ansprechen.",
+        "Ich leite das intern weiter."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten am [Datum] schonmal miteinander gesprochen. Es ging damals um unsere Sprachdokumentation für Pflegemitarbeiter via mobiler App. Leiten Sie mich bitte weiter / Können Sie mir die korrenkte Nummer geben, damit ich gleich beim richtigen Kollegen lande?",
+      "generic_followup": "X Neu-Anruf",
+      "action": "pitch"
+    },
+    {
+      "id": "DM04",
+      "role": "DM",
+      "label": "Ansprechpartner abwesend Urlaub",
+      "quotes": [
+        "Der Verantwortliche ist im Urlaub.",
+        "Die Leitung ist krankgemeldet.",
+        "Unsere Ansprechpartnerin ist gerade nicht im Haus.",
+        "Der Zuständige ist erst nächste Woche wieder da."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten am [Datum] schonmal miteinander gesprochen. Es ging damals um unsere Sprachdokumentation für Pflegemitarbeiter via mobiler App. Da wurde mir gesagt, der Kollege sei außer Haus. Ist er denn heute zu sprechen? Wann darf ich denn nochmal anrufen? Können Sie mir seinen Namen buchstabieren? Haben Sie eine Durchwahl, damit ich dann gleich beim Richtigen lande?",
+      "generic_followup": "X Neu-Anruf",
+      "action": "pitch"
+    },
+    {
+      "id": "DM05",
+      "role": "DM",
+      "label": "Entscheidung zentralisiert",
+      "quotes": [
+        "Das wird bei uns zentral entschieden.",
+        "Wir haben keine Entscheidungshoheit hier im Haus.",
+        "Die Entscheidung trifft unser Träger.",
+        "Das läuft über unsere Verwaltung."
+      ],
+      "answer_template": "raus (Gruppieren und schauen, ob wir die erreichen)",
+      "generic_followup": "X",
+      "action": "exclude"
+    },
+    {
+      "id": "DM06",
+      "role": "DM",
+      "label": "Bereits Anbieter System vorhanden",
+      "quotes": [
+        "Wir haben bereits ein System im Einsatz.",
+        "Wir arbeiten schon mit einem anderen Anbieter.",
+        "Wir sind aktuell gut abgedeckt.",
+        "Wir haben bereits eine funktionierende Lösung."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja [Datum] miteinander gesprochen. Es ging damals um unsere Sprachdokumentation für Pflegemitarbeiter via mobiler App. Da sagten Sie mir, dass Sie gut abgedeckt seien. Wir haben inzwischen einige neue Funktionen hinzugefügt, die uns deutlich besser machen. Und wir arbeiten inzwischen schon mit dem Haus [Name Heim] bei Ihnen in [Ort in der Nähe] zusammen und dort sind sie auch sehr zufrieden, also ist das vielleicht inzwischen doch auch für Ihr Haus interessant und deshalb rufe ich nochmal an.",
+      "generic_followup": "Wollen wir uns dazu doch nochmal austauschen? Ich kann Ihnen unseren Ansatz nochmal kurz umreißen, aber am sinnvollsten wäre es, wenn wir einen kurzen Termin, vielleicht 15 Minuten mit meinem Kollegen vereinbaren, an dem wir nochmal etwas genauer über das Thema sprechen.",
+      "action": "pitch"
+    },
+    {
+      "id": "DM07",
+      "role": "DM",
+      "label": "Kein Budget zu teuer",
+      "quotes": [
+        "Dafür haben wir derzeit kein Budget.",
+        "Das ist uns im Moment zu teuer.",
+        "Wir müssen erst die nächste Budgetrunde abwarten.",
+        "Aktuell sind keine Investitionen geplant."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja am [Datum] schonmal Kontakt wegen unserer Sprachdokumentation für Pflegemitarbeiter via mobiler App. Damals hatten Sie Herausforderungen im Budget. Wir haben immer wieder Kunden, bei denen das so ist und die nach der Einführung gemerkt haben, dass die Ersparnisse durch Zeit und Effektivität deutlich höher sind. Zum Beispiel das Haus [Name Heim] in [Ort in der Nähe] arbeitet jetzt mit uns zusammen und die sind super zufrieden und sehen auch die Ersparnis.",
+      "generic_followup": "Und da dachte ich mir, ich rufe Sie nochmal an und wir tauschen uns doch noch einmal aus, wie wir auch Sie aktiv unterstützen können.",
+      "action": "pitch"
+    },
+    {
+      "id": "DM08",
+      "role": "DM",
+      "label": "Unklare Zuständigkeit",
+      "quotes": [
+        "Ich weiß nicht, wer das bei uns macht.",
+        "Das fällt in keinen bestimmten Bereich.",
+        "Da kümmert sich bei uns niemand direkt drum.",
+        "Ich bin mir nicht sicher, wer das verantwortet."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja am [Datum] schonmal Kontakt wegen unserer Sprachdokumentation für Pflegemitarbeiter via mobiler App und ich würde das Gespräch gerne mit der richtigen Person nochmal aufnehmen. Ich hätte gern die PDL / Die Abrechnungsstelle / den Hausleiter gesprochen.",
+      "generic_followup": "X Neu-Anruf",
+      "action": "pitch"
+    },
+    {
+      "id": "DM09",
+      "role": "DM",
+      "label": "Interne Umstellung keine Kapazitäten",
+      "quotes": [
+        "Wir sind gerade im Umbau.",
+        "Wir haben aktuell andere Prioritäten.",
+        "Wir stellen intern gerade Systeme um.",
+        "Wir haben derzeit keine Kapazitäten für neue Themen."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja am [Datum] miteinander gesprochen. Es ging um unsere Sprachdokumentation für Pflegemitarbeiter via mobiler App. Sie hatten damals Umstellungen und dementsprechend lagen Ihre Prioritäten eher bei [Grund]. Und deswegen rufe ich heute nochmal an. Wir haben jetzt neue Funktionen und sind auch schon im Haus [Name Heim] in [Ort in der Nähe] mit eingebunden, die Kollegen sind ganz begeistert von der zeitlichen Einsparung. Und da dachte ich, ich melde mich nochmal bei Ihnen",
+      "generic_followup": "Wollen wir uns dazu doch nochmal austauschen? Ich kann Ihnen unseren Ansatz nochmal kurz umreißen, aber am sinnvollsten wäre es, wenn wir einen kurzen Termin, vielleicht 15 Minuten mit meinem Kollegen vereinbaren, an dem wir nochmal etwas genauer über das Thema sprechen.",
+      "action": "pitch"
+    },
+    {
+      "id": "DM10",
+      "role": "DM",
+      "label": "Technische organisatorische Barrieren",
+      "quotes": [
+        "Unser System ist nicht kompatibel.",
+        "Das geht nur über unseren IT-Dienstleister.",
+        "Wir haben feste interne Abläufe.",
+        "Das ist bei uns technisch nicht vorgesehen."
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja am [Datum] miteinander gesprochen. Es ging damals um unsere Sprachdokumentation für Pflegemitarbeiter via mobiler App. Und Sie hatten damals Zweifel, ob ihr System kompatibel ist. Darf ich einmal kurz fragen, womit Sie arbeiten? --Achtung! Je nach Antwort reagieren: Positiv-Negativ-Liste!-- Antwort negativ: Das stimmt, damit können wir aktuell leider noch nicht arbeiten --beenden und Antwort (Name des Systems) hinterlegen Antwort positiv: Super, damit können wir problemlos arbeiten. Unter anderem ist das Haus [Name Heim] in [Ort in der Nähe] inzwischen auch schon bei uns eingebunden und die Kollegen berichten begeistert, wie viel Zeit wir ihnen in der Dokumentation sparen.",
+      "generic_followup": "Oder: Welches System verwenden Sie denn aktuell? --EWBs im Skript nutzen Wollen wir uns dazu doch nochmal austauschen? Ich kann Ihnen unseren Ansatz nochmal kurz umreißen, aber am sinnvollsten wäre es, wenn wir einen kurzen Termin, vielleicht 15 Minuten mit meinem Kollegen vereinbaren, an dem wir nochmal etwas genauer über das Thema sprechen.",
+      "action": "pitch"
+    },
+    {
+      "id": "DM11",
+      "role": "DM",
+      "label": "GK \"fragt bei AP nach und KI\"",
+      "quotes": [
+        "Ich frage kurz nach -Warteschleife- \"AP ist nicht interessiert\""
+      ],
+      "answer_template": "Guten Tag, mein Name ist... von Dexter. Wir hatten ja am [Datum] miteinander gesprochen. Es ging um unsere Sprachdokumentation für Pflegemitarbeiter via mobiler App. Damals hatten Sie beim zuständigen Kollegen [oder Name] nachgefragt und der hatte gesagt, dass es zu dem Zeitpunkt nicht interessant gewesen sei. Und deswegen rufe ich heute nochmal an. Wir haben jetzt neue Funktionen und sind auch schon im Haus [Name Heim] in [Ort in der Nähe] mit eingebunden, die Kollegen sind ganz begeistert von der zeitlichen Einsparung. Es wäre schön, wenn Sie mich einmal kurz durchstellen, damit wir das direkt besprechen können.",
+      "generic_followup": "X",
+      "action": "pitch"
+    }
+  ],
+  "meta": {
+    "source": "Kundenzitate und Antworten 3.xlsx",
+    "gk_count": 10,
+    "dm_count": 11
+  }
+}

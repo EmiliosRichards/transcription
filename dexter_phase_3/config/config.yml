@@ -1,0 +1,49 @@
+# Dexter Phase 3 Pipeline Configuration
+
+# --- Databases ---
+# We connect to TWO Postgres servers:
+#
+# 1. MEDIA DB (173.249.24.215) — has media_pipeline schema (audio_files, transcriptions)
+#    Access via SSH tunnel: ssh -L 5433:localhost:5432 emilios@173.249.24.215
+#    Then connect to localhost:5433
+media_db_url: "${MEDIA_DB_URL}"  # loaded from .env
+
+# 2. DIALFIRE DB (185.216.75.247) — has contacts, transactions, recordings, agent_data view
+#    Direct connection or via SSH tunnel
+dialfire_db_url: "${DIALFIRE_DB_URL}"  # loaded from .env
+
+# Scope filter for Dexter calls in media_pipeline.audio_files
+audio_scope: "dexter/audio/%"  # b2_object_key LIKE this
+
+# Dexter campaign IDs in Dialfire (to filter contacts)
+# Leave empty to skip Dialfire enrichment
+dexter_campaign_ids: []  # e.g. ["campaign_id_1", "campaign_id_2"]
+
+# --- LLM ---
+# Uses OPENAI_API_KEY from environment
+model: "gpt-4o-mini"  # classification model (cost-effective for ~12K contacts)
+temperature: 0.0       # deterministic classification
+max_context_words: 3000  # max words of transcript context per journey
+workers: 4             # parallel LLM requests
+
+# --- Classification ---
+# Unreachable markers (German voicemail/IVR indicators)
+unreachable_markers:
+  - "anrufbeantworter"
+  - "mailbox"
+  - "sprachbox"
+  - "voicemail"
+  - "besetzt"
+  - "nicht erreichbar"
+  - "außerhalb der geschäftszeiten"
+  - "outside of business hours"
+  - "kein anschluss"
+
+min_transcript_chars: 100  # skip transcripts shorter than this
+
+# --- Reference Matching ---
+# PLZ prefix matching: compare first N digits for regional proximity
+plz_prefix_length: 2  # 2 digits = broad region, 3 = tighter match
+
+# --- Run Settings ---
+# max_journeys: 10  # uncomment to limit for testing

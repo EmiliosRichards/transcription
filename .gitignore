@@ -84,7 +84,6 @@ dexter_analysis_pitch-regeneration/data/
 # Dexter v2 (fixed taxonomy) run artifacts and local env
 dexter_v2_fixed_taxonomy/runs/
 dexter_v2_fixed_taxonomy/.env
-docs/
 random_csvs/
 random_logs/
 random_scripts/

@@ -78,7 +78,8 @@ Why this design:
 
 ## Deployment
 
-### Server (Contabo)
+### Production Server (185.216.75.247)
+- Database: `dialfire` (schema: `media_pipeline`)
 - Reverse proxy (Caddy) on :80/:443:
 ```
 transcribe.vertikon.ltd {
@@ -126,11 +127,15 @@ Group=emilios
 WantedBy=multi-user.target
 ```
 
+### Former server (173.249.24.215)
+- Database was `manuav` — services stopped, kept as future staging server.
+- The `media_pipeline` schema and data were migrated to the production server on 2026-03-24.
+
 ### Environment (`/opt/transcribe/transcription/.env`)
 ```
 OPENAI_API_KEY=...
 GOOGLE_API_KEY=dummy-ok
-DATABASE_URL=postgresql+asyncpg://postgres:<PASS>@localhost:5432/<DBNAME>
+DATABASE_URL=postgresql+asyncpg://postgres:<PASS>@localhost:5432/dialfire
 BACKBLAZE_B2_S3_ENDPOINT=https://s3.eu-central-003.backblazeb2.com
 BACKBLAZE_B2_BUCKET=campaign-analysis
 BACKBLAZE_B2_KEY_ID=...

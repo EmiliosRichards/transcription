@@ -33,6 +33,7 @@ Why this design:
   - Optional body:
     - `b2_prefix`: prepends a tenant/namespace (e.g., `gateway`)
     - `phone`, `campaign`, `campaign_id`: fallbacks (DB remains the source of truth)
+    - `prompt`: optional transcription biasing prompt (stored in `audio_files.metadata` as `{"prompt": "..."}`, read by the worker per‑job; overrides CLI `--prompt` when present)
   - Response: `{ audio_file_id, status: "QUEUED", b2_key, b2_url }`
   - Behavior:
     1) Looks up the recording via `public.recordings` + `public.contacts` + optional `public.campaign_map`:
@@ -43,7 +44,7 @@ Why this design:
        - `[<b2_prefix>/]<campaign>/audio/<phone>/<uuid>.<ext>`
     4) Short‑circuit duplicates: if this `recording_id` (or `url_sha1`) already has a completed transcription, the API immediately returns the existing `{ audio_file_id, status, transcript, metadata }` without re‑uploading or re‑transcribing.
     5) Otherwise inserts `media_pipeline.audio_files` (idempotent) with:
-       - `phone` (normalized), `campaign_name`, `recording_id` (text), `url`, `url_sha1`, `started`, `stopped`, `b2_object_key`, `source_table='public.recordings'`, `source_row_id` (numeric only, else NULL)
+       - `phone` (normalized), `campaign_name`, `recording_id` (text), `url`, `url_sha1`, `started`, `stopped`, `b2_object_key`, `source_table='public.recordings'`, `source_row_id` (numeric only, else NULL), `metadata` (JSONB, includes `prompt` if provided)
 
 - GET `/api/media/status/{audio_file_id}`
   - Headers: `X-API-Key: <your_key>`

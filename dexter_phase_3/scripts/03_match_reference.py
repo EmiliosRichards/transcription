@@ -1,7 +1,7 @@
 """
 03_match_reference.py
 Match each classified contact to the nearest Dexter reference facility
-by PLZ (postal code) proximity.
+using real geographic distance (km) via PLZ coordinates.
 
 Usage:
     python scripts/03_match_reference.py --run runs/test_run
@@ -9,12 +9,15 @@ Usage:
 
 import argparse
 import csv
-import json
+from math import radians, sin, cos, sqrt, atan2
 from pathlib import Path
 
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# Distance threshold: under this = "nah" (can say "bei Ihnen in der Nähe")
+NEAR_KM = 50
 
 
 def load_config() -> dict:
@@ -31,55 +34,91 @@ def load_referenzen() -> list[dict]:
     return refs
 
 
-def plz_distance(plz_a: str, plz_b: str) -> int:
-    """
-    Simple PLZ proximity score.
-    Lower = closer. Compares PLZ as integers (difference).
-    Falls back to prefix matching if one is missing.
-    """
-    if not plz_a or not plz_b:
-        return 999999
+def _build_plz_coords() -> dict[str, tuple[float, float]]:
+    """Build PLZ -> (lat, lon) lookup using pgeocode."""
+    import pgeocode
+    geo = pgeocode.Nominatim("de")
+    return geo, {}
 
-    try:
-        return abs(int(plz_a) - int(plz_b))
-    except ValueError:
-        # Fallback: compare prefixes
-        shared = 0
-        for a, b in zip(plz_a, plz_b):
-            if a == b:
-                shared += 1
+
+def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Great-circle distance between two points in km."""
+    R = 6371.0
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+    a = sin(dlat / 2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) ** 2
+    return R * 2 * atan2(sqrt(a), sqrt(1 - a))
+
+
+class PLZMatcher:
+    """Matches contacts to reference facilities by real geographic distance."""
+
+    def __init__(self, refs: list[dict]):
+        import pgeocode
+        self._geo = pgeocode.Nominatim("de")
+        self._cache: dict[str, tuple[float, float] | None] = {}
+        # Pre-geocode all reference PLZs
+        self.refs_with_coords = []
+        for ref in refs:
+            coords = self._lookup(ref.get("plz", ""))
+            if coords:
+                self.refs_with_coords.append((ref, coords))
             else:
-                break
-        return 10 ** (5 - shared)
+                # Keep ref but with None coords (fallback to numeric)
+                self.refs_with_coords.append((ref, None))
 
+        geocoded = sum(1 for _, c in self.refs_with_coords if c)
+        print(f"  Geocoded {geocoded}/{len(refs)} reference PLZs")
 
-def find_nearest_reference(
-    contact_plz: str,
-    contact_system: str | None,
-    refs: list[dict],
-    prefer_system_match: bool = True,
-) -> dict | None:
-    """Find the nearest reference facility by PLZ distance.
-    Optionally prefer facilities using the same system."""
-    if not refs:
+    def _lookup(self, plz: str) -> tuple[float, float] | None:
+        if not plz:
+            return None
+        plz = plz.strip()
+        if plz in self._cache:
+            return self._cache[plz]
+        result = self._geo.query_postal_code(plz)
+        if result is not None and not (result.latitude != result.latitude):  # NaN check
+            coords = (float(result.latitude), float(result.longitude))
+            self._cache[plz] = coords
+            return coords
+        self._cache[plz] = None
         return None
-    if not contact_plz:
-        # No PLZ available — return a random reference (or None)
-        return refs[0] if refs else None
 
-    scored = []
-    for ref in refs:
-        dist = plz_distance(contact_plz, ref.get("plz", ""))
-        # Bonus: prefer same system (reduce distance by 50% if match)
-        system_match = False
-        if prefer_system_match and contact_system and contact_system.lower() != "unbekannt":
-            if ref.get("system", "").lower() == contact_system.lower():
-                system_match = True
-                dist = int(dist * 0.5)
-        scored.append((dist, system_match, ref))
+    def find_nearest(
+        self,
+        contact_plz: str,
+        contact_system: str | None = None,
+    ) -> tuple[dict | None, str, float]:
+        """Find nearest reference. Returns (ref, proximity, distance_km)."""
+        contact_coords = self._lookup(contact_plz)
 
-    scored.sort(key=lambda x: (x[0], not x[1]))
-    return scored[0][2] if scored else None
+        if not contact_coords:
+            # No coords for contact — return first ref as fallback
+            if self.refs_with_coords:
+                return self.refs_with_coords[0][0], "fern", 9999.0
+            return None, "fern", 9999.0
+
+        scored = []
+        for ref, ref_coords in self.refs_with_coords:
+            if ref_coords:
+                km = _haversine_km(*contact_coords, *ref_coords)
+            else:
+                km = 9999.0
+
+            # Prefer same system: reduce distance by 30% if match
+            system_match = False
+            if contact_system and contact_system.lower() != "unbekannt":
+                ref_sys = ref.get("system", "").lower()
+                if ref_sys and ref_sys in contact_system.lower():
+                    system_match = True
+                    km = km * 0.7
+
+            scored.append((km, system_match, ref))
+
+        scored.sort(key=lambda x: (x[0], not x[1]))
+        best_km, _, best_ref = scored[0]
+        proximity = "nah" if best_km <= NEAR_KM else "fern"
+        return best_ref, proximity, round(best_km, 1)
 
 
 def main():
@@ -91,35 +130,43 @@ def main():
     refs = load_referenzen()
     print(f"Loaded {len(refs)} reference facilities")
 
+    matcher = PLZMatcher(refs)
+
     run_dir = ROOT / args.run if not args.run.is_absolute() else args.run
     class_path = run_dir / "classifications.csv"
     if not class_path.exists():
         print(f"ERROR: {class_path} not found. Run 02_classify.py first.")
         return
 
-    # Read classifications (PLZ is already embedded from Dialfire enrichment)
-    classifications = []
     with open(class_path, encoding="utf-8") as f:
         classifications = list(csv.DictReader(f))
 
-    # Match references
     results = []
     matched = 0
+    nah_count = 0
+    fern_count = 0
+
     for row in classifications:
         contact_plz = row.get("plz", "")
         system = row.get("system_in_use", "unbekannt")
 
-        ref = find_nearest_reference(contact_plz, system, refs)
+        ref, proximity, distance_km = matcher.find_nearest(contact_plz, system)
 
         row["ref_einrichtung"] = ref["einrichtung"] if ref else ""
         row["ref_ort"] = ref["ort"] if ref else ""
         row["ref_plz"] = ref["plz"] if ref else ""
         row["ref_system"] = ref["system"] if ref else ""
         row["ref_traeger"] = ref["traeger"] if ref else ""
+        row["ref_proximity"] = proximity
+        row["ref_distance_km"] = distance_km
         row["contact_plz"] = contact_plz
 
         if ref and contact_plz:
             matched += 1
+        if proximity == "nah":
+            nah_count += 1
+        else:
+            fern_count += 1
 
         results.append(row)
 
@@ -132,9 +179,10 @@ def main():
         writer.writerows(results)
 
     no_plz = sum(1 for r in results if not r.get("contact_plz"))
-    print(f"Matched {matched}/{len(results)} contacts with PLZ-based references -> {out_path}")
+    print(f"Matched {matched}/{len(results)} contacts -> {out_path}")
+    print(f"  Nearby (<={NEAR_KM}km): {nah_count}, Distant: {fern_count}")
     if no_plz:
-        print(f"  {no_plz} contacts had no PLZ (got default reference)")
+        print(f"  {no_plz} contacts had no PLZ")
 
 
 if __name__ == "__main__":

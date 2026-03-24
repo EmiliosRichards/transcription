@@ -1,0 +1,25 @@
+{
+  "exported_at": "2026-03-24T10:27:12.015131",
+  "scope": "dexter/audio/%",
+  "campaign_ids": [
+    "H2C8QWP35CYFC8ZM",
+    "6FLEGYS7RGQL483P",
+    "2SAA6AP74RYPNDL3",
+    "JDVTGVTLTS99ZXC3",
+    "RDSFPLHE9BT68CFW",
+    "6CV8XLPGJYESMKUQ",
+    "PNUYAU4HZH6SNGVV",
+    "ZPKZDSD766UJLW59",
+    "72LZE7Q2B2RQSQJ5",
+    "3SY5V6Z5C3GSXRA4"
+  ],
+  "total_journeys": 20,
+  "total_calls": 2304,
+  "calls_with_transcript": 2300,
+  "contacts_with_plz": 20,
+  "calls_per_journey": {
+    "min": 97,
+    "max": 181,
+    "avg": 115.2
+  }
+}

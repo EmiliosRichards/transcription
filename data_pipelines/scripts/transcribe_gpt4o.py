@@ -236,6 +236,24 @@ def db_get_transcription_row(
         return (int(row[0]), str(row[1])) if row else None
 
 
+def db_get_audio_file_prompt(
+    engine,
+    audio_table: str,
+    *,
+    audio_file_id: int,
+) -> Optional[str]:
+    """Read the per-job prompt from audio_files.metadata->>'prompt'."""
+    if engine is None:
+        return None
+    sql = text(f"SELECT metadata->>'prompt' FROM {audio_table} WHERE id = :aid")
+    try:
+        with engine.begin() as conn:
+            row = conn.execute(sql, {"aid": audio_file_id}).fetchone()
+            return str(row[0]) if row and row[0] else None
+    except Exception:
+        return None
+
+
 def _failure_upsert(
     engine,
     *,
@@ -935,7 +953,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                             "b2_key": key,
                             "size_bytes": size_bytes,
                             "started_at": started_at,
-                            "prompt": (prompt_text if prompt_text else None),
+                            "prompt": None,  # will be resolved per-job before transcription
                         },
                         raw_response_json=None,
                         b2_transcript_key=None,
@@ -944,10 +962,17 @@ def main(argv: Optional[List[str]] = None) -> int:
                 except Exception:
                     pass
 
+            # Per-job prompt from DB overrides CLI --prompt
+            effective_prompt = prompt_text
+            if audio_file_id is not None:
+                per_job_prompt = db_get_audio_file_prompt(db_engine, args.db_audio_table, audio_file_id=audio_file_id)
+                if per_job_prompt:
+                    effective_prompt = per_job_prompt
+
             err_msg = None
             data = None
             try:
-                data = transcribe_with_retries(proc_path, args.model, args.timestamps, args.language, prompt_text)
+                data = transcribe_with_retries(proc_path, args.model, args.timestamps, args.language, effective_prompt)
             except Exception as e:
                 err_msg = str(e)
 
@@ -1103,7 +1128,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                         "wall_ms_total": row.get("wall_ms_total"),
                         "wall_ms_api": row.get("wall_ms_api"),
                         "error": err_msg,
-                        "prompt": (prompt_text if prompt_text else None),
+                        "prompt": (effective_prompt if effective_prompt else None),
                     },
                     raw_response_json=(data if isinstance(data, dict) else None),
                     b2_transcript_key=b2_transcript_key,

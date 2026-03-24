@@ -29,6 +29,28 @@ def build_template_lookup(taxonomy: dict) -> dict[str, dict]:
     return lookup
 
 
+_FACILITY_PREFIXES = re.compile(
+    r"^(Diakonisches\s+Seniorenzentrum|Diakoniezentrum|"
+    r"Seniorenzentrum|Seniorenheim|Seniorenresidenz|Seniorenstift|"
+    r"Seniorenpflegeheim|Altenpflegeheim|Altenheim|Alten-\s*und\s+Pflegeheim|"
+    r"Pflegeheim)\s+",
+    re.IGNORECASE,
+)
+
+# "Haus X" as a standalone prefix (not "Xhaus" compound words)
+_HAUS_PREFIX = re.compile(r"^Haus\s+", re.IGNORECASE)
+
+
+def _name_after_haus(ref_name: str) -> str:
+    """Strip facility-type prefixes so 'Haus Seniorenzentrum X' doesn't happen.
+    Applies repeatedly to handle 'Diakonisches Seniorenzentrum Haus Lehmgruben'."""
+    if not ref_name:
+        return ref_name
+    result = _FACILITY_PREFIXES.sub("", ref_name).strip()
+    result = _HAUS_PREFIX.sub("", result).strip()
+    return result or ref_name  # fallback to original if everything got stripped
+
+
 def fill_template(
     template: str,
     last_call_date: str,
@@ -36,6 +58,7 @@ def fill_template(
     ref_ort: str,
     reason_summary: str,
     contact_name: str | None = None,
+    ref_proximity: str = "nah",
 ) -> str:
     """Fill placeholders in a pitch template."""
     if not template:
@@ -45,24 +68,40 @@ def fill_template(
     result = re.sub(r"\[datum\]", last_call_date or "[Datum]", template, flags=re.IGNORECASE)
     result = re.sub(r"\[Datum\]", last_call_date or "[Datum]", result)
 
-    # Reference company
-    result = result.replace("[Name Heim]", ref_einrichtung or "[Name Heim]")
-    result = result.replace("[Ort in der Nähe]", ref_ort or "[Ort in der Nähe]")
+    # Reference company — use short name after "Haus" / "das Haus" to avoid
+    # "dem Haus Seniorenzentrum St. Josef" → "dem Haus St. Josef"
+    ref_short = _name_after_haus(ref_einrichtung) if ref_einrichtung else ""
+    ref_full = ref_einrichtung or "[Name Heim]"
 
-    # Also handle the "Haus..." and "Haus [Name Heim]" patterns
-    # Some templates use "dem Haus…" or "das Haus..."
+    # Templates with "Haus [Name Heim]" or "Haus…" already say "Haus",
+    # so insert the short name. Standalone [Name Heim] gets the full name.
     if ref_einrichtung:
-        result = re.sub(r"dem Haus…", f"dem Haus {ref_einrichtung}", result)
-        result = re.sub(r"dem Haus\.\.\.", f"dem Haus {ref_einrichtung}", result)
-        result = re.sub(r"das Haus\.\.\.", f"das Haus {ref_einrichtung}", result)
+        result = re.sub(r"dem Haus…", f"dem {ref_full}", result)
+        result = re.sub(r"dem Haus\.\.\.", f"dem {ref_full}", result)
+        result = re.sub(r"das Haus\.\.\.", f"das {ref_full}", result)
+    result = result.replace("[Name Heim]", ref_short or "[Name Heim]")
+
+    # Location phrasing depends on proximity
+    ort = ref_ort or "[Ort]"
+    if ref_proximity == "nah":
+        result = result.replace("[Ort in der Nähe]", ort)
+    else:
+        # Distant reference — rewrite proximity language
+        # "bei Ihnen in [Ort in der Nähe]" → "in [Ort]"
+        result = result.replace(f"bei Ihnen in [Ort in der Nähe]", f"in {ort}")
+        result = result.replace("[Ort in der Nähe]", ort)
+        result = result.replace("bei Ihnen in der Nähe", f"in {ort}")
+        result = result.replace("bei Ihnen um die Ecke in", "ebenfalls in")
+        result = result.replace("im Nachbarort", f"in {ort}")
 
     # Reason placeholder
     result = re.sub(r"\[Grund\]", reason_summary or "[Grund]", result, flags=re.IGNORECASE)
 
-    # Contact person
-    if contact_name:
-        result = re.sub(r"\[mein AP\]", contact_name, result, flags=re.IGNORECASE)
-        result = re.sub(r"\[oder Name\]", contact_name, result, flags=re.IGNORECASE)
+    # Contact person — use name if available, otherwise "der zuständigen Person"
+    ap_fallback = "der zuständigen Person"
+    ap_name = contact_name if contact_name else ap_fallback
+    result = re.sub(r"\[mein AP\]", ap_name, result, flags=re.IGNORECASE)
+    result = re.sub(r"\[oder Name\]", ap_name, result, flags=re.IGNORECASE)
 
     return result
 
@@ -109,9 +148,9 @@ def main():
             continue
 
         if cat_info["action"] == "exclude":
-            row["action"] = "exclude"
+            row["action"] = "raus"
             row["pitch_text"] = ""
-            row["generic_followup"] = ""
+            row["generic_followup"] = cat_info.get("answer_template", "")
             excluded += 1
             results.append(row)
             continue
@@ -124,6 +163,7 @@ def main():
             ref_ort=row.get("ref_ort", ""),
             reason_summary=row.get("reason_summary", ""),
             contact_name=row.get("contact_person_name"),
+            ref_proximity=row.get("ref_proximity", "nah"),
         )
 
         generic = cat_info.get("generic_followup", "")

@@ -1,0 +1,32 @@
+{
+  "total": 5,
+  "roles": {
+    "DM": 2,
+    "GK": 3
+  },
+  "shortcuts": 0,
+  "errors": 0,
+  "top_categories": [
+    [
+      "GK02: Zentralisierte Entscheidung / Hauptstelle zuständig",
+      2
+    ],
+    [
+      "DM06: Bereits Anbieter / System vorhanden",
+      1
+    ],
+    [
+      "GK08: Entscheider abwesend",
+      1
+    ],
+    [
+      "DM02: Schlechtes Timing keine Zeit",
+      1
+    ]
+  ],
+  "token_usage": {
+    "prompt_tokens": 40304,
+    "completion_tokens": 656,
+    "total_tokens": 40960
+  }
+}

@@ -11,6 +11,7 @@ import argparse
 import csv
 import json
 import os
+import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -21,6 +22,29 @@ from openai import OpenAI
 
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
+
+
+def _clean_name(raw: str | None) -> str:
+    """Clean up a person name extracted from ASR transcripts.
+    Handles common garbling, normalises 'Herr/Frau' prefix, title-cases."""
+    if not raw or raw.lower() in ("null", "none", "unbekannt", "n/a", ""):
+        return ""
+    name = raw.strip()
+    # Remove stray punctuation from ASR
+    name = re.sub(r"[.,:;!?]+$", "", name)
+    # Normalise title case (ASR sometimes gives ALL CAPS or lowercase)
+    parts = name.split()
+    cleaned = []
+    for p in parts:
+        if p.lower() in ("herr", "frau", "dr", "dr.", "prof", "prof."):
+            cleaned.append(p.capitalize())
+        else:
+            # Title-case but keep short prepositions lowercase
+            if p.lower() in ("von", "van", "de", "zu", "am", "im"):
+                cleaned.append(p.lower())
+            else:
+                cleaned.append(p.capitalize() if p == p.lower() or p == p.upper() else p)
+    return " ".join(cleaned)
 
 
 def load_config() -> dict:
@@ -41,8 +65,11 @@ def load_prompt_template() -> str:
 def format_categories_for_prompt(categories: list[dict]) -> str:
     lines = []
     for cat in categories:
-        quotes_str = " | ".join(cat["quotes"][:3]) if cat["quotes"] else ""
-        lines.append(f'- **{cat["id"]}: {cat["label"]}** (e.g. "{quotes_str}")')
+        quotes = cat.get("quotes", [])
+        quotes_str = " | ".join(f'"{q}"' for q in quotes) if quotes else ""
+        lines.append(f'- **{cat["id"]}: {cat["label"]}**')
+        if quotes_str:
+            lines.append(f'  Typische Aussagen: {quotes_str}')
     return "\n".join(lines)
 
 
@@ -53,39 +80,39 @@ def build_system_prompt(taxonomy: dict, template: str) -> str:
 
 
 def build_journey_context(journey: dict, max_words: int) -> str:
-    """Build transcript context from journey calls, most recent first."""
+    """Build transcript context from journey calls.
+    Selects most recent calls first (to prioritize them if we hit the word cap),
+    then presents them in CHRONOLOGICAL order so the LLM reads oldest→newest
+    and the most recent call is freshest in its attention."""
     calls = journey["calls"]
     if not calls:
         return ""
 
-    # Most recent call first (most relevant for classification)
-    sorted_calls = sorted(calls, key=lambda c: c.get("started") or "", reverse=True)
+    # Select calls starting from most recent (priority for inclusion)
+    sorted_by_recency = sorted(calls, key=lambda c: c.get("started") or "", reverse=True)
+
+    selected = []
+    word_count = 0
+    for call in sorted_by_recency:
+        text = (call.get("transcript_text") or "").strip()
+        if not text or len(text) < 30:
+            continue
+        call_words = len(text.split())
+        if word_count + call_words > max_words:
+            break
+        selected.append(call)
+        word_count += call_words
+
+    # Now reverse to chronological order (oldest first, newest last)
+    selected.sort(key=lambda c: c.get("started") or "")
 
     parts = []
-    word_count = 0
-    for i, call in enumerate(sorted_calls):
+    for i, call in enumerate(selected):
         text = (call.get("transcript_text") or "").strip()
-        if not text:
-            continue
-
         date_str = call.get("started", "unbekannt")
         if date_str and "T" in str(date_str):
             date_str = str(date_str).split("T")[0]
-
-        header = f"--- Anruf {i + 1} (Datum: {date_str}) ---"
-        call_words = len(text.split())
-
-        if word_count + call_words > max_words:
-            # Truncate this call to fit
-            remaining = max_words - word_count
-            if remaining > 50:
-                words = text.split()
-                text = " ".join(words[:remaining]) + " [...]"
-                parts.append(f"{header}\n{text}")
-            break
-
-        parts.append(f"{header}\n{text}")
-        word_count += call_words
+        parts.append(f"--- Anruf {i + 1} von {len(selected)} (Datum: {date_str}) ---\n{text}")
 
     return "\n\n".join(parts)
 
@@ -180,6 +207,15 @@ def classify_single(
 
             usage = response.usage
 
+            # Resolve best contact name: LLM extraction > Dialfire AP fields
+            contact_name = _clean_name(result.get("contact_person_name"))
+            contact_role = result.get("contact_person_role") or ""
+            gk_name = _clean_name(result.get("gatekeeper_name"))
+            # Fallback: use Dialfire AP fields if LLM didn't find a name
+            if not contact_name and (meta.get("ap_vorname") or meta.get("ap_nachname")):
+                parts = [meta.get("ap_vorname", ""), meta.get("ap_nachname", "")]
+                contact_name = " ".join(p for p in parts if p).strip()
+
             return {
                 "input_index": index,
                 "phone": phone,
@@ -192,8 +228,12 @@ def classify_single(
                 "evidence_quote": evidence,
                 "reason_summary": result.get("reason_summary", ""),
                 "system_in_use": result.get("system_in_use", "unbekannt"),
-                "contact_person_name": result.get("contact_person_name"),
+                "contact_person_name": contact_name,
+                "contact_person_role": contact_role,
+                "gatekeeper_name": gk_name,
                 "last_call_date": result.get("last_call_date") or _last_call_date(journey),
+                "do_not_call": result.get("do_not_call", False),
+                "do_not_call_evidence": result.get("do_not_call_evidence", ""),
                 "_evidence_mismatch": evidence_mismatch,
                 "_shortcut": None,
                 "usage_prompt_tokens": usage.prompt_tokens if usage else 0,
@@ -309,7 +349,8 @@ def main():
         "input_index", "phone", "campaign_name", "num_calls",
         "role", "category_id", "category_label", "confidence",
         "evidence_quote", "reason_summary", "system_in_use",
-        "contact_person_name", "last_call_date",
+        "contact_person_name", "contact_person_role", "gatekeeper_name",
+        "last_call_date", "do_not_call", "do_not_call_evidence",
         "firma", "plz", "ort", "ap_vorname", "ap_nachname",
         "dialfire_contact_id", "dialfire_status", "dialfire_status_detail",
         "_evidence_mismatch", "_shortcut",

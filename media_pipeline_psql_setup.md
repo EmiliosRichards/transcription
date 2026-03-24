@@ -64,6 +64,7 @@ Catalog of every audio file we ingest.
 | `file_size_bytes`  | `BIGINT`                             | Optional, when known                                                                               |
 | `source_table`     | `TEXT`                               | Provenance (e.g., `public.recordings`)                                                             |
 | `source_row_id`    | `BIGINT`                             | Source table row id (e.g., `recordings.id`)                                                        |
+| `metadata`         | `JSONB`                              | Optional per-job metadata (e.g., `{"prompt": "..."}` for transcription biasing)                    |
 | `created_at`       | `TIMESTAMPTZ NOT NULL DEFAULT now()` | Insertion timestamp                                                                                |
 
 **Indexes/uniques**
@@ -445,6 +446,7 @@ CREATE TABLE IF NOT EXISTS media_pipeline.audio_files (
   file_size_bytes   BIGINT,
   source_table      TEXT,
   source_row_id     BIGINT,
+  metadata          JSONB,
   created_at        TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

@@ -45,10 +45,21 @@
 | 2026-03-24 | Fresh pipeline in dexter_phase_3/ | Clean start, borrowing patterns from v2 but not carrying over complexity |
 | 2026-03-24 | Two-DB architecture | Media DB (173.249.24.215) for transcripts, Dialfire (185.216.75.247) for contacts/PLZ |
 | 2026-03-24 | PLZ from Dialfire contacts table | contacts.plz and contacts.ort are available, enriched during journey export |
+| 2026-03-24 | Chronological call order for LLM | Oldest call first, newest last — LLM recency bias helps classify on latest info |
+| 2026-03-24 | do_not_call flag added | LLM detects explicit "stop calling" requests independent of category |
+| 2026-03-24 | Real km distance for ref matching | pgeocode replaces PLZ numeric diff, 50km threshold for "nah" vs "fern" |
 
 ## Blockers
 
 | Blocker | Owner | Status |
 |---------|-------|--------|
-| .env with real DB credentials | Emilios | Open |
-| Confirm Dexter campaign_id(s) in Dialfire | Emilios | Open — needed to scope contact queries |
+| .env with real DB credentials | Emilios | Done |
+| Confirm Dexter campaign_id(s) in Dialfire | Emilios | Done (10 IDs) |
+
+## Come Back To
+
+| Item | Notes |
+|------|-------|
+| Programmatic system pre-scan | Grep all transcripts for known system names (from Whisper prompt) before LLM call, inject as hint. Catches systems mentioned in early calls that get truncated. |
+| Push colleagues for AP name tracking | AP_Vorname/AP_Nachname in Dialfire are almost always empty. Agents should fill these in after calls. Currently relying on LLM to extract garbled names from ASR. |
+| Transcription of new calls | Calls after Aug 25, 2025 exist in DB but may not be transcribed. Need to run transcription pipeline or Gateway Worker for new recordings. |

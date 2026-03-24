@@ -3,7 +3,7 @@ from fastapi.security.api_key import APIKeyHeader
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from typing import Optional
-import hashlib, os, uuid
+import hashlib, json, os, uuid
 import urllib.request
 import urllib.parse
 
@@ -33,6 +33,7 @@ async def enqueue_transcription(
     campaign_id: Optional[str] = Form(None),
     recording_id: Optional[str] = Form(None),
     b2_prefix: Optional[str] = Form(None),
+    prompt: Optional[str] = Form(None),
 ):
     if not recording_id and not url:
         raise HTTPException(status_code=400, detail="Provide recording_id or url")
@@ -184,6 +185,11 @@ async def enqueue_transcription(
     b2_url = f"b2://{object_key}"
 
     url_sha1 = hashlib.sha1((source_url or uuid.uuid4().hex).encode("utf-8")).hexdigest()
+    metadata_obj = {}
+    if prompt:
+        metadata_obj["prompt"] = prompt
+    metadata_json = json.dumps(metadata_obj) if metadata_obj else None
+
     stmt = text(
         """
         INSERT INTO media_pipeline.audio_files (
@@ -191,19 +197,22 @@ async def enqueue_transcription(
             url, url_sha1,
             started, stopped,
             b2_object_key, file_size_bytes,
-            source_table, source_row_id
+            source_table, source_row_id,
+            metadata
         ) VALUES (
             :phone, :campaign_name, :recording_id,
             :url, :url_sha1,
             :started, :stopped,
             :b2_key, :size_bytes,
-            :source_table, :source_row_id
+            :source_table, :source_row_id,
+            :metadata::jsonb
         )
         ON CONFLICT (url_sha1) DO UPDATE SET
             url = EXCLUDED.url,
             b2_object_key = EXCLUDED.b2_object_key,
             phone = COALESCE(EXCLUDED.phone, media_pipeline.audio_files.phone),
-            campaign_name = COALESCE(EXCLUDED.campaign_name, media_pipeline.audio_files.campaign_name)
+            campaign_name = COALESCE(EXCLUDED.campaign_name, media_pipeline.audio_files.campaign_name),
+            metadata = COALESCE(EXCLUDED.metadata, media_pipeline.audio_files.metadata)
         RETURNING id
         """
     )
@@ -227,6 +236,7 @@ async def enqueue_transcription(
             "stopped": row.stopped if hasattr(row, 'stopped') else None,
             "source_table": "public.recordings",
             "source_row_id": source_row_id_val,
+            "metadata": metadata_json,
         },
     )
     row = res.first()

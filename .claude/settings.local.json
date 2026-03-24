@@ -5,7 +5,25 @@
       "Bash(head -50 /c/Users/EmiliosRichards/Projects/transcription/chatbot_app/backend/app/prompts/company_pitch/*)",
       "Bash(find /c/Users/EmiliosRichards/Projects/transcription -iname *phase*3* -o -iname *dexter_phase* -o -iname *Kundenzitate* -o -iname *jaguta* -o -iname *dexterjaguta*)",
       "Bash(python -c \":*)",
-      "Bash(python scripts/00_prepare_inputs.py)"
+      "Bash(python scripts/00_prepare_inputs.py)",
+      "Bash(pip install:*)",
+      "Bash(pip show:*)",
+      "Bash(python -m pip install sqlalchemy psycopg2-binary python-dotenv pyyaml openai openpyxl)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(python scripts/01_export_journeys.py --run runs/smoke_test --max-journeys 10)",
+      "Bash(python scripts/01_export_journeys.py --run runs/test_5 --max-journeys 5)",
+      "Bash(python scripts/01_export_journeys.py --run runs/test_mid --max-journeys 15000)",
+      "Bash(python scripts/01_export_journeys.py --run runs/e2e_test --max-journeys 5)",
+      "Bash(python -c \"import ast; ast.parse\\(open\\(''scripts/02_classify.py'',encoding=''utf-8''\\).read\\(\\)\\); print\\(''OK''\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\(''scripts/04_generate_pitches.py'',encoding=''utf-8''\\).read\\(\\)\\); print\\(''OK''\\)\")",
+      "Bash(python scripts/02_classify.py --run runs/e2e_test --max-journeys 5)",
+      "Bash(python scripts/03_match_reference.py --run runs/e2e_test)",
+      "Bash(python scripts/04_generate_pitches.py --run runs/e2e_test)",
+      "Bash(python scripts/05_export_final.py --run runs/e2e_test)",
+      "Bash(PYTHONIOENCODING=utf-8 python -c \":*)",
+      "Bash(python -m pip install pgeocode)"
     ]
   }
 }

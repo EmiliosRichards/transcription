@@ -232,6 +232,8 @@ def classify_single(
                 "contact_person_role": contact_role,
                 "gatekeeper_name": gk_name,
                 "last_call_date": result.get("last_call_date") or _last_call_date(journey),
+                "termin_booked": result.get("termin_booked", False),
+                "termin_details": result.get("termin_details", ""),
                 "do_not_call": result.get("do_not_call", False),
                 "do_not_call_evidence": result.get("do_not_call_evidence", ""),
                 "_evidence_mismatch": evidence_mismatch,
@@ -262,10 +264,13 @@ def _last_call_date(journey: dict) -> str | None:
     dates = [c.get("started") for c in calls if c.get("started")]
     if not dates:
         return None
-    latest = max(dates)
-    if "T" in str(latest):
-        return str(latest).split("T")[0]
-    return str(latest)
+    latest = str(max(dates))
+    # Strip time portion — handles both "T" separator and space separator
+    for sep in ("T", " "):
+        if sep in latest:
+            latest = latest.split(sep)[0]
+            break
+    return latest
 
 
 def _error_result(index: int, journey: dict, error: str) -> dict:
@@ -350,7 +355,8 @@ def main():
         "role", "category_id", "category_label", "confidence",
         "evidence_quote", "reason_summary", "system_in_use",
         "contact_person_name", "contact_person_role", "gatekeeper_name",
-        "last_call_date", "do_not_call", "do_not_call_evidence",
+        "last_call_date", "termin_booked", "termin_details",
+        "do_not_call", "do_not_call_evidence",
         "firma", "plz", "ort", "ap_vorname", "ap_nachname",
         "dialfire_contact_id", "dialfire_status", "dialfire_status_detail",
         "_evidence_mismatch", "_shortcut",

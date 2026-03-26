@@ -93,10 +93,8 @@ class PLZMatcher:
         contact_coords = self._lookup(contact_plz)
 
         if not contact_coords:
-            # No coords for contact — return first ref as fallback
-            if self.refs_with_coords:
-                return self.refs_with_coords[0][0], "fern", 9999.0
-            return None, "fern", 9999.0
+            # No PLZ or coords — cannot match, skip reference
+            return None, "unknown", 0.0
 
         scored = []
         for ref, ref_coords in self.refs_with_coords:

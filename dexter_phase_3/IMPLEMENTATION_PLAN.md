@@ -1,210 +1,92 @@
 # Dexter Phase 3 — Implementation Plan
 
-## Pipeline Scripts
+*Last updated: 2026-03-26*
 
-We'll create a clean new pipeline in `dexter_phase_3/` with numbered scripts (inspired by the v2 structure but simplified).
+## Pipeline Structure
 
 ```
 dexter_phase_3/
 ├── config/
-│   ├── taxonomy.json          ← generated from Excel (categories + templates)
-│   ├── referenzen.csv         ← generated from Excel (golden partners)
-│   └── config.yml             ← DB connection, model, run settings
+│   ├── taxonomy.json          ← 10 GK + 11 DM categories from Excel
+│   ├── referenzen.csv         ← 51 reference facilities from Excel
+│   └── config.yml             ← DB URL, model, campaign IDs
 ├── prompts/
-│   ├── classify_journey.txt   ← system prompt for classification
-│   └── generate_pitch.txt     ← system prompt for pitch generation (if needed)
+│   ├── classify_journey.txt   ← Classification system prompt
+│   └── enhance_pitch.txt      ← Pitch enhancement system prompt
 ├── scripts/
-│   ├── 00_prepare_inputs.py   ← convert Excel → taxonomy.json + referenzen.csv
-│   ├── 01_export_journeys.py  ← pull calls from DB, group by contact
-│   ├── 02_classify.py         ← LLM classification into fixed taxonomy
-│   ├── 03_match_reference.py  ← find nearest Dexter reference per contact
-│   ├── 04_generate_pitches.py ← fill templates with dynamic fields
-│   └── 05_export_final.py     ← combine everything into output CSV
-├── runs/                      ← one subfolder per run (timestamped)
+│   ├── 00_prepare_inputs.py   ← Excel → taxonomy.json + referenzen.csv
+│   ├── 01_export_journeys.py  ← DB → journeys.jsonl
+│   ├── 02_classify.py         ← LLM classification
+│   ├── 03_match_reference.py  ← PLZ-based reference matching (pgeocode)
+│   ├── 04_generate_pitches.py ← Template placeholder filling
+│   ├── 04b_enhance_pitches.py ← Optional LLM pitch personalisation
+│   └── 05_export_final.py     ← Final CSV assembly
+├── runs/                      ← Output per run
+│   ├── selection_1250.csv     ← Contact selection for new campaign
+│   ├── compare_test/          ← 16-contact test run
+│   └── sample_20/             ← 20-contact sample run
+├── .env                       ← DB + OpenAI credentials (gitignored)
 ├── PIPELINE_OVERVIEW.md
 ├── IMPLEMENTATION_PLAN.md
+├── LINEAGE.md
+├── NOTES.md
 └── PROGRESS.md
 ```
 
----
-
-## Phase 1: Setup & Data Prep
-
-### Task 1.1 — Convert Excel inputs to machine-readable formats
-- **Script:** `00_prepare_inputs.py`
-- **What:** Read both Excel files, produce:
-  - `config/taxonomy.json` — structured categories with IDs, quotes, templates
-  - `config/referenzen.csv` — clean CSV of reference companies (Träger, Einrichtung, Ort, PLZ, System)
-- **Notes:**
-  - GK sheet has 6 columns (Kategorie, 4 Kundenzitate, Antworten)
-  - DM sheet has 4 columns (Kategorie, Kundenzitat 1 [multi-line], Antworten individualisiert, Generische Antwort)
-  - Some DM "Antworten" contain conditional logic (e.g. "Achtung! Je nach Antwort reagieren") — preserve as-is
-  - Categories marked "raus" should be flagged as `action: "exclude"`
-
-### Task 1.2 — Set up DB connection config
-- **What:** Create `config/config.yml` with:
-  - DATABASE_URL (or SSH tunnel details for Contabo Postgres)
-  - OPENAI_API_KEY reference (from env)
-  - Model selection (default: whatever is already configured)
-  - Run settings (max journeys for testing, workers, etc.)
-- **Blocker:** Need Emilios to provide/confirm DB connection details
-  - How to connect (direct URL vs SSH tunnel?)
-  - Which tables contain the Dexter call data
-  - Schema for recordings / transcriptions / contacts
-
----
-
-## Phase 2: Export Journeys
-
-### Task 2.1 — Export and group Dexter calls from DB
-- **Script:** `01_export_journeys.py`
-- **What:**
-  - Query `media_pipeline.audio_files` + `media_pipeline.transcriptions` for Dexter calls
-  - Filter: `b2_object_key LIKE 'dexter/audio/%'` (or equivalent scope)
-  - Group by phone number → one journey per contact
-  - For each journey: collect all calls chronologically with timestamps + transcript text
-  - Include any Dialfire metadata if available (contact_id, status, etc.)
-- **Output:** `runs/<run_id>/journeys.jsonl` — one JSON object per contact
-- **Fields per journey:**
-  ```json
-  {
-    "phone": "+49...",
-    "campaign_name": "...",
-    "num_calls": 5,
-    "calls": [
-      {
-        "audio_id": 123,
-        "started": "2025-06-15T10:00:00",
-        "transcript_text": "...",
-        "status": "completed"
-      }
-    ],
-    "dialfire_contact_id": "..."
-  }
-  ```
-- **DB schema dependency:** Need to confirm exact table/column names with Emilios
-
----
-
-## Phase 3: Classification
-
-### Task 3.1 — Build classification prompt
-- **File:** `prompts/classify_journey.txt`
-- **Approach:**
-  - System prompt provides the full taxonomy (all GK + DM categories with example quotes)
-  - User prompt provides the stitched transcript (most recent call first, capped by word count)
-  - LLM returns JSON: `{ role, category_id, category_label, confidence, evidence_quote, last_call_date, reason_summary }`
-- **Design:** Direct classification — no embeddings needed for ~20 categories
-  - Temperature = 0 for deterministic results
-  - JSON mode enforced
-  - Evidence validation (check quote exists in transcript)
-
-### Task 3.2 — Classification script
-- **Script:** `02_classify.py`
-- **What:**
-  - Read `journeys.jsonl`
-  - For each journey, build context from transcripts
-  - Call LLM with classify prompt
-  - Handle edge cases:
-    - No transcripts → mark as "Nicht erreichbar"
-    - Very short transcripts → mark as "Other/Unklar"
-    - Empty/voicemail detection (reuse unreachable markers from v2)
-  - Track token usage
-  - Parallel processing with ThreadPoolExecutor
-- **Output:** `runs/<run_id>/classifications.csv` + `.jsonl`
-
----
-
-## Phase 4: Reference Matching
-
-### Task 4.1 — Build reference matcher
-- **Script:** `03_match_reference.py`
-- **What:**
-  - Load `referenzen.csv` (PLZ, Ort, Einrichtung, Träger, System)
-  - For each classified contact, find the nearest reference facility
-  - "Nearest" = geographic proximity by PLZ
-    - Option A: Simple PLZ prefix matching (first 2-3 digits = same region)
-    - Option B: PLZ → lat/lon lookup table for actual distance
-    - Start with Option A, upgrade to B if needed
-  - Also match by System if the contact's system is known (from classification)
-- **Output:** Adds `ref_einrichtung`, `ref_ort`, `ref_plz`, `ref_system`, `ref_traeger` to each row
-- **Phrasing:** "Die nächste Referenz, die wir nennen können, ist [Einrichtung] in [Ort]"
-- **Note:** Need the contact's PLZ/city — may come from Dialfire data or need to be looked up
-
----
-
-## Phase 5: Pitch Generation
-
-### Task 5.1 — Template-based pitch generation
-- **Script:** `04_generate_pitches.py`
-- **What:**
-  - For each classified contact, look up the response template from taxonomy.json
-  - Fill in placeholders:
-    - `[Datum]` / `[datum]` → date of the last (or most relevant) call
-    - `[Name Heim]` → matched reference facility name
-    - `[Ort in der Nähe]` → matched reference facility city
-    - `[Grund]` → extracted reason/evidence from classification
-    - `[mein AP]` → contact person name (if known from transcript or Dialfire)
-  - For categories with `action: "exclude"` (marked "raus"), skip pitch generation
-  - For DM categories: append the "Generische Antwort" follow-up
-- **Decision:** Template filling might be enough (no LLM needed). But if the templates need more natural personalization, we can optionally use an LLM to smooth them.
-- **Output:** `runs/<run_id>/pitches.csv`
-
----
-
-## Phase 6: Final Export
-
-### Task 6.1 — Combine into final output CSV
-- **Script:** `05_export_final.py`
-- **What:** Merge classifications + references + pitches into one CSV
-- **Output columns:**
-  | Column | Description |
-  |--------|-------------|
-  | phone | Contact phone number |
-  | campaign_name | Dexter campaign |
-  | num_calls | Total calls in journey |
-  | role | GK or DM |
-  | category_id | e.g. GK01, DM03 |
-  | category_label | e.g. "Bereits Anbieter / System vorhanden" |
-  | confidence | Classification confidence |
-  | evidence_quote | German quote from transcript |
-  | reason_summary | Brief reason extract |
-  | last_call_date | Date of most recent call |
-  | action | "pitch" or "exclude" |
-  | ref_einrichtung | Matched reference facility |
-  | ref_ort | Reference facility city |
-  | ref_system | Reference facility's system |
-  | pitch_text | Final pitch (or empty if excluded) |
-  | generic_followup | DM generic follow-up text |
-  | dialfire_contact_id | Dialfire reference (if available) |
-
----
-
-## Open Questions / Blockers
-
-1. **DB Connection:** How do we connect to the Contabo Postgres? SSH tunnel? Direct URL? What port?
-2. **DB Schema:** Exact table names and columns for:
-   - Dexter call recordings (audio_files? recordings?)
-   - Transcriptions
-   - Contact info (phone → PLZ/city mapping for reference matching)
-   - Dialfire contact IDs
-3. **Contact location:** Where do we get each contact's PLZ/city for reference matching?
-   - From Dialfire data?
-   - From a separate contacts table?
-   - From the transcript itself (organization name → web lookup)?
-4. **System detection:** Do we need to identify what system (Vivendi, Medifox, etc.) the contact uses? The DM "Technische Barrieren" template has conditional logic based on this.
-5. **Which LLM model?** Use whatever is already configured (gpt-4o-mini?) — optimize later.
-6. **Scale:** ~12,000 contacts. At ~$0.001/classification (mini model), that's ~$12 total. Manageable.
-
----
-
-## Execution Order
+## Execution
 
 ```
-Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ──→ Phase 5 ──→ Phase 6
- Setup       Export      Classify    Match Ref    Pitches     Export
- (local)     (needs DB)  (needs LLM) (local)      (local)     (local)
+00_prepare_inputs.py     one-time (re-run if Excel changes)
+        │
+01_export_journeys.py    --run runs/<name> [--max-journeys N]
+        │
+02_classify.py           --run runs/<name>
+        │
+03_match_reference.py    --run runs/<name>
+        │
+04_generate_pitches.py   --run runs/<name>
+        │
+04b_enhance_pitches.py   --run runs/<name> [--max N]  (optional)
+        │
+05_export_final.py       --run runs/<name>
 ```
 
-**Can start immediately:** Phase 1 (Excel conversion, prompt writing, config setup)
-**Blocked on DB access:** Phase 2 onward
+All scripts use `--run` to specify the run directory. Data flows via intermediate files:
+- `journeys.jsonl` → `classifications.csv` → `classifications_with_refs.csv` → `pitches.csv` → `pitches_enhanced.csv` → `final_output.csv`
+
+## Configuration
+
+### config.yml
+```yaml
+database_url: env:DATABASE_URL          # from .env
+openai_api_key: env:OPENAI_API_KEY      # from .env
+model: gpt-5.4-mini-2026-03-17          # used for classification + enhancement
+scope: dexter/audio/%                   # b2_object_key filter
+campaign_ids: [...]                     # 12 Dexter campaign IDs
+```
+
+### .env
+```
+DATABASE_URL=postgresql+psycopg2://postgres:***@localhost:5432/dialfire
+OPENAI_API_KEY=sk-proj-...
+```
+Requires SSH tunnel to Contabo: `ssh -L 5432:localhost:5432 root@185.216.75.247`
+
+## Contact Selection
+
+The file `runs/selection_1250.csv` contains 1,250 contacts for the new campaign:
+- 836 from the original Phase A selection (`dexter_final_numbers_appended.csv`), last called before July 2025 (8+ month gap)
+- 414 from the wider Dexter contact pool, last called before March 2025 (12+ month gap)
+
+### Pre-filters applied:
+- Must have full data (firma + PLZ + ort)
+- Excluded: `success`, `Bestandskunde`, `nie_wieder_anrufen`, `will_nicht_mehr`, `Termin*`, `$wrong_number`, `$locked_number`, `$duplicate`, `Unternehmen_existiert_nicht`, `selbständig_gebucht`
+
+### Action needed before running:
+- 711 contacts need closing in old Dexter campaigns (CSV has `active_contact_id` + `active_campaign_id`)
+- 30 of those are **actively callable** right now (anrufen_stufe + anrufen_status=open) — close these first
+- 539 remaining are in `action_needed=none` — not in active campaigns, ready to go
+
+## Open Items / Future Work
+
+See NOTES.md for tracked items.

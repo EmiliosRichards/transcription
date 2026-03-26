@@ -38,12 +38,20 @@ OUTPUT_COLUMNS = [
     "ref_ort",
     "ref_plz",
     "ref_system",
+    "ref_traeger",
     "ref_proximity",
     "ref_distance_km",
+    "termin_booked",
+    "termin_details",
     "do_not_call",
+    "do_not_call_call_count",
     "do_not_call_evidence",
     "pitch_text",
+    "pitch_text_enhanced",
     "generic_followup",
+    "enhanced_followup",
+    "suggested_new_category",
+    "suggested_new_category_reason",
     "dialfire_contact_id",
     "dialfire_status",
 ]
@@ -58,10 +66,14 @@ def main():
 
     run_dir = ROOT / args.run if not args.run.is_absolute() else args.run
 
-    # Read pitches (the most complete file)
-    input_path = run_dir / "pitches.csv"
+    # Read pitches — prefer enhanced version if it exists
+    input_path = run_dir / "pitches_enhanced.csv"
     if not input_path.exists():
-        print(f"ERROR: {input_path} not found. Run the full pipeline first.")
+        input_path = run_dir / "pitches.csv"
+    else:
+        print("Using LLM-enhanced pitches")
+    if not input_path.exists():
+        print(f"ERROR: pitches.csv not found. Run the full pipeline first.")
         return
 
     with open(input_path, encoding="utf-8") as f:

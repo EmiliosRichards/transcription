@@ -156,10 +156,52 @@ def fetch_contacts_by_phones(engine, phones: set[str], campaign_ids: list[str]) 
             except Exception as e:
                 print(f"  Warning: pass2 batch {i} failed: {e}")
 
+    # Pass 3: For phones not found at all, try any campaign
+    missing_entirely = [p for p in phones if p not in contact_map]
+    if missing_entirely:
+        print(f"  Pass 3: looking up {len(missing_entirely)} contacts from any campaign...")
+        for i in range(0, len(missing_entirely), batch_size):
+            batch = missing_entirely[i:i + batch_size]
+            ph_placeholders = ", ".join(f":p{j}" for j in range(len(batch)))
+            ph_params = {f"p{j}": p for j, p in enumerate(batch)}
+
+            query = text(f"""
+                SELECT DISTINCT ON ("$phone")
+                    "$id" AS contact_id, "$phone" AS phone,
+                    firma, plz, ort, strasse,
+                    "AP_Vorname" AS ap_vorname, "AP_Nachname" AS ap_nachname,
+                    "$status" AS status, "$status_detail" AS status_detail
+                FROM public.contacts
+                WHERE "$phone" IN ({ph_placeholders})
+                  AND firma IS NOT NULL AND firma != ''
+                ORDER BY "$phone",
+                    (CASE WHEN plz IS NOT NULL AND plz != '' THEN 0 ELSE 1 END),
+                    "$changed" DESC NULLS LAST
+            """)
+            try:
+                with engine.connect() as conn:
+                    rows = conn.execute(query, ph_params).fetchall()
+                for r in rows:
+                    if r.phone:
+                        contact_map[r.phone] = {
+                            "dialfire_contact_id": r.contact_id or "",
+                            "firma": r.firma or "",
+                            "plz": r.plz or "",
+                            "ort": r.ort or "",
+                            "ap_vorname": r.ap_vorname or "",
+                            "ap_nachname": r.ap_nachname or "",
+                            "dialfire_status": r.status or "",
+                            "dialfire_status_detail": r.status_detail or "",
+                        }
+            except Exception as e:
+                print(f"  Warning: pass3 batch {i} failed: {e}")
+        found_pass3 = len([p for p in missing_entirely if p in contact_map])
+        print(f"  Pass 3: found {found_pass3}/{len(missing_entirely)} contacts")
+
     return contact_map
 
 
-def export_journeys(cfg: dict, run_dir: Path, max_journeys: int | None = None):
+def export_journeys(cfg: dict, run_dir: Path, max_journeys: int | None = None, phone_filter: set | None = None):
     db_url = cfg.get("database_url", "")
     if not db_url:
         print("ERROR: DATABASE_URL not set. Configure in .env")
@@ -197,6 +239,11 @@ def export_journeys(cfg: dict, run_dir: Path, max_journeys: int | None = None):
         if not phone:
             continue
         journeys_by_phone[phone].append(call)
+
+    # Apply phone filter if specified
+    if phone_filter:
+        journeys_by_phone = {p: c for p, c in journeys_by_phone.items() if p in phone_filter}
+        print(f"  Filtered to {len(journeys_by_phone)} phones")
 
     journeys = []
     for phone, phone_calls in journeys_by_phone.items():
@@ -274,11 +321,13 @@ def main():
     parser = argparse.ArgumentParser(description="Export Dexter call journeys")
     parser.add_argument("--run", type=Path, required=True, help="Run output directory")
     parser.add_argument("--max-journeys", type=int, default=None)
+    parser.add_argument("--phones", type=str, default=None, help="Comma-separated phone list to export")
     args = parser.parse_args()
 
     cfg = load_config()
     run_dir = ROOT / args.run if not args.run.is_absolute() else args.run
-    export_journeys(cfg, run_dir, args.max_journeys)
+    phone_filter = set(args.phones.split(",")) if args.phones else None
+    export_journeys(cfg, run_dir, args.max_journeys, phone_filter=phone_filter)
 
 
 if __name__ == "__main__":

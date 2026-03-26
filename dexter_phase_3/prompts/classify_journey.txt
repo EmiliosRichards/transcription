@@ -53,7 +53,25 @@ Look for mentions of documentation/care software:
 
 If the system is mentioned negatively ("damit können wir nicht arbeiten") or positively, note it either way.
 
-## Task 5: Evidence and reasoning
+## Task 5: APPOINTMENT / TERMIN detection
+
+CRITICAL: Before classifying, scan ALL calls for any evidence that a Termin (appointment/demo/video call) was actually booked. This OVERRIDES the normal classification.
+
+Signs a Termin was booked:
+- A specific date and time was agreed ("dann am 28. August um 9 Uhr", "Mittwoch 14 Uhr")
+- Email address was exchanged for a calendar invite
+- The agent confirmed the booking ("habe ich eingetragen", "ich sende Ihnen den Link")
+- The contact agreed to a demo/presentation ("das können wir gerne machen", "ja super")
+- Phrases like "dann verbleiben wir so", "bis dann", "freue mich auf das Gespräch"
+
+If a Termin WAS booked in ANY call:
+- Set `termin_booked` to true
+- Set `termin_details` to a brief description (date, who, what was agreed)
+- STILL classify normally into the taxonomy — the Termin info is an additional flag
+
+This is important because these contacts should NOT be called again with a cold pitch — they already have an appointment or had one.
+
+## Task 6: Evidence and reasoning
 
 - **evidence_quote**: A verbatim German substring from the transcript (max 25 words) that best supports your classification. Must be an EXACT substring — do not paraphrase.
 - **reason_summary**: A concrete German phrase (max 12 words) capturing WHY this contact hasn't converted. Be specific to their situation, don't just repeat the category name.
@@ -61,18 +79,48 @@ If the system is mentioned negatively ("damit können wir nicht arbeiten") or po
   - Good: "Nutzt bereits Vivendi, sieht keinen Wechselgrund"
   - Good: "PDL im Urlaub bis Ende März"
 
-## Task 6: Do-not-call detection
+## Task 7: Do-not-call detection
 
-Scan the ENTIRE call history for signs that the contact has explicitly asked to not be called again. Look for phrases like:
+IMPORTANT: A single rejection ("Wir haben kein Interesse", "Nein danke") is NOT a do-not-call. That is a normal rejection and is handled by the category classification above.
+
+A TRUE do-not-call is when the contact has **repeatedly** asked to stop being called — across **3 or more separate calls**. Look for a PATTERN of escalating frustration:
+- Call N: "Nein, danke" (normal rejection — NOT do-not-call)
+- Call N+1: "Ich habe das schon gesagt, wir brauchen das nicht" (repeated — still not enough alone)
+- Call N+2: "Ich habe jetzt schon 5 Mal gesagt, rufen Sie nicht mehr an" (NOW it's do-not-call)
+
+Signals that indicate true do-not-call (only when appearing across multiple calls):
 - "Rufen Sie nicht mehr an"
-- "Nehmen Sie uns aus dem Verteiler"
+- "Nehmen Sie uns aus dem Verteiler / aus der Liste"
 - "Ich habe das schon X-mal gesagt"
-- "Bitte vermerken Sie das"
-- "Wir möchten das nicht / nicht interessiert" (repeatedly across calls)
-- "Langsam werde ich ärgerlich"
-- Any expression of frustration about repeated calling
+- "Bitte vermerken Sie das irgendwo"
+- "Langsam werde ich ärgerlich / das nervt"
+- Explicitly referencing previous calls where they already declined
+- Threatening to complain or take action
 
-Set `do_not_call` to true if the contact has clearly and explicitly asked to stop being contacted. This is independent of the category classification — classify them normally AND flag if they want no more calls.
+Set `do_not_call` to true ONLY if the rejection pattern appears across 3+ separate calls. A single strong rejection in one call is NOT sufficient — it's just a "Kein Interesse" classification.
+
+Also set `do_not_call_call_count` to the number of separate calls in which a rejection or stop-request was expressed.
+
+## Task 8: Suggested new classification (only when clearly warranted)
+
+You MUST always classify into the fixed taxonomy above. But sometimes a contact's situation genuinely doesn't fit any existing category — it represents a truly distinct reason we haven't captured.
+
+If and ONLY if you see a clear, high-value new classification that is:
+- NOT similar to any existing category (if it's close to an existing one, just use that one)
+- Distinct enough that it would warrant its own pitch template
+- Clearly evidenced in the transcript
+
+Then fill in `suggested_new_category`. Otherwise leave it null.
+
+Do NOT suggest new categories just because the fit isn't perfect — a 0.7 confidence match to an existing category is fine. Only suggest when the contact's situation is genuinely novel and recurring enough to be valuable.
+
+Examples of what WOULD warrant a suggestion:
+- A completely different objection type not covered (e.g. "data privacy concerns about cloud-based solutions")
+- A structural situation not in the taxonomy (e.g. "facility is closing/merging")
+
+Examples of what would NOT warrant a suggestion:
+- "Kein Interesse" but slightly differently worded → just use GK03/DM01
+- A mix of two existing categories → pick the dominant one
 
 ## Output Format
 
@@ -89,8 +137,13 @@ Return ONLY valid JSON:
   "contact_person_role": "their role if known (e.g. 'PDL', 'Heimleitung') or null",
   "gatekeeper_name": "GK name if mentioned, or null",
   "last_call_date": "date of last call if identifiable, else null",
+  "termin_booked": true | false,
+  "termin_details": "date/time and what was agreed, or null",
   "do_not_call": true | false,
-  "do_not_call_evidence": "verbatim quote showing they asked to stop, or null"
+  "do_not_call_evidence": "verbatim quote from the MOST frustrated call, or null",
+  "do_not_call_call_count": 0,
+  "suggested_new_category": "short German label for the new category, or null",
+  "suggested_new_category_reason": "why this doesn't fit existing categories, or null"
 }
 
 ## Special cases

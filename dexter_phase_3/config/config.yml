@@ -24,7 +24,7 @@ dexter_campaign_ids:
   - "3SY5V6Z5C3GSXRA4"
 
 # --- LLM ---
-model: "gpt-5.4-mini-2026-03-17"
+model: "gpt-5.4-2026-03-05"
 temperature: 0.0
 max_context_words: 3000
 workers: 4
@@ -42,6 +42,34 @@ unreachable_markers:
   - "kein anschluss"
 
 min_transcript_chars: 100
+
+# --- Contact Exclusion Rules ---
+# Contacts with ANY of these values (in ANY campaign) are excluded from selection
+exclusion_rules:
+  # Top-level statuses that mean "done"
+  excluded_statuses:
+    - "success"
+
+  # Tasks that indicate appointments/recordings (not for cold calling)
+  excluded_tasks:
+    - "export_aufzeichnungen"
+
+  # $$anrufen_status_detail values that warrant exclusion
+  excluded_anrufen_details:
+    - "Nie_wieder_anrufen"
+    - "nie_wieder_anrufen"
+    - "will_nicht_mehr"
+    - "Bestandskunde"
+    - "Bestandkunde"
+    - "Termin"
+    - "Termin_bestätigt"
+    - "Termin_nach_Infomail"
+    - "Termin_verschoben"
+    - "selbständig_gebucht"
+    - "$do_not_call"
+    - "$wrong_number"
+    - "$locked_number"
+    - "Unternehmen_existiert_nicht"
 
 # --- Reference Matching ---
 plz_prefix_length: 2

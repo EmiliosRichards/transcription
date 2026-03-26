@@ -64,38 +64,65 @@ def fill_template(
     if not template:
         return ""
 
+    # Clean date — strip timestamps, keep just YYYY-MM-DD
+    clean_date = last_call_date or "[Datum]"
+    if clean_date and "T" in clean_date:
+        clean_date = clean_date.split("T")[0]
+    if clean_date and " " in clean_date:
+        clean_date = clean_date.split(" ")[0]
+
     # Date placeholders (various casings)
-    result = re.sub(r"\[datum\]", last_call_date or "[Datum]", template, flags=re.IGNORECASE)
-    result = re.sub(r"\[Datum\]", last_call_date or "[Datum]", result)
+    result = re.sub(r"\[datum\]", clean_date, template, flags=re.IGNORECASE)
+    result = re.sub(r"\[Datum\]", clean_date, result)
 
-    # Reference company — use short name after "Haus" / "das Haus" to avoid
-    # "dem Haus Seniorenzentrum St. Josef" → "dem Haus St. Josef"
-    ref_short = _name_after_haus(ref_einrichtung) if ref_einrichtung else ""
-    ref_full = ref_einrichtung or "[Name Heim]"
+    # Reference company handling
+    if not ref_einrichtung:
+        # No reference available — remove reference sentences entirely
+        # Remove common patterns like "Und: Wir haben... eingeführt. Die Kollegen sind begeistert..."
+        # or "Und wir arbeiten schon mit dem Haus [Name Heim]..."
+        result = re.sub(
+            r"\s*Und:?\s*[Ww]ir haben[^.]*\[Name Heim\][^.]*\.\s*Die Kollegen sind begeistert[^.]*\.",
+            "", result)
+        result = re.sub(
+            r"\s*Und wir arbeiten schon mit[^.]*\[Name Heim\][^.]*\.",
+            "", result)
+        result = re.sub(
+            r"\s*[Ww]ir arbeiten.*?schon.*?\[Name Heim\][^.]*\.",
+            "", result)
+        # Clean up any remaining unfilled placeholders
+        result = result.replace("[Name Heim]", "")
+        result = result.replace("[Ort in der Nähe]", "")
+        result = re.sub(r"\s{2,}", " ", result).strip()
+    else:
+        # Reference available — fill in names
+        ref_short = _name_after_haus(ref_einrichtung)
+        ref_full = ref_einrichtung
 
-    # Templates with "Haus [Name Heim]" or "Haus…" already say "Haus",
-    # so insert the short name. Standalone [Name Heim] gets the full name.
-    if ref_einrichtung:
+        # Templates with "Haus [Name Heim]" already say "Haus",
+        # so insert the short name. Standalone [Name Heim] gets the full name.
         result = re.sub(r"dem Haus…", f"dem {ref_full}", result)
         result = re.sub(r"dem Haus\.\.\.", f"dem {ref_full}", result)
         result = re.sub(r"das Haus\.\.\.", f"das {ref_full}", result)
-    result = result.replace("[Name Heim]", ref_short or "[Name Heim]")
+        result = result.replace("[Name Heim]", ref_short or ref_full)
 
-    # Location phrasing depends on proximity
-    ort = ref_ort or "[Ort]"
-    if ref_proximity == "nah":
-        result = result.replace("[Ort in der Nähe]", ort)
-    else:
-        # Distant reference — rewrite proximity language
-        # "bei Ihnen in [Ort in der Nähe]" → "in [Ort]"
-        result = result.replace(f"bei Ihnen in [Ort in der Nähe]", f"in {ort}")
-        result = result.replace("[Ort in der Nähe]", ort)
-        result = result.replace("bei Ihnen in der Nähe", f"in {ort}")
-        result = result.replace("bei Ihnen um die Ecke in", "ebenfalls in")
-        result = result.replace("im Nachbarort", f"in {ort}")
+        # Location phrasing depends on proximity
+        ort = ref_ort or "[Ort]"
+        if ref_proximity == "nah":
+            result = result.replace("[Ort in der Nähe]", ort)
+        else:
+            # Distant reference — rewrite proximity language
+            result = result.replace(f"bei Ihnen in [Ort in der Nähe]", f"in {ort}")
+            result = result.replace("[Ort in der Nähe]", ort)
+            result = result.replace("bei Ihnen in der Nähe", f"in {ort}")
+            result = result.replace("bei Ihnen um die Ecke in", "ebenfalls in")
+            result = result.replace("im Nachbarort", f"in {ort}")
 
-    # Reason placeholder
-    result = re.sub(r"\[Grund\]", reason_summary or "[Grund]", result, flags=re.IGNORECASE)
+    # Reason placeholder — lowercase first char so it flows mid-sentence
+    # e.g. "lagen Ihre Prioritäten eher bei [Grund]" → "...bei aktueller Umstellung"
+    reason = reason_summary or "[Grund]"
+    if reason and reason != "[Grund]" and reason[0].isupper():
+        reason = reason[0].lower() + reason[1:]
+    result = re.sub(r"\[Grund\]", reason, result, flags=re.IGNORECASE)
 
     # Contact person — use name if available, otherwise "der zuständigen Person"
     ap_fallback = "der zuständigen Person"

@@ -99,3 +99,12 @@ todos.md
 dexter_phase_3/Dexter Jagdhütte.xlsx
 dexter_phase_3/Kundenzitate und Antworten 3.xlsx
 dexter_phase_3/runs/
+
+# Sandbox / experimental
+dexter_sandbox/
+
+# Local reference docs
+multi-agent-pipeline-setup-guide.md
+
+# Claude Code local settings
+.claude/settings.local.json

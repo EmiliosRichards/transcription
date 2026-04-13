@@ -114,6 +114,20 @@ def submit(recording_id):
         return False, {"detail": str(e)}
 
 
+def mark_as_skipped(conn, recording_id, campaign_id, reason):
+    """Insert a placeholder row so this recording is not retried."""
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO media_pipeline.audio_files
+            (phone, campaign_name, recording_id, url, url_sha1, source_table)
+        VALUES
+            ('unknown', %s, %s, %s, md5(%s), 'skipped')
+        ON CONFLICT DO NOTHING
+    """, (campaign_id, recording_id, f"SKIPPED: {reason}", recording_id))
+    conn.commit()
+    cur.close()
+
+
 def main():
     dry_run = "--dry-run" in sys.argv
 
@@ -127,15 +141,16 @@ def main():
 
     conn = get_db_connection()
     new_recordings = find_new_recordings(conn, campaign_ids)
-    conn.close()
 
     if not new_recordings:
+        conn.close()
         log(f"No new recordings found for {len(campaign_ids)} campaigns")
         return
 
     log(f"Found {len(new_recordings)} new recordings to transcribe")
 
     if dry_run:
+        conn.close()
         for rid, cid in new_recordings[:10]:
             log(f"  DRY RUN: would submit {rid} ({cid})")
         if len(new_recordings) > 10:
@@ -145,6 +160,7 @@ def main():
     queued = 0
     already_done = 0
     failed = 0
+    skipped = 0
 
     for rid, cid in new_recordings:
         ok, result = submit(rid)
@@ -155,10 +171,21 @@ def main():
             else:
                 queued += 1
         else:
-            failed += 1
-            log(f"  FAILED: {rid} — {result.get('detail', '')[:100]}")
+            status_code = result.get("status_code", 0)
+            detail = result.get("detail", "")
+            # Permanent failures (400 = bad request, 404 = not found) — mark as skipped so we don't retry
+            if status_code in (400, 404):
+                mark_as_skipped(conn, rid, cid, detail[:200])
+                skipped += 1
+                log(f"  SKIPPED (permanent): {rid} — {detail[:100]}")
+            else:
+                # Transient failures (500, timeout, etc.) — don't mark, will retry next run
+                failed += 1
+                log(f"  FAILED (will retry): {rid} — {detail[:100]}")
 
-    log(f"Done: queued={queued} already_done={already_done} failed={failed}")
+    conn.close()
+
+    log(f"Done: queued={queued} already_done={already_done} skipped={skipped} failed={failed}")
 
 
 if __name__ == "__main__":

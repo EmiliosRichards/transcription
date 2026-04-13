@@ -1,0 +1,9 @@
+# Jagdhuette campaign IDs
+# Source: manuav-platform client_portal.campaign_dialfire_configs WHERE enabled=true
+# Last updated: 2026-04-13
+#
+# Add new campaign IDs here (one per line) when new campaigns are created.
+# The auto_transcribe.py cron reads this file every run.
+
+E7ZVULZVFA9TRHY2
+YHSF97B9FVFFRL6Z
